@@ -1,0 +1,14 @@
+{
+  "/page": "app/page.js",
+  "/cart/page": "app/cart/page.js",
+  "/api/orders/route": "app/api/orders/route.js",
+  "/api/tables/route": "app/api/tables/route.js",
+  "/api/staff/route": "app/api/staff/route.js",
+  "/api/reservations/route": "app/api/reservations/route.js",
+  "/staff/page": "app/staff/page.js",
+  "/admin/orders/page": "app/admin/orders/page.js",
+  "/admin/tables/page": "app/admin/tables/page.js",
+  "/admin/kitchen/page": "app/admin/kitchen/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/admin/staff/page": "app/admin/staff/page.js"
+}

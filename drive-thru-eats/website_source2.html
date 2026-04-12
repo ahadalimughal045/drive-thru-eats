@@ -1,0 +1,2695 @@
+
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <!-- ===============================================-->
+    <!--    Document Title-->
+    <!-- ===============================================-->
+    <title>Drive Thru Eats</title>
+
+
+    <!-- ===============================================-->
+    <!--    Favicons-->
+    <!-- ===============================================-->
+    <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="logo.png">
+    <link rel="shortcut icon" type="image/x-icon" href="logo.png">
+    <link rel="manifest" href="assets/img/favicons/manifest.json">
+    <meta name="msapplication-TileImage" content="logo.png">
+    <meta name="theme-color" content="#ffffff">
+
+
+    <!-- ===============================================-->
+    <!--    Stylesheets-->
+    <!-- ===============================================-->
+    <link href="assets/css/theme.css" rel="stylesheet" />
+
+    <script src="admin/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+    
+<script src="admin/awaissoft/awaissoft-min.js"></script>
+  </head>
+
+
+  <body>
+ <main class="main" id="top">
+   
+
+      <style>
+    .menu-tab{
+        overflow:hidden;
+        display:inline-block;
+        
+        
+        
+    }
+    
+    .menu-tab li{
+        display:inline;
+         overflow:hidden;
+    }
+    
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" data-navbar-on-scroll="data-navbar-on-scroll">
+        <div class="container"><a class="navbar-brand d-inline-flex" href="index.php"><img class="d-inline-block" src="logo.png" alt="logo" width="150" /><span class="text-1000 fs-3 fw-bold ms-2 text-gradient"></span></a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"> </span></button>
+          <div class="collapse navbar-collapse border-top border-lg-0 my-2 mt-lg-0" id="navbarSupportedContent">
+            <div class="mx-auto pt-5 pt-lg-0 d-block d-lg-none d-xl-block" >
+              <p class="mb-0 fw-bold text-lg-center" style="display:;">
+			    <a class="btn btn-white  text-warning col-xs-12" href="tel:+919682387952"> <i class="fas fa-phone me-2"></i>Call Now
+             
+               </a>
+			  </p>
+            </div>
+            
+          
+            
+            <!--
+            <li>  <button class="btn btn-danger shadow-warning" type="button">Search</button></li>
+-->             
+   
+            <form class="d-flex mt-4 mt-lg-0 ms-lg-auto ms-xl-0">
+              <!--
+              <div class="input-group-icon pe-2"><i class="fas fa-search input-box-icon text-primary"></i>
+                <input class="form-control border-0 input-box bg-100" type="search" placeholder="Search Food" aria-label="Search" />
+              </div>
+-->           
+
+<div class="dropdown">
+  <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+    Menu Category
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+          <li><a class="dropdown-item" href="#ctg_18">BREAKFAST</a></li>
+     <li><a class="dropdown-item" href="#ctg_17">SHAWARMA</a></li>
+     <li><a class="dropdown-item" href="#ctg_16">TANDOORI CHICKEN</a></li>
+     <li><a class="dropdown-item" href="#ctg_15">PIZZA</a></li>
+     <li><a class="dropdown-item" href="#ctg_2">BURGER</a></li>
+     <li><a class="dropdown-item" href="#ctg_4">ROLLS</a></li>
+     <li><a class="dropdown-item" href="#ctg_6">CHICKEN MEALS</a></li>
+     <li><a class="dropdown-item" href="#ctg_11">MOMOS</a></li>
+     <li><a class="dropdown-item" href="#ctg_8">SANDWICH</a></li>
+     <li><a class="dropdown-item" href="#ctg_10">OTHER COURSE</a></li>
+     <li><a class="dropdown-item" href="#ctg_12">COMBOS</a></li>
+     <li><a class="dropdown-item" href="#ctg_13">KIDS MENU</a></li>
+     <li><a class="dropdown-item" href="#ctg_5">APPETIZERS</a></li>
+     <li><a class="dropdown-item" href="#ctg_7">SALAD'S</a></li>
+     <li><a class="dropdown-item" href="#ctg_1">JUICES</a></li>
+     <li><a class="dropdown-item" href="#ctg_3">SHAKES</a></li>
+     <li><a class="dropdown-item" href="#ctg_9">ICE CREAM / SWEETS</a></li>
+     <li><a class="dropdown-item" href="#ctg_14">WATER</a></li>
+   </ul>
+</div>
+
+    
+	&nbsp;
+              &nbsp;
+              &nbsp;
+            
+			   <!--
+    <a class="btn btn-white shadow-warning text-warning col-xs-12" href="feedback.php"> <i class="fas fa-list me-2"></i>Feedback</a>
+			  -->
+              
+              &nbsp;
+              &nbsp;
+              &nbsp;
+              <a class="btn btn-white shadow-warning text-warning col-xs-12" href="cart.php"> <i class="fas fa-shopping-cart me-2"></i>Cart
+              &nbsp;
+              &nbsp;
+               
+              
+			  <span class="badge badge-success" style="background-color: #cd6122;" id="itemCount">0</span></a>
+              
+			  
+              
+			  
+            </form>
+          </div>
+        </div>
+      
+      </nav>
+    
+     <section class="py-5 overflow-hidden bg-primary" id="home">
+        <div class="container">
+          <div class="row flex-center">
+            <div class="col-md-5 col-lg-6 order-0 order-md-1 mt-8 mt-md-0"><a class="img-landing-banner" href="#!"><img class="img-fluid" src="combo-img.png" alt="hero-header" /></a></div>
+            <div class="col-md-7 col-lg-6 py-8 text-md-start text-center">
+              <h1 class="display-1 fs-md-5 fs-lg-6 fs-xl-8 text-light">Are you starving?</h1>
+              <!--
+			  <h1 class="text-800 mb-5 fs-4">Within a few clicks, find meals that<br class="d-none d-xxl-block" />are accessible near you</h1>
+-->              
+			  <h1 class="text-light text-light mb-5 fs-4"><marquee>Daily Offer on all the online orders. Use coupon code "Discount10" while ordering at check out.</marquee></h1>
+             
+			 
+              <div class="dropdown" style="z-index:99999999;">
+			  
+			  
+			  
+  <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+    Menu Category
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+          <li><a class="dropdown-item" href="#ctg_18">BREAKFAST</a></li>
+     <li><a class="dropdown-item" href="#ctg_17">SHAWARMA</a></li>
+     <li><a class="dropdown-item" href="#ctg_16">TANDOORI CHICKEN</a></li>
+     <li><a class="dropdown-item" href="#ctg_15">PIZZA</a></li>
+     <li><a class="dropdown-item" href="#ctg_2">BURGER</a></li>
+     <li><a class="dropdown-item" href="#ctg_4">ROLLS</a></li>
+     <li><a class="dropdown-item" href="#ctg_6">CHICKEN MEALS</a></li>
+     <li><a class="dropdown-item" href="#ctg_11">MOMOS</a></li>
+     <li><a class="dropdown-item" href="#ctg_8">SANDWICH</a></li>
+     <li><a class="dropdown-item" href="#ctg_10">OTHER COURSE</a></li>
+     <li><a class="dropdown-item" href="#ctg_12">COMBOS</a></li>
+     <li><a class="dropdown-item" href="#ctg_13">KIDS MENU</a></li>
+     <li><a class="dropdown-item" href="#ctg_5">APPETIZERS</a></li>
+     <li><a class="dropdown-item" href="#ctg_7">SALAD'S</a></li>
+     <li><a class="dropdown-item" href="#ctg_1">JUICES</a></li>
+     <li><a class="dropdown-item" href="#ctg_3">SHAKES</a></li>
+     <li><a class="dropdown-item" href="#ctg_9">ICE CREAM / SWEETS</a></li>
+     <li><a class="dropdown-item" href="#ctg_14">WATER</a></li>
+   </ul>
+</div>
+<br/>
+
+			 <a href="dte-app.apk" target="_blank" class="btn btn-danger"  id="dropdownMenuButton1" >
+    Download Our APK
+  </a>
+
+              <div class="card w-xxl-75" style="display:none;">
+                  
+                <div class="card-body">
+                  <nav style="display:none;">
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                      <button class="nav-link active mb-3" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true"><i class="fas fa-search me-2"></i>Search Food</button>
+                      <button class="nav-link mb-3" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false" style="display: none;"><i class="fas fa-shopping-bag me-2"></i>Pickup</button>
+                    </div>
+                  </nav>
+                   
+                  <div class="tab-content mt-3" id="nav-tabContent" style="display:none;">
+                      
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                      <form class="row gx-2 gy-2 align-items-center">
+                        <div class="col" >
+                          <div class="input-group-icon"><i class="fas fa-search text-danger input-box-icon"></i>
+                            <label class="visually-hidden" for="inputDelivery">Address</label>
+                            <input class="form-control input-box form-foodwagon-control" id="inputDelivery" type="text" placeholder="Enter Food Name" />
+                          </div>
+                        </div>
+                        <div class="d-grid gap-3 col-sm-auto">
+                          <button style="display:none;" class="btn btn-danger" type="submit">Find Food</button>
+                          <div class="dropdown">
+						  
+						  
+						  
+  <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+    Menu Category
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+          <li><a class="dropdown-item" href="#ctg_1">JUICES</a></li>
+     <li><a class="dropdown-item" href="#ctg_2">BURGER</a></li>
+     <li><a class="dropdown-item" href="#ctg_3">SHAKES</a></li>
+     <li><a class="dropdown-item" href="#ctg_4">ROLLS</a></li>
+     <li><a class="dropdown-item" href="#ctg_5">APPETIZERS</a></li>
+     <li><a class="dropdown-item" href="#ctg_6">CHICKEN MEALS</a></li>
+     <li><a class="dropdown-item" href="#ctg_7">SALAD'S</a></li>
+     <li><a class="dropdown-item" href="#ctg_8">SANDWICH</a></li>
+     <li><a class="dropdown-item" href="#ctg_9">ICE CREAM / SWEETS</a></li>
+     <li><a class="dropdown-item" href="#ctg_10">OTHER COURSE</a></li>
+     <li><a class="dropdown-item" href="#ctg_11">MOMOS</a></li>
+     <li><a class="dropdown-item" href="#ctg_12">COMBOS</a></li>
+     <li><a class="dropdown-item" href="#ctg_13">KIDS MENU</a></li>
+     <li><a class="dropdown-item" href="#ctg_14">WATER</a></li>
+     <li><a class="dropdown-item" href="#ctg_15">PIZZA</a></li>
+     <li><a class="dropdown-item" href="#ctg_16">TANDOORI CHICKEN</a></li>
+     <li><a class="dropdown-item" href="#ctg_17">SHAWARMA</a></li>
+     <li><a class="dropdown-item" href="#ctg_18">BREAKFAST</a></li>
+   </ul>
+</div>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                      <form class="row gx-4 gy-2 align-items-center">
+                        <div class="col">
+                          <div class="input-group-icon"><i class="fas fa-map-marker-alt text-danger input-box-icon"></i>
+                            <label class="visually-hidden" for="inputPickup">Address</label>
+                            <input class="form-control input-box form-foodwagon-control" id="inputPickup" type="text" placeholder="Enter Your Address" />
+                          </div>
+                        </div>
+                        <div class="d-grid gap-3 col-sm-auto" style="">
+                          <button class="btn btn-danger" type="submit">Find Food</button>
+                        </div>
+                      
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_18">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> BREAKFAST</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_39" style="height: " src="admin/oimg/img_39.jpg?id=980047829" alt="FRENCH FRIES" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">FRENCH FRIES</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 99</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(39)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_39"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_44" style="height: " src="admin/oimg/img_44.jpg?id=955747001" alt="PERI PERI FRENCH FRIES" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">PERI PERI FRENCH FRIES</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 110</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(44)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_44"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_45" style="height: " src="admin/oimg/img_45.jpg?id=327980790" alt="TOAST NORMAL (2pc)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">TOAST NORMAL (2pc)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 20</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(45)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_45"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_46" style="height: " src="admin/oimg/img_46.jpg?id=88386377" alt="BUTTER TOAST (2pc)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">BUTTER TOAST (2pc)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 25</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(46)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_46"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_47" style="height: " src="admin/oimg/img_47.jpg?id=842235986" alt="FRIED TOAST (1pc)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">FRIED TOAST (1pc)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 10</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(47)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_47"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_48" style="height: " src="admin/oimg/img_48.jpg?id=394704092" alt="EGG TOAST (1pc)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">EGG TOAST (1pc)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 25</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(48)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_48"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_94" style="height: " src="admin/oimg/img_94.jpg?id=1116322268" alt="Halwa Poori (250 gm, 2 poori)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">Halwa Poori (250 Gm, 2 Poori)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 99</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(94)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_94"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_17">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> SHAWARMA</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_84" style="height: " src="admin/oimg/img_84.jpg?id=89691843" alt="SHAWARMA" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">SHAWARMA</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 120</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(84)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_84"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_85" style="height: " src="admin/oimg/img_85.jpg?id=668873853" alt="SHAWARMA LARGE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">SHAWARMA LARGE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 200</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(85)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_85"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_86" style="height: " src="admin/oimg/img_86.jpg?id=984231400" alt="ARABIC SHAWARMA SINGLE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">ARABIC SHAWARMA SINGLE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 150</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(86)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_86"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_87" style="height: " src="admin/oimg/img_87.jpg?id=2123372760" alt="ARABIC SHAWARMA DOUBLE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">ARABIC SHAWARMA DOUBLE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 250</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(87)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_87"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_16">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> TANDOORI CHICKEN</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_78" style="height: " src="admin/oimg/img_78.jpg?id=1995435294" alt="TANDOORI CHICKEN 1 PC" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">TANDOORI CHICKEN 1 PC</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 140</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(78)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_78"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_79" style="height: " src="admin/oimg/img_79.jpg?id=776102712" alt="TANDOORI CHICKEN HALF" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">TANDOORI CHICKEN HALF</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 280</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(79)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_79"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_80" style="height: " src="admin/oimg/img_80.jpg?id=694134893" alt="TANDOORI CHICKEN FULL" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">TANDOORI CHICKEN FULL</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 560</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(80)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_80"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_15">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> PIZZA</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_64" style="height: " src="admin/oimg/img_64.jpg?id=1968851010" alt="Chicken Fajita SMALL" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">Chicken Fajita SMALL</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 200</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(64)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_64"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_65" style="height: " src="admin/oimg/img_65.jpg?id=1015109125" alt="Chicken Fajita MEDIUM" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">Chicken Fajita MEDIUM</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 400</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(65)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_65"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_66" style="height: " src="admin/oimg/img_66.jpg?id=1780256165" alt="Chicken Fajita LARGE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">Chicken Fajita LARGE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 600</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(66)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_66"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_67" style="height: " src="admin/oimg/img_67.jpg?id=1553155706" alt="Chicken Super Supreme SMALL" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">Chicken Super Supreme SMALL</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 200</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(67)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_67"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_68" style="height: " src="admin/oimg/img_68.jpg?id=926994076" alt="Chicken Super Supreme MEDIUM" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">Chicken Super Supreme MEDIUM</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 400</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(68)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_68"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_69" style="height: " src="admin/oimg/img_69.jpg?id=1560027308" alt="Chicken Super Supreme LARGE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">Chicken Super Supreme LARGE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 600</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(69)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_69"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_70" style="height: " src="admin/oimg/img_70.jpg?id=1461005587" alt="Chicken Barbeque SMALL" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">Chicken Barbeque SMALL</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 210</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(70)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_70"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_71" style="height: " src="admin/oimg/img_71.jpg?id=2012062835" alt="Chicken Barbeque MEDIUM" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">Chicken Barbeque MEDIUM</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 420</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(71)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_71"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_72" style="height: " src="admin/oimg/img_72.jpg?id=806058750" alt="Chicken Barbeque LARGE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">Chicken Barbeque LARGE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 650</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(72)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_72"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_73" style="height: " src="admin/oimg/img_73.jpg?id=466023969" alt="VEG PIZZA SMALL" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">VEG PIZZA SMALL</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 180</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(73)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_73"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_74" style="height: " src="admin/oimg/img_74.jpg?id=1098006556" alt="VEG PIZZA MEDIUM" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">VEG PIZZA MEDIUM</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 350</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(74)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_74"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_75" style="height: " src="admin/oimg/img_75.jpg?id=140601067" alt="VEG PIZZA LARGE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">VEG PIZZA LARGE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 500</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(75)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_75"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_2">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> BURGER</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_5" style="height: " src="admin/oimg/img_5.jpg?id=1102182888" alt="ZINGER BURGER" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">ZINGER BURGER</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 100</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(5)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_5"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_6" style="height: " src="admin/oimg/img_6.jpg?id=148509216" alt="ZINGER KING BURGER" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">ZINGER KING BURGER</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 120</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(6)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_6"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_7" style="height: " src="admin/oimg/img_7.jpg?id=1740541391" alt="MAGICIAN BURGER" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">MAGICIAN BURGER</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 120</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(7)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_7"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_8" style="height: " src="admin/oimg/img_8.jpg?id=793796297" alt="PERI PERI BURGER" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">PERI PERI BURGER</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 120</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(8)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_8"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_4">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> ROLLS</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_13" style="height: " src="admin/oimg/img_13.jpg?id=1705156657" alt="CRISPY TWISTER" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">CRISPY TWISTER</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 99</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(13)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_13"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_14" style="height: " src="admin/oimg/img_14.jpg?id=982556990" alt="MEXICAN TWISTER" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">MEXICAN TWISTER</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 120</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(14)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_14"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_15" style="height: " src="admin/oimg/img_15.jpg?id=1291715621" alt="PERI PERI TWISTER" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">PERI PERI TWISTER</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 120</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(15)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_15"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_51" style="height: " src="admin/oimg/img_51.jpg?id=622401062" alt="CHICKEN MAX ROLL" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">CHICKEN MAX ROLL</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 120</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(51)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_51"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_6">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> CHICKEN MEALS</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_24" style="height: " src="admin/oimg/img_24.jpg?id=1164312613" alt="CHICKEN NUGGETS (8pc)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">CHICKEN NUGGETS (8pc)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 199</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(24)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_24"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_25" style="height: " src="admin/oimg/img_25.jpg?id=636568072" alt="CHICKEN POPCORN (20pc)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">CHICKEN POPCORN (20pc)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 110</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(25)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_25"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_26" style="height: " src="admin/oimg/img_26.jpg?id=15198053" alt="CHICKEN STRIPS (4pc)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">CHICKEN STRIPS (4pc)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 100</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(26)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_26"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_42" style="height: " src="admin/oimg/img_42.jpg?id=318723530" alt="CHICKEN LOLIPOP" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">CHICKEN LOLIPOP</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 199</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(42)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_42"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_52" style="height: " src="admin/oimg/img_52.jpg?id=193431166" alt="CHICKEN STRIPS (6pc)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">CHICKEN STRIPS (6pc)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 150</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(52)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_52"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_53" style="height: " src="admin/oimg/img_53.jpg?id=1340683768" alt="CHICKEN WINGS (4pc)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">CHICKEN WINGS (4pc)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 100</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(53)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_53"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_54" style="height: " src="admin/oimg/img_54.jpg?id=1134746823" alt="CHICKEN WINGS (8pc)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">CHICKEN WINGS (8pc)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 199</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(54)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_54"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_88" style="height: " src="admin/oimg/img_88.jpg?id=255753317" alt="CRISPY FRIED CHICKEN 1 PC" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">CRISPY FRIED CHICKEN 1 PC</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 70</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(88)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_88"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_89" style="height: " src="admin/oimg/img_89.jpg?id=2106372789" alt="CRISPY FRIED CHICKEN 4 PC" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">CRISPY FRIED CHICKEN 4 PC</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 260</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(89)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_89"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_91" style="height: " src="admin/oimg/img_91.jpg?id=670448083" alt="CRISPY FRIED CHICKEN 8 PC" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">CRISPY FRIED CHICKEN 8 PC</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 520</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(91)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_91"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_11">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> MOMOS</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_55" style="height: " src="admin/oimg/img_55.jpg?id=1490371321" alt="STEAM MOMOS (10pc)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">STEAM MOMOS (10pc)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 100</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(55)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_55"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_56" style="height: " src="admin/oimg/img_56.jpg?id=670888904" alt="FRIED MOMOS (10pc)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">FRIED MOMOS (10pc)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 120</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(56)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_56"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_8">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> SANDWICH</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_29" style="height: " src="admin/oimg/img_29.jpg?id=1826160800" alt="CHICKEN SANDWICH" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">CHICKEN SANDWICH</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 120</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(29)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_29"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_30" style="height: " src="admin/oimg/img_30.jpg?id=574357585" alt="SANDWICH VEG." />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">SANDWICH VEG.</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 99</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(30)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_30"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_10">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> OTHER COURSE</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_40" style="height: " src="admin/oimg/img_40.jpg?id=1631577844" alt="VEG. NODDLES" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">VEG. NODDLES</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 99</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(40)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_40"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_49" style="height: " src="admin/oimg/img_49.jpg?id=1013884826" alt="CHICKEN BIRYANI" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">CHICKEN BIRYANI</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 120</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(49)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_49"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_50" style="height: " src="admin/oimg/img_50.jpg?id=1575503964" alt="VEG. BIRYANI" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">VEG. BIRYANI</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 100</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(50)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_50"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_60" style="height: " src="admin/oimg/img_60.jpg?id=1359805699" alt="POPCORN" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">POPCORN</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 20</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(60)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_60"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_76" style="height: " src="admin/oimg/img_76.jpg?id=1078888315" alt="FISH STRIPS 5 pcs" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">FISH STRIPS 5 Pcs</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 100</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(76)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_76"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_77" style="height: " src="admin/oimg/img_77.jpg?id=1998927987" alt="FISH CUTLETS -1 PLATE SMALL" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">FISH CUTLETS -1 PLATE SMALL</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 100</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(77)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_77"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_90" style="height: " src="admin/oimg/img_90.jpg?id=968209380" alt="LOADED FRIES" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">LOADED FRIES</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 149</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(90)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_90"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_12">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> COMBOS</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_61" style="height: " src="admin/oimg/img_61.jpg?id=735630396" alt="1 TWISTER<BR/>1FRIES<BR/>1JUICE<BR/>1DIP" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">1 TWISTER<BR/>1FRIES<BR/>1JUICE<BR/>1DIP</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 220</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(61)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_61"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_13">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> KIDS MENU</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_58" style="height: " src="admin/oimg/img_58.jpg?id=1219448815" alt="FRENCH FRIES</br>CHICKEN LOLLIPOP </br>JUICE</br>KETCHUP" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">FRENCH FRIES</br>CHICKEN LOLLIPOP </br>JUICE</br>KETCHUP</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 179</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(58)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_58"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_59" style="height: " src="admin/oimg/img_59.jpg?id=1211240433" alt="FRIES<br/>CHICKEN POPCORN<br/>JUICE<br/>KETCHUP" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">FRIES<br/>CHICKEN POPCORN<br/>JUICE<br/>KETCHUP</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 220</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(59)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_59"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_5">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> APPETIZERS</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_16" style="height: " src="admin/oimg/img_16.jpg?id=1986800901" alt="COFFEE SMALL" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">COFFEE SMALL</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 20</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(16)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_16"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_17" style="height: " src="admin/oimg/img_17.jpg?id=704144793" alt="COFFEE MEDIUM" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">COFFEE MEDIUM</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 30</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(17)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_17"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_18" style="height: " src="admin/oimg/img_18.jpg?id=232523914" alt="TEA SMALL" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">TEA SMALL</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 20</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(18)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_18"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_19" style="height: " src="admin/oimg/img_19.jpg?id=1799091117" alt="TEA MEDIUM" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">TEA MEDIUM</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 30</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(19)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_19"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_20" style="height: " src="admin/oimg/img_20.jpg?id=1827216049" alt="LEMON TEA SMALL" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">LEMON TEA SMALL</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 20</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(20)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_20"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_21" style="height: " src="admin/oimg/img_21.jpg?id=241533559" alt="LEMON TEA MEDIUM" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">LEMON TEA MEDIUM</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 30</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(21)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_21"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_22" style="height: " src="admin/oimg/img_22.jpg?id=829632539" alt="KEHWA KASHMIRI SMALL" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">KEHWA KASHMIRI SMALL</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 20</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(22)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_22"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_23" style="height: " src="admin/oimg/img_23.jpg?id=1441941071" alt="KEHWA KASHMIRI MEDIUM" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">KEHWA KASHMIRI MEDIUM</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 40</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(23)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_23"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_81" style="height: " src="admin/oimg/img_81.jpg?id=1448064966" alt="HOT CHOCOLATE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">HOT CHOCOLATE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 25</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(81)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_81"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_82" style="height: " src="admin/oimg/img_82.jpg?id=1676309807" alt="TOMATO SOUP" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">TOMATO SOUP</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 25</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(82)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_82"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_83" style="height: " src="admin/oimg/img_83.jpg?id=1712995513" alt="BLACK COFFEE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">BLACK COFFEE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 25</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(83)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_83"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_7">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> SALAD'S</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_27" style="height: " src="admin/oimg/img_27.jpg?id=954922315" alt="VEG. SALAD (250gm)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">VEG. SALAD (250gm)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 75</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(27)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_27"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_28" style="height: " src="dimg.svg" alt="FRUIT CREAM CHAT (150gm)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">FRUIT CREAM CHAT (150gm)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 149</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(28)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_28"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_92" style="height: " src="admin/oimg/img_92.jpg?id=2117804288" alt="Mango Cream (150gm)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">Mango Cream (150gm)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 100</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(92)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_92"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_1">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> JUICES</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_1" style="height: " src="admin/oimg/img_1.jpg?id=1017254233" alt="MANGO JUICE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">MANGO JUICE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 100</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(1)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_1"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_2" style="height: " src="admin/oimg/img_2.jpg?id=792566900" alt="ORANGE JUICE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">ORANGE JUICE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 100</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(2)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_2"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_3" style="height: " src="admin/oimg/img_3.jpg?id=989419051" alt="PINE APPLE JUICE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">PINE APPLE JUICE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 100</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(3)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_3"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_4" style="height: " src="admin/oimg/img_4.jpg?id=864283676" alt="WATERMELON JUICE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">WATERMELON JUICE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 100</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(4)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_4"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_3">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> SHAKES</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_9" style="height: " src="admin/oimg/img_9.jpg?id=691302284" alt="MANGO SHAKE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">MANGO SHAKE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 130</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(9)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_9"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_10" style="height: " src="admin/oimg/img_10.jpg?id=1811040570" alt="BANANA SHAKE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">BANANA SHAKE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 120</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(10)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_10"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_11" style="height: " src="admin/oimg/img_11.jpg?id=1555728405" alt="VANILLA SHAKE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">VANILLA SHAKE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 100</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(11)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_11"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_12" style="height: " src="admin/oimg/img_12.jpg?id=624831824" alt="CHOCOLATE SHAKE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">CHOCOLATE SHAKE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 120</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(12)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_12"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_93" style="height: " src="admin/oimg/img_93.jpg?id=656187353" alt="Fruit Falooda (200gm)" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">Fruit Falooda (200gm)</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 200</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(93)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_93"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_9">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> ICE CREAM / SWEETS</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_31" style="height: " src="admin/oimg/img_31.jpg?id=2026344829" alt="VANILLA SOFTY SMALL" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">VANILLA SOFTY SMALL</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 30</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(31)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_31"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_32" style="height: " src="admin/oimg/img_32.jpg?id=153927515" alt="VANILLA SOFTY MEDIUM" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">VANILLA SOFTY MEDIUM</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 40</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(32)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_32"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_33" style="height: " src="admin/oimg/img_33.jpg?id=1339299838" alt="STRAWBERRY SOFT SMALL" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">STRAWBERRY SOFT SMALL</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 30</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(33)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_33"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_34" style="height: " src="admin/oimg/img_34.jpg?id=1418352636" alt="STRAWBERRY SOFT MEDIUM" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">STRAWBERRY SOFT MEDIUM</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 40</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(34)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_34"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_35" style="height: " src="admin/oimg/img_35.jpg?id=1911295407" alt="BUTTER SCOTCH SOFTY SMALL" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">BUTTER SCOTCH SOFTY SMALL</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 30</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(35)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_35"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_36" style="height: " src="admin/oimg/img_36.jpg?id=1825807454" alt="BUTTER SCOTCH SOFTY MEDIUM" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">BUTTER SCOTCH SOFTY MEDIUM</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 40</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(36)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_36"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+
+      <!-- ============================================-->
+      <!-- <section> begin ============================-->
+      <section class="py-4 overflow-hidden">
+
+        <div class="container">
+          <div class="row h-100">
+            <div class="col-lg-7 mx-auto text-center mt-7 mb-5" id="ctg_14">
+              <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"> WATER</h5>
+            </div>
+            <div class="col-12">
+              <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                  <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="row gx-3 h-100 align-items-center">
+                     
+                    
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_62" style="height: " src="admin/oimg/img_62.jpg?id=476627855" alt="SMALL WATER BOTTLE" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">SMALL WATER BOTTLE</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 10</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(62)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_62"></span>
+						                        </div>
+                      </div>
+
+
+
+                    <div class="col-sm-3  mb-5 h-100">
+                        <div class="card card-span h-100 rounded-3">
+                        <img class=" rounded-3 " width="100%" height="250" id="img_63" style="height: " src="admin/oimg/img_63.jpg?id=1062757809" alt="WATER BOTTLE MEDIUM" />
+                    
+                          <div class="card-body ps-0">
+                            <h5 class="fw-bold text-1000 mb-1">WATER BOTTLE MEDIUM</h5>
+                            <div style="display: none;"><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">₹ 20</span>
+                          </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                                                  <a class="btn btn-lg btn-danger" href="#!" onclick="addItemInCart(63)" role="button">Add to Cart</a>
+                      <span style="color:green; font-weight:bold; font-style:italic; text-align:center" id="msg_63"></span>
+						                        </div>
+                      </div>
+                      
+
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              <!--
+                <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+                <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+                    -->              
+              
+              </div>
+            </div>
+          </div>
+        </div><!-- end of .container-->
+
+      </section>
+
+
+      <script>
+for(i=1;i<=50; i++){
+  url = random_img_gen();
+ // document.getElementById("img_"+i).src=url;
+  //document.getElementById("img_"+i).width="100%";
+  //document.getElementById("img_"+i).height="100";
+
+}
+  
+  </script>
+      <section class="py-0">
+        <div class="bg-holder" style="background-image:url(assets/img/gallery/cta-two-bg.png);background-position:center;background-size:cover;">
+        </div>
+        <!--/.bg-holder-->
+
+        <div class="container">
+          <div class="row flex-center">
+            <div class="col-xxl-9 py-7 text-center">
+              <h1 class="fw-bold mb-4 text-white fs-6">Are you satisfied <br />with our services? </h1><a class="btn btn-danger" href="feedback.php"> GIVE US YOUR FEEDBACK<i class="fas fa-chevron-right ms-2"></i></a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+<a href="https://wa.link/mnta3l" target="_blank">
+<img src="walogo.png"  style="width:50px; position:fixed; top:89%; left:85%; z-index:999;" />  
+</a>
+
+<section class="py-0 pt-7 bg-1000">
+
+<div class="container">
+  <span style="color: white;">
+ <b>Location:</b>  
+Rehmani Technologies Building , By pass Road Handwara - Kashmir
+
+<br/>
+<b>Email: </b>helpdesk@drive-thrueats.online
+
+
+<br/>
+<b>Phone# </b>01955295310 / 01955313018<br/>
+
+<b>WhatsApp# </b>+917889683368<br/>
+<b>Follow us: </b>
+&nbsp;&nbsp; 
+<a href="https://www.facebook.com/profile.php?id=61566862304889" style="color:white;" target="_blank">
+<i style="font-size:30px;" class="fab fa-facebook-square"></i>
+</a>
+&nbsp;&nbsp;
+&nbsp;
+
+<a href="https://www.instagram.com/drivethru.eats/?igsh=M21tc3R5eDIzcXU4" style="color:white;" target="_blank">
+<i style="font-size:30px;" class="fab fa-instagram-square"></i>
+</a>
+<span>
+  
+<hr class="text-900" style="display: none;" />
+    
+  <hr class="border border-800" />
+<center>
+  <p style="font-size:12px;">All rights Reserved &copy; Drive Thru Eats, 2024<br>
+  
+  Powered by AFKAR AL-MUSTAQBIL Technologies
+  </p>
+  </center>
+  <div class="row flex-center pb-3">
+    <div class="col-md-12 order-0" >
+    
+    </div>
+    <div class="col-md-6 order-1">
+      
+    </div>
+  </div>
+
+</div><!-- end of .container-->
+
+</section>
+
+<iframe name="oframe" style="display:none;"></iframe>
+    
+<script src="vendors/@popperjs/popper.min.js"></script>
+    <script src="vendors/bootstrap/bootstrap.min.js"></script>
+    <script src="vendors/is/is.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll"></script>
+    <script src="vendors/fontawesome/all.min.js"></script>
+    <script src="assets/js/theme.js"></script>
+    
+
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&amp;display=swap" rel="stylesheet">
+
+    <script>
+items	 = JSON.parse(localStorage.items);
+document.getElementById("itemCount").innerHTML=items.length;
+			
+</script>
+
+
+    </main>
+  </body>
+
+</html>
+

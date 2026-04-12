@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model order {
+  id                String   @id
+  orderId           String   @unique(map: "Order_orderId_key")
+  customerName      String
+  email             String?
+  phone             String
+  type              String
+  tableNumber       String?
+  deliveryArea      String?
+  address           String?
+  instructions      String?
+  paymentMethod     String?
+  transactionNumber String?
+  total             Float
+  status            String   @default("Pending")
+  chef              String?
+  waiter            String?
+  timestamp         DateTime @default(now())
+  items             String   @db.LongText
+}
+
+model reservation {
+  id      String @id
+  tableId String
+  name    String
+  phone   String
+  date    String
+  time    String
+  guests  Int
+}
+
+model staff {
+  id    String  @id
+  sid   String  @unique(map: "Staff_sid_key")
+  name  String
+  email String?
+  phone String?
+  role  String
+  pin   String  @default("1234")
+}
+
+model table {
+  id     String @id
+  number Int    @unique(map: "Table_number_key")
+  seats  Int
+  type   String
+  status String @default("available")
+}
