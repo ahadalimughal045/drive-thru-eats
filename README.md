@@ -103,7 +103,7 @@ To update contact info, edit `/components/Footer.tsx`.
 
 ## 📞 Original Site Contact
 
-- **Location:** Rehmani Technologies Building, By pass Road Handwara - Kashmir
-- **Email:** helpdesk@drive-thrueats.online
-- **Phone:** 01955295310 / 01955313018
-- **WhatsApp:** +917889683368
+- **Location:** Bismillah City - Hyderabad - Pakistan
+- **Email:** alimughal4t@gmail.com
+- **Phone:** 3182110366
+- **WhatsApp:** +3010036500
