@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, ChefHat, Users, ShoppingBag, LogOut, ArrowLeft, LayoutGrid } from 'lucide-react';
+import { LayoutDashboard, ChefHat, Users, ShoppingBag, LogOut, ArrowLeft, LayoutGrid, Utensils } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -12,6 +12,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} /> },
     { name: 'Tables', href: '/admin/tables', icon: <LayoutGrid size={20} /> },
     { name: 'Kitchen', href: '/admin/kitchen', icon: <ChefHat size={20} /> },
+    { name: 'Menu', href: '/admin/menu', icon: <Utensils size={20} /> },
+    { name: 'Customers', href: '/admin/users', icon: <Users size={20} /> },
     { name: 'Staff', href: '/admin/staff', icon: <Users size={20} /> },
   ];
 
@@ -19,11 +21,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen bg-brand-bg flex">
       {/* Sidebar */}
       <aside className="w-64 bg-[#212529] text-white hidden md:flex flex-col">
-        <div className="p-6 border-b border-gray-700">
-          <h2 className="text-xl font-black text-white flex items-center gap-2">
-            <ChefHat className="text-brand-red" /> Admin Panel
-          </h2>
-          <p className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-bold">Drive Thru Eats</p>
+        <div className="p-8 border-b border-gray-800 flex flex-col items-center">
+          <img 
+            src="https://drive-thrueats.online/logo.png" 
+            alt="Logo" 
+            className="w-24 h-auto invert brightness-0 invert-0"
+            style={{ filter: 'brightness(0) invert(1)' }} 
+          />
+          <div className="mt-4 text-center">
+            <h2 className="text-xl font-black text-white tracking-widest uppercase">Admin</h2>
+            <div className="h-1 w-12 bg-brand-red mx-auto mt-1 rounded-full" />
+          </div>
         </div>
 
         <nav className="flex-1 py-6 px-4 space-y-2">
@@ -52,9 +60,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <main className="flex-1 flex flex-col min-h-screen overflow-hidden">
         {/* Mobile Header */}
         <header className="md:hidden bg-[#212529] text-white p-4 flex items-center justify-between">
-          <h2 className="text-lg font-black flex items-center gap-2">
-            <ChefHat className="text-brand-red" /> Admin Panel
-          </h2>
+          <img 
+            src="https://drive-thrueats.online/logo.png" 
+            alt="Logo" 
+            className="h-8 w-auto brightness-0 invert" 
+          />
           <Link href="/">
             <ArrowLeft className="text-gray-400" />
           </Link>

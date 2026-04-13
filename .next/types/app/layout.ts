@@ -1,4 +1,4 @@
-// File: C:\Users\Ahad Ali Mughal\Downloads\drive-thru-eats\drive-thru-eats\app\layout.tsx
+// File: G:\drive-thru-eats\app\layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

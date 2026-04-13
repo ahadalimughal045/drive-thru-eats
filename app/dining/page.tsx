@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Users, Calendar, Clock, Phone, User, CheckCircle2, X } from 'lucide-react';
+import { ArrowLeft, Users, Calendar, Clock, Phone, User, CheckCircle2, X, Map as MapIcon, Info, Receipt } from 'lucide-react';
 import { tables, Table } from '@/data/tables';
 import { useReservation, Reservation } from '@/components/ReservationContext';
 
@@ -9,7 +9,6 @@ export default function DiningPage() {
   const { reservations, addReservation, cancelReservation } = useReservation();
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
   
-  // Form State
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [date, setDate] = useState('');
@@ -29,25 +28,13 @@ export default function DiningPage() {
     }
   }, []);
 
-  // Get current status of tables (simulate booked if there's a reservation for the selected date/time)
-  // For simplicity, table is booked if it's in reservations list at all (or you can filter by date)
-  // In a real app, it would be by Date + Time
-  
-  // To keep it simple, if a table is reserved *at all*, mark it as booked for the map today.
   const isTableBooked = (tableId: string) => {
     return reservations.some(r => r.tableId === tableId);
   };
 
   const handleBooking = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedTable) {
-      alert('Please select a table from the map first');
-      return;
-    }
-    if (!name || !phone || !date) {
-      alert('Please fill out all fields');
-      return;
-    }
+    if (!selectedTable) return;
 
     const newRes: Reservation = {
       id: Math.random().toString(36).substr(2, 9),
@@ -72,64 +59,95 @@ export default function DiningPage() {
   const today = new Date().toISOString().split('T')[0];
 
   return (
-    <div className="min-h-screen bg-brand-bg py-8">
-      <div className="max-w-6xl mx-auto px-4">
+    <div className="min-h-screen bg-white py-12 lg:py-20 relative overflow-hidden">
+      {/* Decor */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-brand-red/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-brand-orange/5 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 relative">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
-          <Link href="/" className="text-brand-muted hover:text-brand-text transition-colors">
-            <ArrowLeft size={20} />
-          </Link>
-          <h1 className="text-3xl font-black text-brand-text" style={{ fontFamily: 'Georgia, serif' }}>
-            Book a Table
-          </h1>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 pt-12 md:pt-16">
+          <div className="space-y-4">
+            <Link href="/" className="group inline-flex items-center gap-2 text-brand-muted hover:text-brand-red transition-all font-bold text-sm">
+              <div className="w-8 h-8 rounded-lg bg-brand-bg flex items-center justify-center group-hover:bg-brand-red group-hover:text-white transition-all">
+                <ArrowLeft size={16} />
+              </div>
+              Back to Store
+            </Link>
+            <h1 className="text-4xl lg:text-7xl font-black text-brand-text tracking-tighter">
+              Reserve Your <br />
+              <span className="text-brand-red">Perfect Spot.</span>
+            </h1>
+          </div>
+          <div className="flex items-center gap-6 pb-2 border-b border-brand-border">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-green-500 shadow-lg shadow-green-500/20" />
+              <span className="text-xs font-black text-brand-muted uppercase tracking-widest">Available</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-brand-red" />
+              <span className="text-xs font-black text-brand-muted uppercase tracking-widest">Booked</span>
+            </div>
+          </div>
         </div>
 
         {toast && (
-          <div className="fixed top-20 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg font-bold flex items-center gap-2 animate-slide-up z-50">
-            <CheckCircle2 size={20} /> {toast}
+          <div className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-brand-text text-white px-8 py-4 rounded-2xl shadow-premium font-bold flex items-center gap-3 animate-slide-up z-[100] border border-white/10">
+            <CheckCircle2 size={24} className="text-green-400" /> {toast}
           </div>
         )}
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Content: Table Map & Form */}
-          <div className="lg:col-span-2 space-y-8">
+        <div className="grid lg:grid-cols-12 gap-12">
+          {/* Main Content */}
+          <div className="lg:col-span-8 space-y-12">
             
-            {/* Section 1: Visual Table Map */}
-            <div className="bg-brand-surface border border-brand-border rounded-2xl p-6 shadow-sm">
-              <h2 className="text-xl font-bold mb-4 text-brand-text">1. Select a Table</h2>
-              
-              <div className="flex items-center gap-4 mb-6 text-sm">
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-green-100 border border-green-500"></div> <span className="text-brand-muted">Available</span></div>
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-red-100 border border-red-500"></div> <span className="text-brand-muted">Booked</span></div>
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-orange-100 border border-orange-500"></div> <span className="text-brand-muted">VIP</span></div>
+            {/* Table Selection */}
+            <div className="glass rounded-[2.5rem] p-8 md:p-12 border-white shadow-premium">
+              <div className="flex items-center gap-4 mb-10">
+                <div className="w-12 h-12 rounded-2xl bg-brand-bg flex items-center justify-center text-brand-text">
+                  <MapIcon size={24} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black text-brand-text tracking-tight">Interactive Map</h2>
+                  <p className="text-brand-muted text-sm font-medium">Click on a highlighted table to select it.</p>
+                </div>
               </div>
 
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-4 bg-brand-bg p-6 rounded-xl border border-brand-border">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 p-8 bg-brand-bg/50 rounded-3xl border border-brand-border/50">
                 {tablesList.map(table => {
                   const booked = isTableBooked(table.id);
                   const isSelected = selectedTable?.id === table.id;
                   
-                  let bgClass = "bg-green-50 hover:bg-green-100 border-green-200 text-green-800";
-                  if (booked) bgClass = "bg-red-50 border-red-200 text-red-400 cursor-not-allowed opacity-60";
-                  else if (table.type === 'vip') bgClass = "bg-orange-50 hover:bg-orange-100 border-orange-200 text-orange-800";
-                  
-                  if (isSelected) bgClass = "bg-brand-red text-white border-brand-red shadow-md scale-105";
-
                   return (
                     <button
                       key={table.id}
                       disabled={booked}
                       onClick={() => setSelectedTable(table)}
-                      className={`relative flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all h-24 ${bgClass}`}
+                      className={`group relative h-32 rounded-3xl border-2 transition-all flex flex-col items-center justify-center gap-2 shadow-soft ${
+                        booked 
+                          ? 'bg-white/50 border-brand-border cursor-not-allowed grayscale' 
+                          : isSelected
+                            ? 'bg-brand-red border-brand-red text-white scale-105 shadow-premium-hover'
+                            : 'bg-white border-white hover:border-brand-red/30 hover:shadow-lg'
+                      }`}
                     >
-                      <span className="font-black text-lg mb-1">T{table.number}</span>
-                      <div className="flex items-center gap-1 text-xs opacity-80 font-semibold">
-                        <Users size={12} /> {table.seats}
+                      <div className={`text-2xl font-black tracking-tighter ${isSelected ? 'text-white' : 'text-brand-text'}`}>
+                        T{table.number}
                       </div>
-                      {table.type !== 'regular' && (
-                        <span className="absolute top-1 right-1 text-[9px] font-bold uppercase tracking-wider opacity-70">
-                          {table.type}
-                        </span>
+                      <div className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-white/80' : 'text-brand-muted'}`}>
+                        <Users size={12} /> {table.seats} Seats
+                      </div>
+                      
+                      {table.type === 'vip' && !isSelected && (
+                        <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-lg bg-brand-accent text-brand-text text-[8px] font-black uppercase tracking-widest">
+                          VIP
+                        </div>
+                      )}
+                      
+                      {booked && (
+                        <div className="absolute inset-0 bg-white/60 flex items-center justify-center rounded-3xl">
+                          <X size={24} className="text-brand-red/30" />
+                        </div>
                       )}
                     </button>
                   );
@@ -137,146 +155,158 @@ export default function DiningPage() {
               </div>
             </div>
 
-            {/* Section 2: Booking Form */}
-            <div className="bg-brand-surface border border-brand-border rounded-2xl p-6 shadow-sm">
-              <h2 className="text-xl font-bold mb-4 text-brand-text">2. Reservation Details</h2>
-              <form onSubmit={handleBooking} className="grid sm:grid-cols-2 gap-5">
-                <div className="sm:col-span-2 bg-brand-bg border border-brand-border rounded-xl p-4 flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-brand-muted font-bold">Selected Table</p>
-                    {selectedTable ? (
-                      <p className="text-brand-text font-black text-lg">Table {selectedTable.number} ({selectedTable.seats} Seats, {selectedTable.type})</p>
-                    ) : (
-                      <p className="text-brand-orange text-sm mt-1">Please select a table from the map</p>
-                    )}
+            {/* Form */}
+            <div className={`glass rounded-[2.5rem] p-8 md:p-12 border-white shadow-premium transition-all duration-500 ${!selectedTable && 'opacity-50 pointer-events-none'}`}>
+              <div className="flex items-center gap-4 mb-10">
+                <div className="w-12 h-12 rounded-2xl bg-brand-bg flex items-center justify-center text-brand-text">
+                  <Info size={24} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black text-brand-text tracking-tight">Booking Details</h2>
+                  <p className="text-brand-muted text-sm font-medium">Tell us more about your visit.</p>
+                </div>
+              </div>
+
+              <form onSubmit={handleBooking} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="md:col-span-2 p-6 bg-brand-red/5 rounded-3xl border border-brand-red/10 flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-brand-red text-white flex items-center justify-center font-black text-xl shadow-lg ring-4 ring-brand-red/10">
+                      {selectedTable?.number || '?'}
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black text-brand-muted uppercase tracking-widest">Selected Table</p>
+                      <p className="text-lg font-black text-brand-text leading-tight">
+                        {selectedTable ? `${selectedTable.seats} Seats, ${selectedTable.type.toUpperCase()}` : 'No table selected'}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div>
-                  <label className="text-brand-text font-semibold text-sm block mb-1">Full Name</label>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-brand-muted uppercase tracking-widest ml-2">Your Name</label>
                   <div className="relative">
-                    <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted" />
-                    <input type="text" required value={name} onChange={e=>setName(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-xl pl-10 pr-4 py-3 text-brand-text placeholder-brand-muted focus:outline-none focus:border-brand-red text-sm" placeholder="John Doe" />
+                    <User size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-red" />
+                    <input type="text" required value={name} onChange={e=>setName(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-12 pr-6 py-4 text-brand-text placeholder-brand-muted focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-medium" placeholder="E.g. Elon Musk" />
                   </div>
                 </div>
 
-                <div>
-                  <label className="text-brand-text font-semibold text-sm block mb-1">Phone Number</label>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-brand-muted uppercase tracking-widest ml-2">Phone</label>
                   <div className="relative">
-                    <Phone size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted" />
-                    <input type="tel" required value={phone} onChange={e=>setPhone(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-xl pl-10 pr-4 py-3 text-brand-text placeholder-brand-muted focus:outline-none focus:border-brand-red text-sm" placeholder="(123) 456-7890" />
+                    <Phone size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-red" />
+                    <input type="tel" required value={phone} onChange={e=>setPhone(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-12 pr-6 py-4 text-brand-text placeholder-brand-muted focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-medium" placeholder="+91 ..." />
                   </div>
                 </div>
 
-                <div>
-                  <label className="text-brand-text font-semibold text-sm block mb-1">Date</label>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-brand-muted uppercase tracking-widest ml-2">Reservation Date</label>
                   <div className="relative">
-                    <Calendar size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted" />
-                    <input type="date" required min={today} value={date} onChange={e=>setDate(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-xl pl-10 pr-4 py-3 text-brand-text focus:outline-none focus:border-brand-red text-sm" />
+                    <Calendar size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-red" />
+                    <input type="date" required min={today} value={date} onChange={e=>setDate(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-12 pr-6 py-4 text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-medium" />
                   </div>
                 </div>
 
-                <div>
-                  <label className="text-brand-text font-semibold text-sm block mb-1">Time</label>
-                  <div className="relative">
-                    <Clock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted" />
-                    <select value={time} onChange={e=>setTime(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-xl pl-10 pr-4 py-3 text-brand-text focus:outline-none focus:border-brand-red text-sm appearance-none">
-                      {['12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM', '11:00 PM'].map(t => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-brand-muted uppercase tracking-widest ml-2">Time</label>
+                    <div className="relative">
+                      <Clock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-red" />
+                      <select value={time} onChange={e=>setTime(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-10 pr-4 py-4 text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-black text-xs appearance-none">
+                        {['12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM'].map(t => (
+                          <option key={t} value={t}>{t}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
-                </div>
-
-                <div>
-                  <label className="text-brand-text font-semibold text-sm block mb-1">Guests</label>
-                  <div className="relative">
-                    <Users size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted" />
-                    <select value={guests} onChange={e=>setGuests(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-xl pl-10 pr-4 py-3 text-brand-text focus:outline-none focus:border-brand-red text-sm appearance-none">
-                      {[1,2,3,4,5,6,7,8].map(n => (
-                        <option key={n} value={n}>{n} People</option>
-                      ))}
-                    </select>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-brand-muted uppercase tracking-widest ml-2">Guests</label>
+                    <div className="relative">
+                      <Users size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-red" />
+                      <select value={guests} onChange={e=>setGuests(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-10 pr-4 py-4 text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-black text-xs appearance-none">
+                        {[1,2,3,4,5,6,7,8].map(n => (
+                          <option key={n} value={n}>{n} {n===1?'Guest':'Guests'}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="sm:col-span-2 pt-2">
-                  <button type="submit" disabled={!selectedTable} className={`w-full font-bold py-3.5 rounded-xl transition-all text-white ${!selectedTable ? 'bg-gray-300 cursor-not-allowed' : 'bg-brand-red hover:bg-red-700 hover:scale-[1.02] active:scale-[0.98]'}`}>
-                    Confirm Reservation
+                <div className="md:col-span-2 pt-4">
+                  <button type="submit" className="w-full btn-primary py-5 text-lg shadow-premium">
+                    Complete Reservation
                   </button>
                 </div>
               </form>
             </div>
           </div>
 
-          {/* Section 3: My Reservations */}
-          <div className="lg:col-span-1">
-            <div className="bg-brand-surface border border-brand-border rounded-2xl p-6 shadow-sm sticky top-24">
-              <h2 className="text-xl font-bold mb-4 text-brand-text flex items-center justify-between">
-                My Reservations
-                <span className="bg-brand-bg text-brand-orange text-xs px-2 py-1 rounded-md">{reservations.length}</span>
-              </h2>
+          {/* Sidebar */}
+          <div className="lg:col-span-4">
+            <div className="glass rounded-[2.5rem] p-8 border-white shadow-premium sticky top-24">
+              <div className="flex items-center justify-between mb-8 pb-4 border-b border-brand-border">
+                <h2 className="text-xl font-black text-brand-text tracking-tight uppercase">History</h2>
+                <div className="w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center font-black text-xs">
+                  {reservations.length}
+                </div>
+              </div>
               
-              <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+              <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2 scrollbar-hide">
                 {reservations.length === 0 ? (
-                  <div className="text-center py-8 text-brand-muted">
-                    <Calendar size={48} className="mx-auto mb-3 opacity-20" />
-                    <p>No reservations yet.</p>
+                  <div className="text-center py-12">
+                    <div className="w-20 h-20 rounded-full bg-brand-bg flex items-center justify-center mx-auto mb-4 grayscale opacity-50">
+                      <Calendar size={32} />
+                    </div>
+                    <p className="text-sm font-bold text-brand-muted uppercase tracking-widest">No Bookings Yet</p>
                   </div>
                 ) : (
                   reservations.map(res => (
-                    <div key={res.id} className="bg-brand-bg border border-brand-border rounded-xl p-4 relative group">
-                      <div className="absolute top-3 right-3 flex gap-2">
-                        <button 
-                          onClick={() => {
-                            const table = tablesList.find(t => t.id === res.tableId);
-                            const content = `
-      ================================
-            DRIVE THRU EATS
-      ================================
-      CUSTOMER RESERVATION RECEIPT
-      
-      Customer Name : ${res.name}
-      Phone Number  : ${res.phone}
-      --------------------------------
-      Table Booked  : ${table?.number} (${table?.type.toUpperCase()})
-      Date          : ${res.date}
-      Time          : ${res.time}
-      Guests        : ${res.guests} Persons
-      Reservation ID: ${res.id.toUpperCase()}
-      ================================
-      Please present this at the counter.
-      Valid for 2 Hours. Thank you!
-      ================================`;
-                            const iframe = document.createElement('iframe');
-                            iframe.style.display = 'none';
-                            document.body.appendChild(iframe);
-                            iframe.contentDocument?.write(`<pre style="font-family: monospace; font-size: 14px;">${content}</pre>`);
-                            iframe.contentDocument?.close();
-                            iframe.contentWindow?.focus();
-                            iframe.contentWindow?.print();
-                            setTimeout(() => document.body.removeChild(iframe), 1000);
-                          }}
-                          className="bg-brand-red text-white p-1 rounded hover:bg-red-700 transition-colors"
-                          title="Print Receipt"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect width="12" height="8" x="6" y="14"></rect></svg>
-                        </button>
-                        <button 
-                          onClick={() => cancelReservation(res.id)}
-                          className="bg-gray-200 text-gray-600 p-1 rounded hover:bg-red-100 hover:text-red-500 transition-colors"
-                          title="Cancel Reservation"
-                        >
-                          <X size={14} />
-                        </button>
+                    <div key={res.id} className="group relative bg-brand-bg rounded-3xl p-6 border border-brand-border hover:border-brand-red/30 transition-all">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 rounded-2xl bg-white border border-brand-border flex items-center justify-center text-brand-text font-black text-lg group-hover:bg-brand-red group-hover:text-white group-hover:border-brand-red transition-all shadow-soft">
+                          T{tablesList.find(t => t.id === res.tableId)?.number}
+                        </div>
+                        <div className="flex gap-2">
+                          <button 
+                            onClick={() => {
+                              const table = tablesList.find(t => t.id === res.tableId);
+                              const content = `DRIVE THRU EATS RESERVATION\nId: ${res.id}\nName: ${res.name}\nTable: ${table?.number}\nDate: ${res.date} at ${res.time}`;
+                              window.print();
+                            }}
+                            className="w-8 h-8 rounded-lg bg-white border border-brand-border flex items-center justify-center text-brand-muted hover:text-brand-red hover:shadow-lg transition-all"
+                            title="Print Receipt"
+                          >
+                            <Receipt size={14} />
+                          </button>
+                          <button 
+                            onClick={() => cancelReservation(res.id)}
+                            className="w-8 h-8 rounded-lg bg-white border border-brand-border flex items-center justify-center text-brand-muted hover:text-red-500 hover:shadow-lg transition-all"
+                            title="Cancel"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
                       </div>
-                      <h3 className="font-bold text-brand-text mb-1 flex items-center gap-2">
-                        <span>Table {tablesList.find(t => t.id === res.tableId)?.number}</span>
-                      </h3>
-                      <div className="text-sm text-brand-muted space-y-1">
-                        <p className="flex items-center gap-2"><Calendar size={14} /> {res.date} at {res.time}</p>
-                        <p className="flex items-center gap-2"><Users size={14} /> {res.guests} Guests</p>
-                        <p className="flex items-center gap-2"><User size={14} /> {res.name}</p>
+
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center text-brand-red shadow-soft">
+                            <Calendar size={14} />
+                          </div>
+                          <div>
+                            <p className="text-[8px] font-black text-brand-muted uppercase tracking-widest">Date & Time</p>
+                            <p className="text-xs font-bold text-brand-text">{res.date} • {res.time}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center text-brand-red shadow-soft">
+                            <Users size={14} />
+                          </div>
+                          <div>
+                            <p className="text-[8px] font-black text-brand-muted uppercase tracking-widest">Guest Count</p>
+                            <p className="text-xs font-bold text-brand-text">{res.guests} People</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))

@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../lib/generated/client_v2"
 }
 
 datasource db {
@@ -54,4 +55,33 @@ model table {
   seats  Int
   type   String
   status String @default("available")
+}
+
+model user {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique(map: "User_email_key")
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model menu_category {
+  id        String      @id
+  name      String
+  icon      String
+  items     menu_item[]
+}
+
+model menu_item {
+  id           String        @id
+  name         String
+  price        Float
+  description  String?       @db.Text
+  discount     Float?        @default(0)
+  image        String
+  restaurant   String        @default("Burger Arena")
+  tags         String?       @default("") // Comma separated tags like "Spicy,Popular"
+  categoryName String
+  categoryId   String
+  category     menu_category @relation(fields: [categoryId], references: [id])
 }

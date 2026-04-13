@@ -8,8 +8,8 @@ export type User = {
 
 type AuthContextType = {
   user: User | null;
-  login: (user: User) => void;
-  register: (user: User) => void;
+  login: (credentials: { email: string; password?: string }) => Promise<{ success: boolean; error?: string; detail?: string }>;
+  register: (userData: { name: string; email: string; password?: string }) => Promise<{ success: boolean; error?: string; detail?: string }>;
   logout: () => void;
 };
 
@@ -29,14 +29,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const login = (userData: User) => {
-    setUser(userData);
-    localStorage.setItem('dte_user', JSON.stringify(userData));
+  const login = async (credentials: { email: string; password?: string }) => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setUser(data.user);
+        localStorage.setItem('dte_user', JSON.stringify(data.user));
+        return { success: true };
+      }
+      return { success: false, error: data.error, detail: data.detail };
+    } catch (e) {
+      return { success: false, error: 'Connection failed' };
+    }
   };
 
-  const register = (userData: User) => {
-    setUser(userData);
-    localStorage.setItem('dte_user', JSON.stringify(userData));
+  const register = async (userData: { name: string; email: string; password?: string }) => {
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setUser(data.user);
+        localStorage.setItem('dte_user', JSON.stringify(data.user));
+        return { success: true };
+      }
+      return { success: false, error: data.error, detail: data.detail };
+    } catch (e) {
+      return { success: false, error: 'Connection failed' };
+    }
   };
 
   const logout = () => {

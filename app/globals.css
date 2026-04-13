@@ -2,44 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
+@layer base {
+  :root {
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+  }
+
+  body {
+    @apply font-body bg-brand-bg text-brand-text antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
+  }
 }
 
-* {
-  box-sizing: border-box;
-}
+@layer components {
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-glass;
+  }
+  
+  .glass-dark {
+    @apply bg-black/20 backdrop-blur-xl border border-white/10 shadow-glass;
+  }
 
-body {
-  font-family: var(--font-body);
-  background-color: #FAFAFC;
-  color: #212529;
+  .btn-primary {
+    @apply bg-brand-red text-white font-bold px-8 py-4 rounded-2xl transition-all 
+           hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-red/30 active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply bg-white text-brand-text font-bold px-8 py-4 rounded-2xl border border-brand-border 
+           transition-all hover:bg-brand-bg hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .section-padding {
+    @apply py-20 lg:py-32;
+  }
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #FAFAFC;
+  @apply bg-brand-bg;
 }
 ::-webkit-scrollbar-thumb {
-  background: #dee2e6;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #F17228;
-}
-
-/* Hide scrollbar utility */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  @apply bg-brand-border rounded-full hover:bg-brand-red transition-colors;
 }
 
 /* Smooth scrolling */
@@ -47,10 +59,10 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Line clamp */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

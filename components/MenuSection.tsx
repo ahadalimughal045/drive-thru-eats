@@ -1,26 +1,42 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { menuItems, categories } from '@/data/menu';
 import MenuCard from './MenuCard';
-import { Search } from 'lucide-react';
+import { Search, SlidersHorizontal, ArrowRight } from 'lucide-react';
 
 export default function MenuSection() {
-  const [activeCategory, setActiveCategory] = useState('breakfast');
+  const [categories, setCategories] = useState<any[]>([]);
+  const [allMenuItems, setAllMenuItems] = useState<any[]>([]);
+  const [activeCategory, setActiveCategory] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+
+  useEffect(() => {
+    fetch('/api/menu')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setCategories(data);
+          const allItems = data.flatMap(cat => cat.items || []);
+          setAllMenuItems(allItems);
+          if (data.length > 0) setActiveCategory(data[0].id);
+        }
+        setLoading(false);
+      });
+  }, []);
 
   const scrollToCategory = (id: string) => {
     setActiveCategory(id);
     const el = sectionRefs.current[id];
     if (el) {
-      const offset = 180;
+      const offset = 120;
       const top = el.getBoundingClientRect().top + window.scrollY - offset;
       window.scrollTo({ top, behavior: 'smooth' });
     }
   };
 
   useEffect(() => {
-    if (searchQuery) return; // Don't track scroll if searching globally
+    if (searchQuery || categories.length === 0) return;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach(entry => {
@@ -36,97 +52,118 @@ export default function MenuSection() {
       if (el) observer.observe(el);
     });
     return () => observer.disconnect();
-  }, [searchQuery]);
+  }, [searchQuery, categories]);
 
-  // Filtering function
   const isSearchActive = searchQuery.trim().length > 0;
   
   const getFilteredItems = (categoryId?: string) => {
     let items = categoryId 
-      ? menuItems.filter(i => i.categoryId === categoryId)
-      : menuItems;
+      ? allMenuItems.filter(i => i.categoryId === categoryId)
+      : allMenuItems;
       
     if (isSearchActive) {
       const lowerQuery = searchQuery.toLowerCase();
       items = items.filter(item => 
         item.name.toLowerCase().includes(lowerQuery) || 
-        item.restaurant.toLowerCase().includes(lowerQuery)
+        (item.restaurant && item.restaurant.toLowerCase().includes(lowerQuery))
       );
     }
     return items;
   };
 
-  return (
-    <section id="menu" className="bg-brand-bg py-12">
-      <div className="max-w-7xl mx-auto px-4">
-        
-        {/* Search Bar */}
-        <div className="mb-8 max-w-2xl mx-auto">
-          <div className="relative group">
-            <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-muted group-focus-within:text-brand-red transition-colors" />
-            <input
-              type="text"
-              placeholder="Search for your favorite food... (e.g. Burger, Pizza)"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="w-full bg-brand-surface border-2 border-brand-border rounded-full pl-12 pr-6 py-4 text-brand-text placeholder-brand-muted focus:outline-none focus:border-brand-red transition-all text-base shadow-sm font-medium"
-            />
-            {isSearchActive && (
-              <button 
-                onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-brand-red font-bold hover:underline"
-              >
-                Clear
-              </button>
-            )}
-          </div>
-        </div>
+  if (loading) return <div className="py-20 text-center font-black animate-pulse text-brand-muted tracking-[0.5em]">PREPARING FRESH MENU...</div>;
 
-        {/* Mobile Category Scroll */}
-        {!isSearchActive && (
-          <div className="lg:hidden mb-6 overflow-x-auto scrollbar-hide">
-            <div className="flex gap-2 pb-2" style={{ width: 'max-content' }}>
-              {categories.map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => scrollToCategory(cat.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm ${
-                    activeCategory === cat.id
-                      ? 'bg-brand-red text-white border border-brand-red'
-                      : 'bg-brand-surface border border-brand-border text-brand-muted hover:text-brand-text'
-                  }`}
-                >
-                  <span className="text-base">{cat.icon}</span> {cat.name}
-                </button>
-              ))}
+  return (
+    <section id="menu" className="bg-brand-bg section-padding relative">
+      {/* Background Decor */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-brand-red/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-brand-orange/5 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex flex-col mb-16 space-y-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-4">
+              <h2 className="text-4xl lg:text-6xl font-black text-brand-text tracking-tighter">
+                Explore Our <br />
+                <span className="text-brand-red">Legendary Menu</span>
+              </h2>
+              <p className="text-brand-muted font-medium max-w-md">
+                From morning breakfast to late night snacks, we've got your cravings covered.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="relative group flex-1 md:w-80">
+                <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-muted group-focus-within:text-brand-red transition-colors" />
+                <input
+                  type="text"
+                  placeholder="Search flavors..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full h-14 bg-white border border-brand-border rounded-2xl pl-12 pr-6 text-brand-text placeholder-brand-muted focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all shadow-soft"
+                />
+              </div>
+              <button className="w-14 h-14 rounded-2xl bg-white border border-brand-border flex items-center justify-center text-brand-text hover:bg-brand-bg transition-colors shadow-soft">
+                <SlidersHorizontal size={20} />
+              </button>
             </div>
           </div>
-        )}
 
-        <div className="flex gap-8 relative items-start">
-
-          {/* Menu Items */}
-          <div className={`flex-1 space-y-12 ${isSearchActive ? 'w-full' : ''}`}>
-            
-            {isSearchActive && getFilteredItems().length === 0 && (
-              <div className="text-center py-16 bg-brand-surface rounded-3xl border border-brand-border">
-                <div className="text-6xl mb-4">😢</div>
-                <h3 className="text-xl font-bold text-brand-text mb-2">No items found</h3>
-                <p className="text-brand-muted">Try searching with a different keyword!</p>
+          {!isSearchActive && (
+            <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
+              <div className="flex gap-3 pb-2">
+                {categories.map(cat => (
+                  <button
+                    key={cat.id}
+                    onClick={() => scrollToCategory(cat.id)}
+                    className={`flex items-center gap-3 px-6 py-3.5 rounded-2xl text-sm font-black whitespace-nowrap transition-all ${
+                      activeCategory === cat.id
+                        ? 'bg-brand-text text-white shadow-premium scale-105'
+                        : 'bg-white border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-text'
+                    }`}
+                  >
+                    <span className="text-lg">{cat.icon}</span> {cat.name}
+                  </button>
+                ))}
               </div>
-            )}
+            </div>
+          )}
+        </div>
 
-            {isSearchActive && getFilteredItems().length > 0 && (
-              <div>
-                <h2 className="text-brand-text font-black text-2xl tracking-wide mb-6 flex items-center gap-3">
-                  <Search size={24} className="text-brand-red" /> 
-                  Search Results ({getFilteredItems().length})
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-5">
-                  {getFilteredItems().map(item => (
-                    <MenuCard key={item.id} item={item} />
-                  ))}
-                </div>
+        <div className="flex gap-12 relative items-start">
+          <div className="flex-1 space-y-24">
+            {isSearchActive && (
+              <div className="animate-fade-in">
+                {getFilteredItems().length === 0 ? (
+                  <div className="text-center py-24 bg-white rounded-4xl border-2 border-dashed border-brand-border">
+                    <div className="text-8xl mb-6">🤌</div>
+                    <h3 className="text-2xl font-black text-brand-text mb-2">Non found, Chef!</h3>
+                    <p className="text-brand-muted mb-8">Maybe try searching for 'Burger' or 'Pizza'?</p>
+                    <button 
+                      onClick={() => setSearchQuery('')}
+                      className="btn-secondary"
+                    >
+                      Clear Search
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="flex items-center gap-4 mb-10">
+                      <div className="h-12 w-12 rounded-2xl bg-brand-red/10 flex items-center justify-center text-brand-red">
+                        <Search size={24} />
+                      </div>
+                      <h2 className="text-brand-text font-black text-3xl tracking-tight">
+                        Results for "{searchQuery}"
+                        <span className="ml-3 text-sm font-bold text-brand-muted bg-brand-bg px-3 py-1 rounded-full border border-brand-border uppercase tracking-widest">{getFilteredItems().length} Items</span>
+                      </h2>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                      {getFilteredItems().map(item => (
+                        <MenuCard key={item.id} item={item} />
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -139,15 +176,25 @@ export default function MenuSection() {
                   key={cat.id}
                   id={cat.id}
                   ref={el => { sectionRefs.current[cat.id] = el; }}
-                  className="scroll-mt-[100px]"
+                  className="scroll-mt-[150px] animate-fade-in"
                 >
-                  <div className="flex items-center gap-3 mb-6">
-                    <span className="text-3xl bg-brand-surface w-12 h-12 flex items-center justify-center rounded-2xl shadow-sm border border-brand-border">{cat.icon}</span>
-                    <h2 className="text-brand-text font-black text-2xl tracking-wide font-display">{cat.name}</h2>
-                    <div className="flex-1 h-px bg-brand-border mx-2" />
-                    <span className="text-brand-muted font-bold text-sm bg-brand-surface px-3 py-1 rounded-full border border-brand-border">{items.length} items</span>
+                  <div className="flex items-center justify-between gap-6 mb-10 group">
+                    <div className="flex items-center gap-5">
+                      <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center text-3xl shadow-soft border border-brand-border group-hover:border-brand-red group-hover:bg-brand-red/5 transition-all">
+                        {cat.icon}
+                      </div>
+                      <div>
+                        <h2 className="text-brand-text font-black text-3xl lg:text-4xl tracking-tight">{cat.name}</h2>
+                        <p className="text-brand-muted text-sm font-bold uppercase tracking-[0.2em]">{items.length} Options Available</p>
+                      </div>
+                    </div>
+                    <div className="hidden md:flex flex-1 h-px bg-brand-border" />
+                    <button className="hidden md:flex items-center gap-2 text-brand-red font-black text-sm uppercase tracking-widest hover:translate-x-2 transition-transform">
+                      View All <ArrowRight size={16} />
+                    </button>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-5">
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                     {items.map(item => (
                       <MenuCard key={item.id} item={item} />
                     ))}

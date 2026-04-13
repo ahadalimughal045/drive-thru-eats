@@ -13,7 +13,9 @@ export async function GET() {
         { sid: 'ST-004', name: 'Counter Staff 1', role: 'Counter Staff', email: 'counter@drivethru.com', phone: '998877665' }
       ];
       
-      await Promise.all(defaultStaff.map(s => prisma.staff.create({ data: s })));
+      await Promise.all(defaultStaff.map(s => prisma.staff.create({ 
+        data: { ...s, id: s.sid } 
+      })));
       staff = await prisma.staff.findMany();
     }
     
@@ -28,6 +30,7 @@ export async function POST(req: Request) {
     const data = await req.json();
     const newMember = await prisma.staff.create({
       data: {
+        id: data.id || `STF-${Date.now()}`, // Added id field
         sid: data.id,
         name: data.name,
         email: data.email,

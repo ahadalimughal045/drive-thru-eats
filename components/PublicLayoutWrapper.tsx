@@ -7,8 +7,8 @@ import Footer from './Footer';
 export default function PublicLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   
-  // If we are anywhere in the admin panel, DO NOT render the Navbar, Footer, or WhatsApp icon.
-  if (pathname.startsWith('/admin')) {
+  // If we are in the admin, waiter, or staff portals, DO NOT render the public Navbar/Footer.
+  if (pathname.startsWith('/admin') || pathname.startsWith('/waiter') || pathname.startsWith('/staff')) {
     return <main className="flex-1 flex flex-col">{children}</main>;
   }
 

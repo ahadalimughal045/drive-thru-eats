@@ -1,120 +1,201 @@
 'use client';
 import { useState } from 'react';
-import { Package, MapPin } from 'lucide-react';
+import { Package, MapPin, ChevronRight, Play, Star, ShieldCheck, Zap, MousePointer2 } from 'lucide-react';
 
 export default function Hero() {
   const [orderType, setOrderType] = useState<'pickup' | 'delivery'>('pickup');
   const [address, setAddress] = useState('');
 
   return (
-    <section className="relative overflow-hidden bg-brand-surface min-h-[85vh] flex flex-col justify-center border-b border-brand-border">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle at 25% 25%, #e63946 0%, transparent 40%), radial-gradient(circle at 75% 75%, #f4a261 0%, transparent 40%)',
-        }} />
-        <div style={{
-          backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(0,0,0,0.03) 30px, rgba(0,0,0,0.03) 31px)`,
-          position: 'absolute', inset: 0,
-        }} />
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-white pt-20">
+      {/* Background Ornamentation */}
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-[#FAFAFA] -skew-x-12 translate-x-1/4 hidden lg:block" />
+      <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-brand-red/10 rounded-full blur-[120px] animate-pulse pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-5%] w-[30%] h-[30%] bg-brand-orange/5 rounded-full blur-[100px] pointer-events-none" />
+      
+      {/* Floating Decorative Icons (Subtle) */}
+      <div className="absolute top-[15%] left-[5%] text-brand-red/10 animate-float opacity-50 hidden md:block">
+        <Star size={48} fill="currentColor" />
+      </div>
+      <div className="absolute bottom-[20%] left-[45%] text-brand-orange/10 animate-float opacity-50 delay-700 hidden md:block">
+        <Zap size={32} fill="currentColor" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 py-16 w-full">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
-          <div className="space-y-8 animate-slide-up">
-            {/* Promo Badge */}
-            <div className="inline-flex items-center gap-2 bg-brand-red/10 border border-brand-red/20 rounded-full px-4 py-2">
-              <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
-              <span className="text-brand-red text-sm font-bold">Daily Offer on all online orders</span>
-            </div>
+      <div className="relative max-w-7xl mx-auto px-4 py-8 lg:py-16 w-full">
+        <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+          
+          {/* Left Content (Text & Form) */}
+          <div className="lg:col-span-7 space-y-10 animate-slide-up z-10">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-3 bg-brand-bg border border-brand-border rounded-2xl px-4 py-2 shadow-soft group hover:border-brand-red/30 transition-all cursor-default">
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-red animate-ping" />
+                <span className="text-brand-text text-[9px] font-black uppercase tracking-[0.2em]">The Future of Drive-Thru</span>
+              </div>
 
-            <div>
-              <h1 className="text-5xl lg:text-7xl font-black text-brand-text leading-none mb-4" style={{ fontFamily: 'Georgia, serif' }}>
-                Are you
-                <span className="block text-brand-red mt-2">Starving?</span>
-              </h1>
-              <p className="text-brand-muted text-lg font-medium">
-                Use coupon code{' '}
-                <span className="bg-brand-orange text-brand-text font-bold px-2 py-0.5 rounded-md text-base shadow-sm">Discount10</span>
-                {' '}while ordering at checkout.
+              <div className="relative">
+                <h1 className="text-4xl md:text-6xl lg:text-[6.5rem] font-black text-brand-text leading-[0.9] tracking-tighter mix-blend-multiply">
+                  Satisfy Your <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red to-brand-orange relative">
+                    Cravings.
+                    <div className="absolute -bottom-1 left-0 w-full h-2 bg-brand-red/5 -rotate-1 -z-10" />
+                  </span>
+                </h1>
+              </div>
+              
+              <p className="text-brand-muted text-sm md:text-base max-w-lg leading-relaxed font-medium">
+                Experience the pinnacle of drive-thru excellence. 
+                Use code <span className="text-brand-text font-black px-1.5 py-0.5 bg-brand-bg rounded-lg border border-brand-border mx-1">Discount10</span> for an instant 10% off.
               </p>
             </div>
 
-            {/* Wait, search input removed from Hero since it'll be in MenuSection */}
-            <div className="bg-brand-surface border border-brand-border rounded-3xl p-6 space-y-5 shadow-xl shadow-brand-border/40">
-              <div className="flex rounded-xl overflow-hidden border border-brand-border bg-brand-bg p-1 gap-1">
+            <div className="glass p-2 md:p-2 rounded-[2rem] border-white shadow-premium max-w-2xl group flex flex-col md:flex-row items-stretch gap-2 transition-transform hover:scale-[1.01]">
+              <div className="flex bg-brand-bg p-1 rounded-2xl gap-1 shrink-0">
                 <button
                   onClick={() => setOrderType('pickup')}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-bold transition-all rounded-lg ${
-                    orderType === 'pickup' ? 'bg-brand-red text-white shadow-md' : 'text-brand-muted hover:text-brand-text hover:bg-brand-surface'
+                  className={`flex items-center gap-2 px-5 py-3 text-[10px] font-black uppercase tracking-widest transition-all rounded-xl ${
+                    orderType === 'pickup' ? 'bg-white text-brand-red shadow-premium' : 'text-brand-muted hover:text-brand-text'
                   }`}
                 >
-                  <Package size={16} /> Pickup
+                  <Package size={14} /> Pickup
                 </button>
                 <button
                   onClick={() => setOrderType('delivery')}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-bold transition-all rounded-lg ${
-                    orderType === 'delivery' ? 'bg-brand-red text-white shadow-md' : 'text-brand-muted hover:text-brand-text hover:bg-brand-surface'
+                  className={`flex items-center gap-2 px-5 py-3 text-[10px] font-black uppercase tracking-widest transition-all rounded-xl ${
+                    orderType === 'delivery' ? 'bg-white text-brand-red shadow-premium' : 'text-brand-muted hover:text-brand-text'
                   }`}
                 >
-                  <MapPin size={16} /> Delivery
+                  <MapPin size={14} /> Delivery
                 </button>
               </div>
 
-              {orderType === 'delivery' && (
-                <div className="relative">
-                  <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-muted" />
-                  <input
-                    type="text"
-                    placeholder="Enter your delivery address..."
-                    value={address}
-                    onChange={e => setAddress(e.target.value)}
-                    className="w-full bg-brand-bg border border-brand-border rounded-xl pl-11 pr-4 py-3.5 text-brand-text placeholder-brand-muted focus:outline-none focus:border-brand-red transition-all text-sm font-medium"
-                  />
-                </div>
-              )}
-
-              <a href="#menu" onClick={(e) => {
-                e.preventDefault();
-                const menu = document.getElementById('menu');
-                if(menu) menu.scrollIntoView({ behavior: 'smooth' });
-              }} className="w-full block text-center bg-brand-red hover:bg-red-700 text-white font-bold py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand-red/30">
-                Browse Menu 🍔
-              </a>
+              <div className="flex-1 relative flex items-center min-h-[50px]">
+                {orderType === 'delivery' ? (
+                  <div className="flex-1 relative animate-fade-in group/input h-full flex items-center">
+                    <MapPin size={16} className="absolute left-5 text-brand-red transition-transform group-focus-within/input:scale-110" />
+                    <input
+                      type="text"
+                      placeholder="Enter delivery address..."
+                      value={address}
+                      onChange={e => setAddress(e.target.value)}
+                      className="w-full h-full bg-transparent border-none pl-12 pr-6 py-3 text-brand-text placeholder-brand-muted focus:outline-none font-bold text-xs"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex-1 px-5 text-[11px] font-bold text-brand-muted animate-fade-in flex items-center">
+                    Select your nearest branch to pickup.
+                  </div>
+                )}
+                
+                <button 
+                  onClick={() => {
+                    document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="bg-brand-red hover:bg-red-700 text-white w-12 md:w-auto md:px-6 h-12 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-red-500/25 shrink-0 m-1 group/btn"
+                >
+                  <span className="hidden md:block font-black text-[10px] uppercase tracking-[0.2em] ml-1">Order Now</span>
+                  <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
+                </button>
+              </div>
             </div>
 
-            {/* Download APK */}
-            <a
-              href="https://drive-thrueats.online/dte-app.apk"
-              className="inline-flex items-center gap-2 text-brand-orange hover:text-brand-red border border-brand-orange hover:border-brand-red rounded-full px-5 py-2.5 text-sm font-bold transition-all bg-brand-orange/5"
-            >
-              📱 Download Our App (APK)
-            </a>
+            <div className="flex flex-wrap items-center gap-6 pt-2">
+              <a
+                href="https://drive-thrueats.online/dte-app.apk"
+                className="group flex items-center gap-3 text-brand-text hover:text-brand-red transition-all"
+              >
+                <div className="w-12 h-12 rounded-xl bg-brand-bg border-2 border-brand-border flex items-center justify-center group-hover:border-brand-red group-hover:bg-brand-red group-hover:text-white group-hover:-rotate-6 transition-all shadow-soft">
+                  <Play size={16} className="fill-current ml-1" />
+                </div>
+                <div>
+                  <p className="text-[9px] font-black text-brand-muted uppercase tracking-widest leading-tight">Get the App</p>
+                  <p className="text-xs font-black uppercase tracking-tight">Android APK</p>
+                </div>
+              </a>
+              
+              <div className="hidden sm:block h-8 w-px bg-brand-border" />
+              
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="w-10 h-10 rounded-xl border-2 border-white bg-brand-bg overflow-hidden shadow-soft transition-transform hover:scale-110 hover:z-10">
+                      <img src={`https://i.pravatar.cc/100?img=${i+14}`} alt="User" />
+                    </div>
+                  ))}
+                  <div className="w-10 h-10 rounded-xl border-2 border-white bg-brand-text text-white text-[9px] font-black flex items-center justify-center shadow-soft">
+                    +5k
+                  </div>
+                </div>
+                <div>
+                  <div className="flex gap-0.5 text-brand-orange mb-0.5">
+                    {[1, 2, 3, 4, 5].map(i => <Star key={i} size={8} fill="currentColor" />)}
+                  </div>
+                  <p className="text-[9px] font-black text-brand-muted uppercase tracking-widest">Happy Cravings</p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Right - Hero Image */}
-          <div className="hidden lg:flex justify-center items-center">
-            <div className="relative">
-              <div className="absolute inset-0 bg-brand-red/10 rounded-full blur-3xl scale-110" />
-              <img
-                src="https://drive-thrueats.online/combo-img.png"
-                alt="Drive Thru Eats Combo"
-                className="relative w-full max-w-lg object-contain drop-shadow-2xl animate-fade-in hover:scale-105 transition-transform duration-700"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600';
-                }}
-              />
+          {/* Right Content (Visuals) */}
+          <div className="lg:col-span-5 relative group">
+            <div className="absolute inset-0 bg-gradient-to-tr from-brand-red/20 to-brand-orange/10 rounded-full blur-[100px] scale-90 animate-pulse pointer-events-none" />
+            
+            <div className="relative z-10">
+              {/* Floating Badges */}
+              <div className="absolute top-0 -right-2 glass px-4 py-3 rounded-2xl shadow-premium animate-bounce-soft z-20 border-white/50">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-brand-orange to-brand-red rounded-xl flex items-center justify-center text-white shadow-lg">
+                    <Zap size={20} fill="currentColor" />
+                  </div>
+                  <div>
+                    <p className="text-[8px] font-black text-brand-muted uppercase tracking-wider">Fast Delivery</p>
+                    <p className="text-[10px] font-black text-brand-text">Under 20 Mins</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="absolute bottom-6 -left-4 glass px-4 py-3 rounded-2xl shadow-premium animate-float z-20 delay-500 border-white/50">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white shadow-lg">
+                    <ShieldCheck size={20} />
+                  </div>
+                  <div>
+                    <p className="text-[8px] font-black text-brand-muted uppercase tracking-wider">Top Rated</p>
+                    <p className="text-[10px] font-black text-brand-text">100% Verified</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative">
+                <div className="absolute inset-0 bg-brand-red/5 rounded-full scale-110 -rotate-6 animate-pulse" />
+                <img
+                  src="https://drive-thrueats.online/combo-img.png"
+                  alt="Delicious Burger Combo"
+                  className="relative w-[110%] -ml-[5%] object-contain drop-shadow-[0_40px_40px_rgba(0,0,0,0.15)] transition-all duration-1000 group-hover:scale-105 group-hover:-rotate-2"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80';
+                  }}
+                />
+              </div>
+
+              {/* Price Tag Overlay */}
+              <div className="absolute top-1/2 -right-4 lg:-right-8 translate-y-[-50%] bg-brand-text text-white p-5 rounded-[2rem] shadow-premium rotate-12 group-hover:rotate-0 transition-all duration-500">
+                <p className="text-[8px] font-black text-brand-orange uppercase tracking-widest text-center mb-0.5">Value Meal</p>
+                <div className="flex items-baseline gap-0.5 justify-center">
+                  <span className="text-xs font-bold opacity-70 leading-none">₹</span>
+                  <span className="text-3xl font-black tracking-tighter leading-none">1299</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Wave bottom */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 60L60 50C120 40 240 20 360 15C480 10 600 20 720 25C840 30 960 30 1080 25C1200 20 1320 10 1380 5L1440 0V60H1380C1320 60 1200 60 1080 60C960 60 840 60 720 60C600 60 480 60 360 60C240 60 120 60 60 60H0Z" fill="#fdf6f0"/>
-        </svg>
+      {/* Hero Footer / Scroll Indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2 animate-bounce cursor-default">
+        <span className="text-[10px] font-black text-brand-muted uppercase tracking-[0.3em] ml-1">Explore Menu</span>
+        <div className="w-6 h-10 border-2 border-brand-border rounded-full flex justify-center p-1">
+          <div className="w-1 h-2 bg-brand-red rounded-full animate-scroll" />
+        </div>
       </div>
     </section>
   );

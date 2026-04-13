@@ -1,4 +1,4 @@
-// File: C:\Users\Ahad Ali Mughal\Downloads\drive-thru-eats\drive-thru-eats\app\admin\tables\page.tsx
+// File: G:\drive-thru-eats\app\admin\tables\page.tsx
 import * as entry from '../../../../../app/admin/tables/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

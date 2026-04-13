@@ -8,12 +8,25 @@ export default function OrdersPage() {
   const [statusFilter, setStatusFilter] = useState('All');
   const [typeFilter, setTypeFilter] = useState('All');
   const [editingOrder, setEditingOrder] = useState<any>(null);
+  const [lastOrderId, setLastOrderId] = useState<string | null>(null);
 
   const fetchOrders = () => {
+    // Audio Notification Sound (Royalty Free Bell)
+    const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+
     fetch('/api/orders')
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data)) setOrders(data);
+        if (Array.isArray(data)) {
+          if (data.length > 0) {
+            const latestId = data[0].id;
+            if (lastOrderId && latestId !== lastOrderId) {
+              notificationSound.play().catch(e => console.log('Audio play blocked:', e));
+            }
+            setLastOrderId(latestId);
+          }
+          setOrders(data);
+        }
       })
       .catch(err => console.error("Fetch failed", err));
   };
@@ -22,7 +35,7 @@ export default function OrdersPage() {
     fetchOrders();
     const interval = setInterval(fetchOrders, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [lastOrderId]);
 
   const filteredOrders = (Array.isArray(orders) ? orders : []).filter(o => {
     const matchesSearch = (o.orderId || o.id || "").toLowerCase().includes(search.toLowerCase()) ||
@@ -162,8 +175,13 @@ export default function OrdersPage() {
                     <div className="flex justify-end gap-2">
                       <button 
                         onClick={() => cancelOrder(order.orderId)}
-                        className="p-2.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                        title="Cancel/Delete Order"
+                        disabled={order.status !== 'Pending'}
+                        className={`p-2.5 rounded-xl transition-all ${
+                          order.status === 'Pending' 
+                            ? 'text-gray-300 hover:text-red-500 hover:bg-red-50' 
+                            : 'text-gray-100 cursor-not-allowed opacity-30'
+                        }`}
+                        title={order.status === 'Pending' ? "Cancel/Delete Order" : "Cannot cancel once preparation starts"}
                       >
                         <Trash2 size={18} />
                       </button>

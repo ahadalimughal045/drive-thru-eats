@@ -5,7 +5,10 @@ export async function POST(req: Request) {
   try {
     const { sid, pin } = await req.json();
     const staff = await prisma.staff.findFirst({
-      where: { sid, pin }
+      where: { 
+        sid: { equals: sid.toUpperCase() },
+        pin 
+      }
     });
 
     if (staff) {

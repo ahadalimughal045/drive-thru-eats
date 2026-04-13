@@ -1,4 +1,4 @@
-// File: C:\Users\Ahad Ali Mughal\Downloads\drive-thru-eats\drive-thru-eats\app\api\tables\route.ts
+// File: G:\drive-thru-eats\app\api\tables\route.ts
 import * as entry from '../../../../../app/api/tables/route.js'
 import type { NextRequest } from 'next/server.js'
 

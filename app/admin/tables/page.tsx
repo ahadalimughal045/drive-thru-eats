@@ -16,24 +16,36 @@ export default function TablesPage() {
   const [newType, setNewType] = useState('regular');
 
   useEffect(() => {
-    // Load reservations
-    fetch('/api/reservations')
-      .then(res => res.json())
-      .then(data => setReservations(data));
-    
-    // Load dynamic tables
-    fetch('/api/tables')
-      .then(res => res.json())
-      .then(data => setTablesList(data));
+    const loadAllData = async () => {
+      try {
+        const [resRes, tablesRes, ordersRes] = await Promise.all([
+          fetch('/api/reservations'),
+          fetch('/api/tables'),
+          fetch('/api/orders')
+        ]);
 
-    // Load active orders
-    fetch('/api/orders')
-      .then(res => res.json())
-      .then(data => setOrders(Array.isArray(data) ? data : []));
-    
+        const [resData, tablesData, ordersData] = await Promise.all([
+          resRes.json(),
+          tablesRes.json(),
+          ordersRes.json()
+        ]);
+
+        setReservations(resData);
+        setTablesList(tablesData);
+        setOrders(Array.isArray(ordersData) ? ordersData : []);
+      } catch (err) {
+        console.error("Data fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadAllData();
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
+
+  const [loading, setLoading] = useState(true);
 
   const addTable = (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,17 +1,46 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { IndianRupee, ShoppingBag, Utensils, TrendingUp } from 'lucide-react';
+import { IndianRupee, ShoppingBag, Utensils, TrendingUp, Users } from 'lucide-react';
 
 export default function AdminDashboard() {
   const [orders, setOrders] = useState<any[]>([]);
+  const [userCount, setUserCount] = useState(0);
+  const [lastOrderId, setLastOrderId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/orders')
+    // Audio Notification Sound (Royalty Free Bell)
+    const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+
+    const fetchData = async () => {
+      try {
+        const res = await fetch('/api/orders');
+        const data = await res.json();
+        
+        if (Array.isArray(data) && data.length > 0) {
+          // Check if there's a new order
+          const latestId = data[0].id;
+          if (lastOrderId && latestId !== lastOrderId) {
+            notificationSound.play().catch(e => console.log('Audio play blocked:', e));
+          }
+          setLastOrderId(latestId);
+          setOrders(data);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 10000); // Polling every 10 seconds
+
+    fetch('/api/users')
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data)) setOrders(data);
+        if (Array.isArray(data)) setUserCount(data.length);
       });
-  }, []);
+
+    return () => clearInterval(interval);
+  }, [lastOrderId]);
 
   const deliveredOrders = (Array.isArray(orders) ? orders : []).filter(o => o.status === 'Delivered');
   const totalRevenue = deliveredOrders.reduce((sum, o) => sum + (o.total || 0), 0);
@@ -69,17 +98,20 @@ export default function AdminDashboard() {
           <p className="text-xs text-[#6c757d] font-medium">Pending & preparing</p>
         </div>
 
-        <div className="bg-white border border-[#dee2e6] rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+        <div 
+          onClick={() => window.location.href = '/admin/users'}
+          className="bg-white border border-[#dee2e6] rounded-2xl p-6 shadow-sm flex flex-col justify-between cursor-pointer hover:border-brand-red/30 transition-all group"
+        >
           <div className="flex justify-between items-start mb-4">
             <div>
-              <p className="text-[#6c757d] font-bold text-sm">Items Sold</p>
-              <h3 className="text-3xl font-black text-[#212529] mt-1">{itemsSold}</h3>
+              <p className="text-[#6c757d] font-bold text-sm uppercase tracking-widest text-[10px]">Total Customers</p>
+              <h3 className="text-3xl font-black text-[#212529] mt-1">{userCount}</h3>
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
-              <TrendingUp size={24} />
+            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 group-hover:bg-brand-red group-hover:text-white transition-all">
+              <Users size={24} />
             </div>
           </div>
-          <p className="text-xs text-[#6c757d] font-medium">Inside delivered orders</p>
+          <p className="text-xs text-[#6c757d] font-medium">New registrations stored</p>
         </div>
       </div>
 

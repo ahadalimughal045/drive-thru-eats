@@ -5,11 +5,23 @@ import { Clock, CheckCircle2, ChefHat, Package } from 'lucide-react';
 export default function KitchenPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [staff, setStaff] = useState<any[]>([]);
+  const [lastOrderId, setLastOrderId] = useState<string | null>(null);
 
   const loadData = async () => {
+    // Audio Notification Sound (Royalty Free Bell)
+    const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+
     try {
       const ordRes = await fetch('/api/orders');
       const ordData = await ordRes.json();
+      
+      if (Array.isArray(ordData) && ordData.length > 0) {
+        const latestId = ordData[0].id;
+        if (lastOrderId && latestId !== lastOrderId) {
+          notificationSound.play().catch(e => console.log('Audio blocked:', e));
+        }
+        setLastOrderId(latestId);
+      }
       setOrders(ordData);
 
       const stfRes = await fetch('/api/staff');
@@ -22,9 +34,9 @@ export default function KitchenPage() {
 
   useEffect(() => {
     loadData();
-    const interval = setInterval(loadData, 3000); 
+    const interval = setInterval(loadData, 10000); 
     return () => clearInterval(interval);
-  }, []);
+  }, [lastOrderId]);
 
   const updateOrder = (id: string, updates: any) => {
     fetch('/api/orders', {
@@ -60,7 +72,14 @@ export default function KitchenPage() {
               </div>
               <div className="text-sm font-bold text-gray-600 mb-2 truncate">Customer: {order.customerName}</div>
               <ul className="space-y-2 mb-4">
-                {(Array.isArray(order.items) ? order.items : []).map((item: any, i: number) => (
+                {(Array.isArray(order.items) ? order.items : []).filter((it: any) => 
+                  !it.category?.toLowerCase().includes('beverage') && 
+                  !it.category?.toLowerCase().includes('drink') &&
+                  !it.category?.toLowerCase().includes('soft') &&
+                  !it.category?.toLowerCase().includes('cola') &&
+                  !it.category?.toLowerCase().includes('readymade') &&
+                  !it.category?.toLowerCase().includes('snack')
+                ).map((item: any, i: number) => (
                   <li key={i} className="flex justify-between text-sm font-medium">
                     <span><span className="text-brand-red font-bold">{item.quantity}x</span> {item.name}</span>
                   </li>
@@ -100,7 +119,14 @@ export default function KitchenPage() {
               </div>
               <div className="text-sm font-bold text-gray-600 mb-2">Customer: {order.customerName}</div>
               <ul className="space-y-2 mb-4">
-                {(Array.isArray(order.items) ? order.items : []).map((item: any, i: number) => (
+                {(Array.isArray(order.items) ? order.items : []).filter((it: any) => 
+                  !it.category?.toLowerCase().includes('beverage') && 
+                  !it.category?.toLowerCase().includes('drink') &&
+                  !it.category?.toLowerCase().includes('soft') &&
+                  !it.category?.toLowerCase().includes('cola') &&
+                  !it.category?.toLowerCase().includes('readymade') &&
+                  !it.category?.toLowerCase().includes('snack')
+                ).map((item: any, i: number) => (
                   <li key={i} className="flex justify-between text-sm font-medium">
                     <span><span className="text-brand-orange font-bold">{item.quantity}x</span> {item.name}</span>
                   </li>
