@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Clock, CheckCircle2, ChefHat, Package } from 'lucide-react';
+import { Clock, CheckCircle2, ChefHat, Package, UserCircle } from 'lucide-react';
 
 export default function KitchenPage() {
   const [orders, setOrders] = useState<any[]>([]);
