@@ -5,8 +5,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'drive-thrueats.online',
-        port: '',
-        pathname: '/admin/oimg/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
       },
     ],
   },

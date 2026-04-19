@@ -1,21 +1,41 @@
 'use client';
 import Link from 'next/link';
-import { ShoppingCart, Phone, Menu, X, LogOut, Heart, User } from 'lucide-react';
+import { ShoppingCart, Phone, Menu, X, LogOut, Heart, User, BookOpen } from 'lucide-react';
 import { useCart } from './CartContext';
-import { useAuth } from './AuthContext';
-import { useState, useEffect } from 'react';
-import { categories } from '@/data/menu';
+import { useState, useEffect, useRef } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 export default function Navbar() {
   const { totalItems } = useCart();
-  const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [dbCategories, setDbCategories] = useState<any[]>([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/menu')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setDbCategories(data);
+      })
+      .catch(console.error);
   }, []);
 
   return (
@@ -39,12 +59,48 @@ export default function Navbar() {
 
             {/* Desktop Nav */}
             <div className="hidden lg:flex items-center gap-8">
+              {/* Menu Categories Dropdown */}
+              <div className="relative" ref={dropdownRef}>
+                <button 
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="text-sm font-bold text-brand-text hover:text-brand-red transition-all flex items-center gap-2"
+                >
+                  <div className="w-8 h-8 rounded-full bg-brand-bg flex items-center justify-center text-brand-red">
+                    <Menu size={14} />
+                  </div>
+                  Menu Category <ChevronDown size={14} className={`transition-transform flex-shrink-0 ${dropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {/* Dropdown Box */}
+                <div 
+                  className={`absolute top-full left-0 mt-4 w-64 bg-white rounded-3xl p-4 shadow-premium border border-brand-border transition-all duration-300 origin-top ${
+                    dropdownOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
+                  }`}
+                >
+                  <div className="flex flex-col gap-1">
+                    {dbCategories.map(cat => (
+                      <Link 
+                        key={cat.id} 
+                        href={`/#${cat.id}`}
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-3 p-3 rounded-2xl hover:bg-brand-bg hover:text-brand-red transition-all w-full text-brand-text group"
+                      >
+                        <span className="text-lg group-hover:scale-110 transition-transform">{cat.icon}</span>
+                        <span className="font-bold text-sm tracking-tight">{cat.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               <Link href="/dining" className="text-sm font-bold text-brand-text hover:text-brand-red transition-all flex items-center gap-2">
-                <span className="w-8 h-8 rounded-full bg-brand-bg flex items-center justify-center text-base">🍽️</span>
+                <div className="w-8 h-8 rounded-full bg-brand-bg flex items-center justify-center text-brand-red">
+                  <BookOpen size={14} />
+                </div>
                 Book Table
               </Link>
               
-              <a href="tel:+919682387952" className="flex items-center gap-2 text-brand-text hover:text-brand-red transition-colors text-sm font-bold">
+              <a href="#footer" className="flex items-center gap-2 text-brand-text hover:text-brand-red transition-colors text-sm font-bold">
                 <div className="w-8 h-8 rounded-full bg-brand-bg flex items-center justify-center text-brand-red">
                   <Phone size={14} fill="currentColor" />
                 </div>
@@ -54,50 +110,30 @@ export default function Navbar() {
               <div className="h-8 w-px bg-brand-border mx-2" />
 
               <div className="flex items-center gap-4">
-                {user ? (
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2 pr-4 border-r border-brand-border">
-                      <div className="w-10 h-10 rounded-xl bg-brand-red text-white flex items-center justify-center font-bold shadow-soft">
-                        {user.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-xs font-bold text-brand-muted">Welcome</span>
-                        <span className="text-sm font-black text-brand-text leading-tight">{user.name}</span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={logout}
-                      className="p-2.5 text-brand-muted hover:text-brand-red transition-all rounded-xl hover:bg-brand-red/5"
-                    >
-                      <LogOut size={20} />
-                    </button>
-                  </div>
-                ) : (
-                  <Link href="/login" className="flex items-center gap-2 text-sm font-bold text-brand-text hover:text-brand-red transition-all">
-                    <User size={18} />
-                    Login
-                  </Link>
-                )}
 
-                <Link href="/cart" className="relative group">
-                  <div className="w-12 h-12 rounded-2xl bg-brand-text text-white flex items-center justify-center group-hover:bg-brand-red transition-all shadow-premium group-hover:scale-110">
-                    <ShoppingCart size={22} />
+
+                <Link href="/cart" className="relative group flex items-center gap-3">
+                  <span className="text-sm font-bold text-brand-text group-hover:text-brand-red transition-colors">Cart</span>
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-2xl bg-brand-red text-white flex items-center justify-center group-hover:bg-brand-text transition-all shadow-premium group-hover:scale-110">
+                      <ShoppingCart size={22} />
+                    </div>
+                    {totalItems > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-brand-accent text-brand-text text-[10px] font-bold rounded-full h-6 px-2 flex items-center justify-center border-2 border-white shadow-soft animate-bounce-soft">
+                        {totalItems}
+                      </span>
+                    )}
                   </div>
-                  {totalItems > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-brand-accent text-brand-text text-[10px] font-black rounded-full h-6 px-2 flex items-center justify-center border-2 border-white shadow-soft animate-bounce-soft">
-                      {totalItems}
-                    </span>
-                  )}
                 </Link>
               </div>
             </div>
 
             {/* Mobile Actions */}
             <div className="flex lg:hidden items-center gap-4">
-              <Link href="/cart" className="relative w-10 h-10 rounded-xl bg-brand-bg flex items-center justify-center text-brand-text">
+              <Link href="/cart" className="relative w-10 h-10 rounded-xl bg-brand-red flex items-center justify-center text-white shadow-soft hover:bg-brand-text transition-colors">
                 <ShoppingCart size={20} />
                 {totalItems > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-brand-red text-white text-[8px] font-black rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">
+                  <span className="absolute -top-1.5 -right-1.5 bg-brand-red text-white text-[8px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">
                     {totalItems}
                   </span>
                 )}
@@ -117,32 +153,16 @@ export default function Navbar() {
           <div className="absolute top-full left-4 right-4 mt-2 animate-slide-up">
             <div className="glass rounded-3xl overflow-hidden shadow-premium border-white/50">
               <div className="p-6 space-y-6">
-                {user ? (
-                  <div className="flex items-center justify-between p-4 bg-brand-bg rounded-2xl">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-brand-red text-white flex items-center justify-center font-bold">
-                        {user.name.charAt(0).toUpperCase()}
-                      </div>
-                      <span className="font-black text-brand-text">{user.name}</span>
-                    </div>
-                    <button onClick={logout} className="text-xs font-bold text-brand-red uppercase tracking-widest">Logout</button>
-                  </div>
-                ) : (
-                  <Link 
-                    onClick={() => setMobileOpen(false)} 
-                    href="/login" 
-                    className="flex items-center justify-center gap-2 w-full py-4 bg-brand-text text-white rounded-2xl font-bold shadow-premium"
-                  >
-                    <User size={18} /> Login / Register
-                  </Link>
-                )}
+
 
                 <div className="grid grid-cols-1 gap-2">
                   <Link href="/dining" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 p-4 hover:bg-brand-bg rounded-2xl transition-colors group">
-                    <span className="w-10 h-10 rounded-xl bg-brand-bg flex items-center justify-center group-hover:scale-110 transition-transform">🍽️</span>
+                    <div className="w-10 h-10 rounded-xl bg-brand-red/10 text-brand-red flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <BookOpen size={18} />
+                    </div>
                     <span className="font-bold text-brand-text">Book Dining Table</span>
                   </Link>
-                  <a href="tel:+919682387952" className="flex items-center gap-3 p-4 hover:bg-brand-bg rounded-2xl transition-colors group">
+                  <a href="#footer" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 p-4 hover:bg-brand-bg rounded-2xl transition-colors group">
                     <div className="w-10 h-10 rounded-xl bg-brand-red/10 text-brand-red flex items-center justify-center group-hover:scale-110 transition-transform">
                       <Phone size={18} />
                     </div>
@@ -151,9 +171,9 @@ export default function Navbar() {
                 </div>
 
                 <div className="space-y-4 pt-4 border-t border-brand-border">
-                  <p className="text-[10px] font-black text-brand-muted uppercase tracking-[0.2em] pl-2">Quick Menu</p>
+                  <p className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.2em] pl-2">Menu Categories</p>
                   <div className="grid grid-cols-2 gap-3">
-                    {categories.slice(0, 4).map(cat => (
+                    {dbCategories.map(cat => (
                       <a
                         key={cat.id}
                         href={`/#${cat.id}`}
@@ -161,7 +181,7 @@ export default function Navbar() {
                         className="flex flex-col items-center gap-2 p-4 bg-brand-bg rounded-2xl hover:bg-white hover:shadow-soft transition-all"
                       >
                         <span className="text-2xl">{cat.icon}</span>
-                        <span className="text-xs font-bold text-brand-text">{cat.name}</span>
+                        <span className="text-xs font-bold text-brand-text text-center">{cat.name}</span>
                       </a>
                     ))}
                   </div>

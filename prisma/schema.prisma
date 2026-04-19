@@ -85,3 +85,11 @@ model menu_item {
   categoryId   String
   category     menu_category @relation(fields: [categoryId], references: [id])
 }
+
+model coupon {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  discount    Int
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}

@@ -1,12 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Users, Calendar, Clock, Phone, User, CheckCircle2, X, Map as MapIcon, Info, Receipt } from 'lucide-react';
+import { ArrowLeft, Users, Calendar, Clock, Phone, User, CheckCircle2, X, Map as MapIcon, Info } from 'lucide-react';
 import { tables, Table } from '@/data/tables';
 import { useReservation, Reservation } from '@/components/ReservationContext';
 
 export default function DiningPage() {
-  const { reservations, addReservation, cancelReservation } = useReservation();
+  const { addReservation } = useReservation();
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
   
   const [name, setName] = useState('');
@@ -17,8 +17,16 @@ export default function DiningPage() {
   
   const [toast, setToast] = useState('');
   const [tablesList, setTablesList] = useState<Table[]>([]);
+  const [dbReservations, setDbReservations] = useState<any[]>([]);
 
   useEffect(() => {
+    // Fetch real occupancy from DB
+    fetch('/api/reservations')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setDbReservations(data);
+      });
+
     const stored = localStorage.getItem('dte_tables');
     if (stored) {
       setTablesList(JSON.parse(stored));
@@ -29,10 +37,10 @@ export default function DiningPage() {
   }, []);
 
   const isTableBooked = (tableId: string) => {
-    return reservations.some(r => r.tableId === tableId);
+    return dbReservations.some(r => r.tableId === tableId);
   };
 
-  const handleBooking = (e: React.FormEvent) => {
+  const handleBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedTable) return;
 
@@ -46,12 +54,25 @@ export default function DiningPage() {
       guests: parseInt(guests)
     };
 
-    addReservation(newRes);
-    setToast('Table booked successfully!');
-    setSelectedTable(null);
-    setName('');
-    setPhone('');
-    setDate('');
+    try {
+      const response = await fetch('/api/reservations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newRes)
+      });
+
+      if (!response.ok) throw new Error('Failed to save reservation');
+
+      addReservation(newRes);
+      setToast('Table booked successfully!');
+      setSelectedTable(null);
+      setName('');
+      setPhone('');
+      setDate('');
+    } catch (error) {
+      console.error(error);
+      setToast('Failed to book table. Please try again.');
+    }
     
     setTimeout(() => setToast(''), 3000);
   };
@@ -74,7 +95,7 @@ export default function DiningPage() {
               </div>
               Back to Store
             </Link>
-            <h1 className="text-4xl lg:text-7xl font-black text-brand-text tracking-tighter">
+            <h1 className="text-4xl lg:text-7xl font-bold text-brand-text tracking-tighter">
               Reserve Your <br />
               <span className="text-brand-red">Perfect Spot.</span>
             </h1>
@@ -82,11 +103,11 @@ export default function DiningPage() {
           <div className="flex items-center gap-6 pb-2 border-b border-brand-border">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-green-500 shadow-lg shadow-green-500/20" />
-              <span className="text-xs font-black text-brand-muted uppercase tracking-widest">Available</span>
+              <span className="text-xs font-bold text-brand-muted uppercase tracking-widest">Available</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-brand-red" />
-              <span className="text-xs font-black text-brand-muted uppercase tracking-widest">Booked</span>
+              <span className="text-xs font-bold text-brand-muted uppercase tracking-widest">Booked</span>
             </div>
           </div>
         </div>
@@ -99,7 +120,7 @@ export default function DiningPage() {
 
         <div className="grid lg:grid-cols-12 gap-12">
           {/* Main Content */}
-          <div className="lg:col-span-8 space-y-12">
+          <div className="lg:col-span-12 max-w-4xl mx-auto w-full space-y-12">
             
             {/* Table Selection */}
             <div className="glass rounded-[2.5rem] p-8 md:p-12 border-white shadow-premium">
@@ -108,7 +129,7 @@ export default function DiningPage() {
                   <MapIcon size={24} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black text-brand-text tracking-tight">Interactive Map</h2>
+                  <h2 className="text-2xl font-bold text-brand-text tracking-tight">Interactive Map</h2>
                   <p className="text-brand-muted text-sm font-medium">Click on a highlighted table to select it.</p>
                 </div>
               </div>
@@ -131,15 +152,15 @@ export default function DiningPage() {
                             : 'bg-white border-white hover:border-brand-red/30 hover:shadow-lg'
                       }`}
                     >
-                      <div className={`text-2xl font-black tracking-tighter ${isSelected ? 'text-white' : 'text-brand-text'}`}>
+                      <div className={`text-2xl font-bold tracking-tighter ${isSelected ? 'text-white' : 'text-brand-text'}`}>
                         T{table.number}
                       </div>
-                      <div className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-white/80' : 'text-brand-muted'}`}>
+                      <div className={`flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest ${isSelected ? 'text-white/80' : 'text-brand-muted'}`}>
                         <Users size={12} /> {table.seats} Seats
                       </div>
                       
                       {table.type === 'vip' && !isSelected && (
-                        <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-lg bg-brand-accent text-brand-text text-[8px] font-black uppercase tracking-widest">
+                        <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-lg bg-brand-accent text-brand-text text-[8px] font-bold uppercase tracking-widest">
                           VIP
                         </div>
                       )}
@@ -162,7 +183,7 @@ export default function DiningPage() {
                   <Info size={24} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black text-brand-text tracking-tight">Booking Details</h2>
+                  <h2 className="text-2xl font-bold text-brand-text tracking-tight">Booking Details</h2>
                   <p className="text-brand-muted text-sm font-medium">Tell us more about your visit.</p>
                 </div>
               </div>
@@ -170,12 +191,12 @@ export default function DiningPage() {
               <form onSubmit={handleBooking} className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="md:col-span-2 p-6 bg-brand-red/5 rounded-3xl border border-brand-red/10 flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-brand-red text-white flex items-center justify-center font-black text-xl shadow-lg ring-4 ring-brand-red/10">
+                    <div className="w-14 h-14 rounded-2xl bg-brand-red text-white flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-brand-red/10">
                       {selectedTable?.number || '?'}
                     </div>
                     <div>
-                      <p className="text-[10px] font-black text-brand-muted uppercase tracking-widest">Selected Table</p>
-                      <p className="text-lg font-black text-brand-text leading-tight">
+                      <p className="text-[10px] font-bold text-brand-muted uppercase tracking-widest">Selected Table</p>
+                      <p className="text-lg font-bold text-brand-text leading-tight">
                         {selectedTable ? `${selectedTable.seats} Seats, ${selectedTable.type.toUpperCase()}` : 'No table selected'}
                       </p>
                     </div>
@@ -183,7 +204,7 @@ export default function DiningPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-brand-muted uppercase tracking-widest ml-2">Your Name</label>
+                  <label className="text-[10px] font-bold text-brand-muted uppercase tracking-widest ml-2">Your Name</label>
                   <div className="relative">
                     <User size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-red" />
                     <input type="text" required value={name} onChange={e=>setName(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-12 pr-6 py-4 text-brand-text placeholder-brand-muted focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-medium" placeholder="E.g. Elon Musk" />
@@ -191,7 +212,7 @@ export default function DiningPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-brand-muted uppercase tracking-widest ml-2">Phone</label>
+                  <label className="text-[10px] font-bold text-brand-muted uppercase tracking-widest ml-2">Phone</label>
                   <div className="relative">
                     <Phone size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-red" />
                     <input type="tel" required value={phone} onChange={e=>setPhone(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-12 pr-6 py-4 text-brand-text placeholder-brand-muted focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-medium" placeholder="+91 ..." />
@@ -199,7 +220,7 @@ export default function DiningPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-brand-muted uppercase tracking-widest ml-2">Reservation Date</label>
+                  <label className="text-[10px] font-bold text-brand-muted uppercase tracking-widest ml-2">Reservation Date</label>
                   <div className="relative">
                     <Calendar size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-red" />
                     <input type="date" required min={today} value={date} onChange={e=>setDate(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-12 pr-6 py-4 text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-medium" />
@@ -208,10 +229,10 @@ export default function DiningPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-brand-muted uppercase tracking-widest ml-2">Time</label>
+                    <label className="text-[10px] font-bold text-brand-muted uppercase tracking-widest ml-2">Time</label>
                     <div className="relative">
                       <Clock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-red" />
-                      <select value={time} onChange={e=>setTime(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-10 pr-4 py-4 text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-black text-xs appearance-none">
+                      <select value={time} onChange={e=>setTime(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-10 pr-4 py-4 text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-bold text-xs appearance-none">
                         {['12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM'].map(t => (
                           <option key={t} value={t}>{t}</option>
                         ))}
@@ -219,10 +240,10 @@ export default function DiningPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-brand-muted uppercase tracking-widest ml-2">Guests</label>
+                    <label className="text-[10px] font-bold text-brand-muted uppercase tracking-widest ml-2">Guests</label>
                     <div className="relative">
                       <Users size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-red" />
-                      <select value={guests} onChange={e=>setGuests(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-10 pr-4 py-4 text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-black text-xs appearance-none">
+                      <select value={guests} onChange={e=>setGuests(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-10 pr-4 py-4 text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-bold text-xs appearance-none">
                         {[1,2,3,4,5,6,7,8].map(n => (
                           <option key={n} value={n}>{n} {n===1?'Guest':'Guests'}</option>
                         ))}
@@ -240,80 +261,6 @@ export default function DiningPage() {
             </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-4">
-            <div className="glass rounded-[2.5rem] p-8 border-white shadow-premium sticky top-24">
-              <div className="flex items-center justify-between mb-8 pb-4 border-b border-brand-border">
-                <h2 className="text-xl font-black text-brand-text tracking-tight uppercase">History</h2>
-                <div className="w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center font-black text-xs">
-                  {reservations.length}
-                </div>
-              </div>
-              
-              <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2 scrollbar-hide">
-                {reservations.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="w-20 h-20 rounded-full bg-brand-bg flex items-center justify-center mx-auto mb-4 grayscale opacity-50">
-                      <Calendar size={32} />
-                    </div>
-                    <p className="text-sm font-bold text-brand-muted uppercase tracking-widest">No Bookings Yet</p>
-                  </div>
-                ) : (
-                  reservations.map(res => (
-                    <div key={res.id} className="group relative bg-brand-bg rounded-3xl p-6 border border-brand-border hover:border-brand-red/30 transition-all">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 rounded-2xl bg-white border border-brand-border flex items-center justify-center text-brand-text font-black text-lg group-hover:bg-brand-red group-hover:text-white group-hover:border-brand-red transition-all shadow-soft">
-                          T{tablesList.find(t => t.id === res.tableId)?.number}
-                        </div>
-                        <div className="flex gap-2">
-                          <button 
-                            onClick={() => {
-                              const table = tablesList.find(t => t.id === res.tableId);
-                              const content = `DRIVE THRU EATS RESERVATION\nId: ${res.id}\nName: ${res.name}\nTable: ${table?.number}\nDate: ${res.date} at ${res.time}`;
-                              window.print();
-                            }}
-                            className="w-8 h-8 rounded-lg bg-white border border-brand-border flex items-center justify-center text-brand-muted hover:text-brand-red hover:shadow-lg transition-all"
-                            title="Print Receipt"
-                          >
-                            <Receipt size={14} />
-                          </button>
-                          <button 
-                            onClick={() => cancelReservation(res.id)}
-                            className="w-8 h-8 rounded-lg bg-white border border-brand-border flex items-center justify-center text-brand-muted hover:text-red-500 hover:shadow-lg transition-all"
-                            title="Cancel"
-                          >
-                            <X size={14} />
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center text-brand-red shadow-soft">
-                            <Calendar size={14} />
-                          </div>
-                          <div>
-                            <p className="text-[8px] font-black text-brand-muted uppercase tracking-widest">Date & Time</p>
-                            <p className="text-xs font-bold text-brand-text">{res.date} • {res.time}</p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center text-brand-red shadow-soft">
-                            <Users size={14} />
-                          </div>
-                          <div>
-                            <p className="text-[8px] font-black text-brand-muted uppercase tracking-widest">Guest Count</p>
-                            <p className="text-xs font-bold text-brand-text">{res.guests} People</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
 
         </div>
       </div>

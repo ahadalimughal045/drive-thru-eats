@@ -54,7 +54,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <h1 className="text-3xl font-black text-brand-text mb-2">Dashboard Overview</h1>
+      <h1 className="text-3xl font-bold text-brand-text mb-2">Dashboard Overview</h1>
       <p className="text-brand-muted font-medium mb-8">Welcome back to your restaurant control center.</p>
 
       {/* Metrics */}
@@ -63,7 +63,7 @@ export default function AdminDashboard() {
           <div className="flex justify-between items-start mb-4">
             <div>
               <p className="text-[#6c757d] font-bold text-sm">Total Revenue</p>
-              <h3 className="text-3xl font-black text-[#212529] mt-1">₹{totalRevenue}</h3>
+              <h3 className="text-3xl font-bold font-body text-[#212529] mt-1">₹{totalRevenue}</h3>
             </div>
             <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600">
               <IndianRupee size={24} />
@@ -76,7 +76,7 @@ export default function AdminDashboard() {
           <div className="flex justify-between items-start mb-4">
             <div>
               <p className="text-[#6c757d] font-bold text-sm">Total Orders</p>
-              <h3 className="text-3xl font-black text-[#212529] mt-1">{totalOrders}</h3>
+              <h3 className="text-3xl font-bold font-body text-[#212529] mt-1">{totalOrders}</h3>
             </div>
             <div className="w-12 h-12 bg-brand-red/10 rounded-xl flex items-center justify-center text-brand-red">
               <ShoppingBag size={24} />
@@ -89,7 +89,7 @@ export default function AdminDashboard() {
           <div className="flex justify-between items-start mb-4">
             <div>
               <p className="text-[#6c757d] font-bold text-sm">Active Queue</p>
-              <h3 className="text-3xl font-black text-brand-orange mt-1">{pendingOrders}</h3>
+              <h3 className="text-3xl font-bold font-body text-brand-orange mt-1">{pendingOrders}</h3>
             </div>
             <div className="w-12 h-12 bg-brand-orange/10 rounded-xl flex items-center justify-center text-brand-orange">
               <Utensils size={24} />
@@ -105,7 +105,7 @@ export default function AdminDashboard() {
           <div className="flex justify-between items-start mb-4">
             <div>
               <p className="text-[#6c757d] font-bold text-sm uppercase tracking-widest text-[10px]">Total Customers</p>
-              <h3 className="text-3xl font-black text-[#212529] mt-1">{userCount}</h3>
+              <h3 className="text-3xl font-bold font-body text-[#212529] mt-1">{userCount}</h3>
             </div>
             <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 group-hover:bg-brand-red group-hover:text-white transition-all">
               <Users size={24} />

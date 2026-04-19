@@ -102,12 +102,12 @@ export default function MenuManagement() {
     }
   };
 
-  const deleteItem = async (id: string) => {
-    if (!confirm('Are you sure?')) return;
+  const deleteItem = async (id: string, type: 'item' | 'category' = 'item') => {
+    if (!confirm(`Are you sure you want to delete this ${type}?`)) return;
     await fetch('/api/menu', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, type: 'item' })
+      body: JSON.stringify({ id, type })
     });
     fetchMenu();
   };
@@ -119,19 +119,19 @@ export default function MenuManagement() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <h1 className="text-4xl font-black text-gray-900 tracking-tighter uppercase">Menu Control</h1>
+            <h1 className="text-4xl font-bold text-gray-900 tracking-tighter uppercase">Menu Control</h1>
             <p className="text-gray-400 font-bold text-xs tracking-widest uppercase mt-1">Management Dashboard • Dynamic Content</p>
           </div>
           <div className="flex gap-4">
             <button 
               onClick={() => { setModalType('category'); setShowAddModal(true); }}
-              className="bg-white border border-gray-200 text-gray-900 font-black px-6 py-4 rounded-2xl flex items-center gap-2 hover:bg-gray-50 transition-all text-sm"
+              className="bg-white border border-gray-200 text-gray-900 font-bold px-6 py-4 rounded-2xl flex items-center gap-2 hover:bg-gray-50 transition-all text-sm"
             >
               <Plus size={18} /> NEW CATEGORY
             </button>
             <button 
               onClick={() => { setModalType('item'); setShowAddModal(true); }}
-              className="bg-brand-red text-white font-black px-6 py-4 rounded-2xl flex items-center gap-2 hover:bg-red-700 transition-all text-sm shadow-premium"
+              className="bg-brand-red text-white font-bold px-6 py-4 rounded-2xl flex items-center gap-2 hover:bg-red-700 transition-all text-sm shadow-premium"
             >
               <Plus size={18} /> ADD NEW DISH
             </button>
@@ -139,7 +139,7 @@ export default function MenuManagement() {
         </div>
 
         {loading ? (
-          <div className="p-20 text-center font-black animate-pulse text-gray-300 tracking-[0.5em]">SYNCHRONIZING DATABASE...</div>
+          <div className="p-20 text-center font-bold animate-pulse text-gray-300 tracking-[0.5em]">SYNCHRONIZING DATABASE...</div>
         ) : (
           <div className="space-y-12">
             {categories.map(cat => (
@@ -148,9 +148,16 @@ export default function MenuManagement() {
                   <div className="w-12 h-12 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center text-2xl">
                     {cat.icon}
                   </div>
-                  <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">{cat.name}</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 uppercase tracking-tight">{cat.name}</h2>
                   <div className="flex-1 h-px bg-gray-200" />
-                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{cat.items.length} Items</span>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{cat.items.length} Items</span>
+                  <button 
+                    onClick={() => deleteItem(cat.id, 'category')}
+                    className="w-10 h-10 flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                    title="Delete Category"
+                  >
+                    <Trash2 size={18} />
+                  </button>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -160,12 +167,12 @@ export default function MenuManagement() {
                         <img src={item.image} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
                         <div className="absolute top-3 left-3 flex flex-col gap-2">
                           {item.discount > 0 && (
-                            <span className="bg-green-500 text-white text-[10px] font-black px-3 py-1 rounded-lg shadow-lg">
+                            <span className="bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-lg shadow-lg">
                               {item.discount}% OFF
                             </span>
                           )}
                           {item.tags?.split(',').map((tag: string) => tag.trim() && (
-                            <span key={tag} className="bg-brand-red text-white text-[8px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter">
+                            <span key={tag} className="bg-brand-red text-white text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-tighter">
                               {tag.trim()}
                             </span>
                           ))}
@@ -179,9 +186,9 @@ export default function MenuManagement() {
                       </div>
                       <div className="space-y-1 px-1">
                         <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{item.restaurant}</p>
-                        <h3 className="font-black text-gray-900 text-sm leading-tight line-clamp-1">{item.name}</h3>
+                        <h3 className="font-bold text-gray-900 text-sm leading-tight line-clamp-1">{item.name}</h3>
                         <div className="flex items-center gap-2">
-                          <p className="font-black text-brand-red text-lg">₹{item.price - (item.price * (item.discount / 100))}</p>
+                          <p className="font-bold text-brand-red text-lg">₹{item.price - (item.price * (item.discount / 100))}</p>
                           {item.discount > 0 && (
                             <p className="text-xs text-gray-400 line-through font-bold">₹{item.price}</p>
                           )}
@@ -200,7 +207,7 @@ export default function MenuManagement() {
           <div className="fixed inset-0 bg-brand-text/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
             <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden animate-slide-up">
               <div className="bg-brand-red p-8 flex justify-between items-center text-white">
-                <h3 className="text-2xl font-black uppercase tracking-tight">
+                <h3 className="text-2xl font-bold uppercase tracking-tight">
                   {modalType === 'item' ? 'Add New Menu Item' : 'New Category Section'}
                 </h3>
                 <button onClick={() => setShowAddModal(false)} className="bg-white/20 p-2 rounded-full hover:bg-white/40 transition-all">
@@ -214,7 +221,7 @@ export default function MenuManagement() {
                     {/* Basic Info */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-3">
-                        <label className="text-[11px] font-black uppercase text-gray-400 tracking-widest ml-1">Dish Name</label>
+                        <label className="text-[11px] font-bold uppercase text-gray-400 tracking-widest ml-1">Dish Name</label>
                         <input 
                           type="text" 
                           value={newItem.name}
@@ -225,7 +232,7 @@ export default function MenuManagement() {
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-3">
-                          <label className="text-[11px] font-black uppercase text-gray-400 tracking-widest ml-1">Base Price</label>
+                          <label className="text-[11px] font-bold uppercase text-gray-400 tracking-widest ml-1">Base Price</label>
                           <input 
                             type="number" 
                             value={newItem.price}
@@ -235,7 +242,7 @@ export default function MenuManagement() {
                           />
                         </div>
                         <div className="space-y-3">
-                          <label className="text-[11px] font-black uppercase text-gray-400 tracking-widest ml-1">Discount %</label>
+                          <label className="text-[11px] font-bold uppercase text-gray-400 tracking-widest ml-1">Discount %</label>
                           <input 
                             type="number" 
                             value={newItem.discount}
@@ -250,8 +257,8 @@ export default function MenuManagement() {
                     {/* Final Price Preview */}
                     {parseFloat(newItem.discount) > 0 && (
                       <div className="bg-green-50 p-6 rounded-3xl border border-green-100 flex justify-between items-center">
-                        <span className="text-xs font-black text-green-700 uppercase tracking-widest">Final Price Preview</span>
-                        <span className="text-2xl font-black text-green-700">
+                        <span className="text-xs font-bold text-green-700 uppercase tracking-widest">Final Price Preview</span>
+                        <span className="text-2xl font-bold text-green-700">
                           ₹{parseFloat(newItem.price || '0') - (parseFloat(newItem.price || '0') * (parseFloat(newItem.discount) / 100))}
                         </span>
                       </div>
@@ -259,7 +266,7 @@ export default function MenuManagement() {
 
                     {/* Description */}
                     <div className="space-y-3">
-                      <label className="text-[11px] font-black uppercase text-gray-400 tracking-widest ml-1">Description</label>
+                      <label className="text-[11px] font-bold uppercase text-gray-400 tracking-widest ml-1">Description</label>
                       <textarea 
                         value={newItem.description}
                         onChange={e => setNewItem({...newItem, description: e.target.value})}
@@ -272,7 +279,7 @@ export default function MenuManagement() {
                     {/* Cat & Tags */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-3">
-                        <label className="text-[11px] font-black uppercase text-gray-400 tracking-widest ml-1">Category</label>
+                        <label className="text-[11px] font-bold uppercase text-gray-400 tracking-widest ml-1">Category</label>
                         <select 
                           value={newItem.categoryId}
                           onChange={e => {
@@ -288,7 +295,7 @@ export default function MenuManagement() {
                         </select>
                       </div>
                       <div className="space-y-3">
-                        <label className="text-[11px] font-black uppercase text-gray-400 tracking-widest ml-1">Tags (Comma separated)</label>
+                        <label className="text-[11px] font-bold uppercase text-gray-400 tracking-widest ml-1">Tags (Comma separated)</label>
                         <input 
                           type="text" 
                           value={newItem.tags}
@@ -301,13 +308,13 @@ export default function MenuManagement() {
 
                     {/* Image Upload */}
                     <div className="space-y-4">
-                      <label className="text-[11px] font-black uppercase text-gray-400 tracking-widest ml-1">Product Photo</label>
+                      <label className="text-[11px] font-bold uppercase text-gray-400 tracking-widest ml-1">Product Photo</label>
                       {newItem.image ? (
                         <div className="relative w-full aspect-video rounded-[2rem] overflow-hidden group">
                           <img src={newItem.image} className="w-full h-full object-cover" />
                           <button 
                             onClick={() => setNewItem({...newItem, image: ''})}
-                            className="absolute inset-0 bg-black/40 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all font-black text-xs uppercase"
+                            className="absolute inset-0 bg-black/40 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all font-bold text-xs uppercase"
                           >
                             Change Image
                           </button>
@@ -317,7 +324,7 @@ export default function MenuManagement() {
                           <div className="w-16 h-16 bg-white rounded-3xl shadow-premium flex items-center justify-center text-gray-300 group-hover:text-brand-red transition-all">
                             <ImageIcon size={32} />
                           </div>
-                          <p className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                             {uploading ? 'Processing...' : 'Click to Upload Image'}
                           </p>
                           <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
@@ -327,7 +334,7 @@ export default function MenuManagement() {
 
                     <button 
                       onClick={handleAddItem}
-                      className="w-full bg-brand-text text-white font-black py-6 rounded-[2rem] shadow-premium hover:bg-black transition-all uppercase tracking-[0.2em] text-sm mt-4 active:scale-95"
+                      className="w-full bg-brand-text text-white font-bold py-6 rounded-[2rem] shadow-premium hover:bg-black transition-all uppercase tracking-[0.2em] text-sm mt-4 active:scale-95"
                     >
                       Sync to Kitchen
                     </button>
@@ -335,7 +342,7 @@ export default function MenuManagement() {
                 ) : (
                   <div className="space-y-8">
                     <div className="space-y-3">
-                      <label className="text-[11px] font-black uppercase text-gray-400 tracking-widest ml-1">Category Name</label>
+                      <label className="text-[11px] font-bold uppercase text-gray-400 tracking-widest ml-1">Category Name</label>
                       <input 
                         type="text" 
                         value={newCat.name}
@@ -345,7 +352,7 @@ export default function MenuManagement() {
                       />
                     </div>
                     <div className="space-y-3 text-center">
-                      <label className="text-[11px] font-black uppercase text-gray-400 tracking-widest">Icon (Emoji)</label>
+                      <label className="text-[11px] font-bold uppercase text-gray-400 tracking-widest">Icon (Emoji)</label>
                       <div className="flex justify-center">
                         <input 
                           type="text" 
@@ -358,7 +365,7 @@ export default function MenuManagement() {
                     </div>
                     <button 
                       onClick={handleAddCategory}
-                      className="w-full bg-brand-text text-white font-black py-6 rounded-[2rem] shadow-premium hover:bg-black transition-all uppercase tracking-[0.2em] text-sm"
+                      className="w-full bg-brand-text text-white font-bold py-6 rounded-[2rem] shadow-premium hover:bg-black transition-all uppercase tracking-[0.2em] text-sm"
                     >
                       Create Section
                     </button>

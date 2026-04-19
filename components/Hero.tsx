@@ -1,10 +1,23 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Package, MapPin, ChevronRight, Play, Star, ShieldCheck, Zap, MousePointer2 } from 'lucide-react';
 
 export default function Hero() {
   const [orderType, setOrderType] = useState<'pickup' | 'delivery'>('pickup');
   const [address, setAddress] = useState('');
+  const [activePromo, setActivePromo] = useState<{ code: string, discount: number } | null>(null);
+
+  useEffect(() => {
+    fetch('/api/coupons')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const active = data.filter(c => c.isActive).sort((a, b) => b.discount - a.discount)[0];
+          if (active) setActivePromo(active);
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-white pt-20">
@@ -12,7 +25,7 @@ export default function Hero() {
       <div className="absolute top-0 right-0 w-1/2 h-full bg-[#FAFAFA] -skew-x-12 translate-x-1/4 hidden lg:block" />
       <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-brand-red/10 rounded-full blur-[120px] animate-pulse pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-5%] w-[30%] h-[30%] bg-brand-orange/5 rounded-full blur-[100px] pointer-events-none" />
-      
+
       {/* Floating Decorative Icons (Subtle) */}
       <div className="absolute top-[15%] left-[5%] text-brand-red/10 animate-float opacity-50 hidden md:block">
         <Star size={48} fill="currentColor" />
@@ -23,17 +36,17 @@ export default function Hero() {
 
       <div className="relative max-w-7xl mx-auto px-4 py-8 lg:py-16 w-full">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          
+
           {/* Left Content (Text & Form) */}
           <div className="lg:col-span-7 space-y-10 animate-slide-up z-10">
             <div className="space-y-6">
               <div className="inline-flex items-center gap-3 bg-brand-bg border border-brand-border rounded-2xl px-4 py-2 shadow-soft group hover:border-brand-red/30 transition-all cursor-default">
                 <div className="w-1.5 h-1.5 rounded-full bg-brand-red animate-ping" />
-                <span className="text-brand-text text-[9px] font-black uppercase tracking-[0.2em]">The Future of Drive-Thru</span>
+                <span className="text-brand-text text-[9px] font-bold uppercase tracking-[0.2em]">The Future of Drive-Thru</span>
               </div>
 
               <div className="relative">
-                <h1 className="text-4xl md:text-6xl lg:text-[6.5rem] font-black text-brand-text leading-[0.9] tracking-tighter mix-blend-multiply">
+                <h1 className="text-4xl md:text-6xl lg:text-[6.5rem] font-bold text-brand-text leading-[0.9] tracking-tighter mix-blend-multiply">
                   Satisfy Your <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red to-brand-orange relative">
                     Cravings.
@@ -41,10 +54,14 @@ export default function Hero() {
                   </span>
                 </h1>
               </div>
-              
+
               <p className="text-brand-muted text-sm md:text-base max-w-lg leading-relaxed font-medium">
-                Experience the pinnacle of drive-thru excellence. 
-                Use code <span className="text-brand-text font-black px-1.5 py-0.5 bg-brand-bg rounded-lg border border-brand-border mx-1">Discount10</span> for an instant 10% off.
+                Experience the pinnacle of drive-thru excellence.
+                {activePromo ? (
+                  <> Use code <span className="text-brand-text font-bold px-1.5 py-0.5 bg-brand-bg rounded-lg border border-brand-border mx-1">{activePromo.code}</span> for an instant {activePromo.discount}% off.</>
+                ) : (
+                  <> Grab our legendary specials today.</>
+                )}
               </p>
             </div>
 
@@ -52,17 +69,15 @@ export default function Hero() {
               <div className="flex bg-brand-bg p-1 rounded-2xl gap-1 shrink-0">
                 <button
                   onClick={() => setOrderType('pickup')}
-                  className={`flex items-center gap-2 px-5 py-3 text-[10px] font-black uppercase tracking-widest transition-all rounded-xl ${
-                    orderType === 'pickup' ? 'bg-white text-brand-red shadow-premium' : 'text-brand-muted hover:text-brand-text'
-                  }`}
+                  className={`flex items-center gap-2 px-5 py-3 text-[10px] font-bold uppercase tracking-widest transition-all rounded-xl ${orderType === 'pickup' ? 'bg-white text-brand-red shadow-premium' : 'text-brand-muted hover:text-brand-text'
+                    }`}
                 >
                   <Package size={14} /> Pickup
                 </button>
                 <button
                   onClick={() => setOrderType('delivery')}
-                  className={`flex items-center gap-2 px-5 py-3 text-[10px] font-black uppercase tracking-widest transition-all rounded-xl ${
-                    orderType === 'delivery' ? 'bg-white text-brand-red shadow-premium' : 'text-brand-muted hover:text-brand-text'
-                  }`}
+                  className={`flex items-center gap-2 px-5 py-3 text-[10px] font-bold uppercase tracking-widest transition-all rounded-xl ${orderType === 'delivery' ? 'bg-white text-brand-red shadow-premium' : 'text-brand-muted hover:text-brand-text'
+                    }`}
                 >
                   <MapPin size={14} /> Delivery
                 </button>
@@ -81,18 +96,16 @@ export default function Hero() {
                     />
                   </div>
                 ) : (
-                  <div className="flex-1 px-5 text-[11px] font-bold text-brand-muted animate-fade-in flex items-center">
-                    Select your nearest branch to pickup.
-                  </div>
+                  <div className="flex-1 px-5 animate-fade-in flex items-center" />
                 )}
-                
-                <button 
+
+                <button
                   onClick={() => {
                     document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' });
                   }}
                   className="bg-brand-red hover:bg-red-700 text-white w-12 md:w-auto md:px-6 h-12 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-red-500/25 shrink-0 m-1 group/btn"
                 >
-                  <span className="hidden md:block font-black text-[10px] uppercase tracking-[0.2em] ml-1">Order Now</span>
+                  <span className="hidden md:block font-bold text-[10px] uppercase tracking-[0.2em] ml-1">Order Now</span>
                   <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
                 </button>
               </div>
@@ -101,27 +114,27 @@ export default function Hero() {
             <div className="flex flex-wrap items-center gap-6 pt-2">
               <a
                 href="https://drive-thrueats.online/dte-app.apk"
-                className="group flex items-center gap-3 text-brand-text hover:text-brand-red transition-all"
+                className="group flex items-center gap-3 text-brand-text hover:text-brand-red transition-all bg-white border border-brand-border px-4 py-2 rounded-2xl shadow-premium hover:shadow-xl hover:-translate-y-1"
               >
                 <div className="w-12 h-12 rounded-xl bg-brand-bg border-2 border-brand-border flex items-center justify-center group-hover:border-brand-red group-hover:bg-brand-red group-hover:text-white group-hover:-rotate-6 transition-all shadow-soft">
                   <Play size={16} className="fill-current ml-1" />
                 </div>
                 <div>
-                  <p className="text-[9px] font-black text-brand-muted uppercase tracking-widest leading-tight">Get the App</p>
-                  <p className="text-xs font-black uppercase tracking-tight">Android APK</p>
+                  <p className="text-[9px] font-bold text-brand-muted uppercase tracking-widest leading-tight">Get the App</p>
+                  <p className="text-xs font-bold uppercase tracking-tight">Android APK</p>
                 </div>
               </a>
-              
+
               <div className="hidden sm:block h-8 w-px bg-brand-border" />
-              
+
               <div className="flex items-center gap-3">
                 <div className="flex -space-x-2">
                   {[1, 2, 3].map((i) => (
                     <div key={i} className="w-10 h-10 rounded-xl border-2 border-white bg-brand-bg overflow-hidden shadow-soft transition-transform hover:scale-110 hover:z-10">
-                      <img src={`https://i.pravatar.cc/100?img=${i+14}`} alt="User" />
+                      <img src={`https://i.pravatar.cc/100?img=${i + 14}`} alt="User" />
                     </div>
                   ))}
-                  <div className="w-10 h-10 rounded-xl border-2 border-white bg-brand-text text-white text-[9px] font-black flex items-center justify-center shadow-soft">
+                  <div className="w-10 h-10 rounded-xl border-2 border-white bg-brand-text text-white text-[9px] font-bold flex items-center justify-center shadow-soft">
                     +5k
                   </div>
                 </div>
@@ -129,7 +142,7 @@ export default function Hero() {
                   <div className="flex gap-0.5 text-brand-orange mb-0.5">
                     {[1, 2, 3, 4, 5].map(i => <Star key={i} size={8} fill="currentColor" />)}
                   </div>
-                  <p className="text-[9px] font-black text-brand-muted uppercase tracking-widest">Happy Cravings</p>
+                  <p className="text-[9px] font-bold text-brand-muted uppercase tracking-widest">Happy Cravings</p>
                 </div>
               </div>
             </div>
@@ -138,7 +151,7 @@ export default function Hero() {
           {/* Right Content (Visuals) */}
           <div className="lg:col-span-5 relative group">
             <div className="absolute inset-0 bg-gradient-to-tr from-brand-red/20 to-brand-orange/10 rounded-full blur-[100px] scale-90 animate-pulse pointer-events-none" />
-            
+
             <div className="relative z-10">
               {/* Floating Badges */}
               <div className="absolute top-0 -right-2 glass px-4 py-3 rounded-2xl shadow-premium animate-bounce-soft z-20 border-white/50">
@@ -147,8 +160,8 @@ export default function Hero() {
                     <Zap size={20} fill="currentColor" />
                   </div>
                   <div>
-                    <p className="text-[8px] font-black text-brand-muted uppercase tracking-wider">Fast Delivery</p>
-                    <p className="text-[10px] font-black text-brand-text">Under 20 Mins</p>
+                    <p className="text-[8px] font-bold text-brand-muted uppercase tracking-wider">Fast Delivery</p>
+                    <p className="text-[10px] font-bold text-brand-text">Under 20 Mins</p>
                   </div>
                 </div>
               </div>
@@ -159,8 +172,8 @@ export default function Hero() {
                     <ShieldCheck size={20} />
                   </div>
                   <div>
-                    <p className="text-[8px] font-black text-brand-muted uppercase tracking-wider">Top Rated</p>
-                    <p className="text-[10px] font-black text-brand-text">100% Verified</p>
+                    <p className="text-[8px] font-bold text-brand-muted uppercase tracking-wider">Top Rated</p>
+                    <p className="text-[10px] font-bold text-brand-text">100% Verified</p>
                   </div>
                 </div>
               </div>
@@ -179,10 +192,10 @@ export default function Hero() {
 
               {/* Price Tag Overlay */}
               <div className="absolute top-1/2 -right-4 lg:-right-8 translate-y-[-50%] bg-brand-text text-white p-5 rounded-[2rem] shadow-premium rotate-12 group-hover:rotate-0 transition-all duration-500">
-                <p className="text-[8px] font-black text-brand-orange uppercase tracking-widest text-center mb-0.5">Value Meal</p>
+                <p className="text-[8px] font-bold text-brand-orange uppercase tracking-widest text-center mb-0.5">Value Meal</p>
                 <div className="flex items-baseline gap-0.5 justify-center">
                   <span className="text-xs font-bold opacity-70 leading-none">₹</span>
-                  <span className="text-3xl font-black tracking-tighter leading-none">1299</span>
+                  <span className="text-3xl font-bold tracking-tighter leading-none">1299</span>
                 </div>
               </div>
             </div>
@@ -192,7 +205,7 @@ export default function Hero() {
 
       {/* Hero Footer / Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2 animate-bounce cursor-default">
-        <span className="text-[10px] font-black text-brand-muted uppercase tracking-[0.3em] ml-1">Explore Menu</span>
+        <span className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.3em] ml-1">Explore Menu</span>
         <div className="w-6 h-10 border-2 border-brand-border rounded-full flex justify-center p-1">
           <div className="w-1 h-2 bg-brand-red rounded-full animate-scroll" />
         </div>

@@ -29,7 +29,7 @@ export default function AdminUsers() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-brand-text tracking-tight">Registered Customers</h1>
+          <h1 className="text-3xl font-bold font-body text-brand-text tracking-tight">Registered Customers</h1>
           <p className="text-brand-muted font-medium">Manage and monitor customer accounts.</p>
         </div>
         
@@ -85,11 +85,11 @@ export default function AdminUsers() {
                   <tr key={user.id} className="hover:bg-gray-50 transition-colors group">
                     <td className="p-6 border-b border-[#dee2e6]">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-brand-bg flex items-center justify-center text-brand-red font-black text-lg group-hover:scale-110 transition-transform shadow-soft">
+                        <div className="w-12 h-12 rounded-2xl bg-brand-bg flex items-center justify-center text-brand-red font-bold text-lg group-hover:scale-110 transition-transform shadow-soft">
                           {user.name.charAt(0)}
                         </div>
                         <div>
-                          <p className="font-black text-brand-text uppercase tracking-tight">{user.name}</p>
+                          <p className="font-bold font-body text-brand-text uppercase tracking-tight">{user.name}</p>
                           <div className="flex items-center gap-1.5 text-xs text-brand-muted font-bold">
                             <Mail size={12} /> {user.email}
                           </div>
@@ -105,12 +105,12 @@ export default function AdminUsers() {
                       </div>
                     </td>
                     <td className="p-6 border-b border-[#dee2e6]">
-                      <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-green-100 text-green-700">
+                      <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-green-100 text-green-700">
                         Active
                       </span>
                     </td>
                     <td className="p-6 border-b border-[#dee2e6]">
-                      <button className="text-xs font-black text-brand-red hover:underline uppercase tracking-widest">
+                      <button className="text-xs font-bold text-brand-red hover:underline uppercase tracking-widest">
                         View Details
                       </button>
                     </td>

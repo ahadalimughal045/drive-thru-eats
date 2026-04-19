@@ -18,6 +18,8 @@ export default function StaffPortal() {
   const [activeTab, setActiveTab] = useState<View>('dashboard');
   const [categories, setCategories] = useState<any[]>([]);
   const [allMenuItems, setAllMenuItems] = useState<any[]>([]);
+  const [reservations, setReservations] = useState<any[]>([]);
+  const [tables, setTables] = useState<any[]>([]);
   
   // POS State
   const [cart, setCart] = useState<any[]>([]);
@@ -37,14 +39,26 @@ export default function StaffPortal() {
 
     const loadCoreData = async () => {
       try {
-        const res = await fetch('/api/menu');
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setCategories(data);
-          setAllMenuItems(data.flatMap(cat => cat.items || []));
+        const [menuRes, tablesRes, resRes] = await Promise.all([
+          fetch('/api/menu'),
+          fetch('/api/tables'),
+          fetch('/api/reservations')
+        ]);
+
+        const [menuData, tablesData, resData] = await Promise.all([
+          menuRes.json(),
+          tablesRes.json(),
+          resRes.json()
+        ]);
+
+        if (Array.isArray(menuData)) {
+          setCategories(menuData);
+          setAllMenuItems(menuData.flatMap(cat => cat.items || []));
         }
+        if (Array.isArray(tablesData)) setTables(tablesData);
+        if (Array.isArray(resData)) setReservations(resData);
       } catch (err) {
-        console.error("Menu fetch failed:", err);
+        console.error("Core data fetch failed:", err);
       }
     };
     
@@ -62,10 +76,15 @@ export default function StaffPortal() {
 
   const fetchOrders = async () => {
     try {
-      // By default our new GET /api/orders returns only active/recent ones
-      const res = await fetch('/api/orders');
-      const data = await res.json();
-      if (Array.isArray(data)) setOrders(data);
+      const [oRes, rRes] = await Promise.all([
+        fetch('/api/orders'),
+        fetch('/api/reservations')
+      ]);
+      const oData = await oRes.json();
+      const rData = await rRes.json();
+      
+      if (Array.isArray(oData)) setOrders(oData);
+      if (Array.isArray(rData)) setReservations(rData);
     } catch (err) {
       console.error(err);
     }
@@ -85,7 +104,11 @@ export default function StaffPortal() {
         setStaffData(data.staff);
         setIsLoggedIn(true);
         localStorage.setItem('dte_staff_session', JSON.stringify(data.staff));
-        if (data.staff.role === 'Kitchen Staff') setActiveTab('kitchen');
+        if (data.staff.role.toLowerCase().includes('kitchen') || 
+            data.staff.role.toLowerCase().includes('chef') ||
+            data.staff.role.toLowerCase().includes('cook')) {
+          setActiveTab('kitchen');
+        }
       } else {
         alert('Invalid ID or PIN');
       }
@@ -169,12 +192,12 @@ export default function StaffPortal() {
         <div className="max-w-md w-full glass rounded-4xl shadow-premium overflow-hidden border-white">
           <div className="bg-brand-red p-10 text-center relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
-            <h1 className="text-3xl font-black text-white tracking-tighter">Portal Login</h1>
+            <h1 className="text-3xl font-bold text-white tracking-tighter">Portal Login</h1>
             <p className="text-red-100 text-xs mt-1 font-bold uppercase tracking-widest">Identify Yourself</p>
           </div>
           <form onSubmit={handleLogin} className="p-10 space-y-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-brand-muted uppercase tracking-[0.2em] ml-2">Staff ID Code</label>
+              <label className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.2em] ml-2">Staff ID Code</label>
               <div className="relative">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-red" size={18} />
                 <input 
@@ -182,13 +205,13 @@ export default function StaffPortal() {
                   type="text" 
                   value={sid}
                   onChange={e => setSid(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border border-brand-border rounded-2xl focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red outline-none font-black text-sm uppercase tracking-wider"
+                  className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border border-brand-border rounded-2xl focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red outline-none font-bold text-sm uppercase tracking-wider"
                   placeholder="E.G. ST-001"
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-brand-muted uppercase tracking-[0.2em] ml-2">Secure Entry PIN</label>
+              <label className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.2em] ml-2">Secure Entry PIN</label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-red" size={18} />
                 <input 
@@ -196,7 +219,7 @@ export default function StaffPortal() {
                   type="password" 
                   value={pin}
                   onChange={e => setPin(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border border-brand-border rounded-2xl focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red outline-none font-black text-lg tracking-[0.8em]"
+                  className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border border-brand-border rounded-2xl focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red outline-none font-bold text-lg tracking-[0.8em]"
                   placeholder="****"
                   maxLength={4}
                 />
@@ -205,7 +228,7 @@ export default function StaffPortal() {
             <button 
               disabled={loading}
               type="submit" 
-              className="w-full bg-brand-red hover:bg-red-700 text-white font-black py-5 rounded-2xl transition-all shadow-premium active:scale-[0.98] mt-4"
+              className="w-full bg-brand-red hover:bg-red-700 text-white font-bold py-5 rounded-2xl transition-all shadow-premium active:scale-[0.98] mt-4"
             >
               {loading ? 'AUTHENTICATING...' : 'GAIN ACCESS'}
             </button>
@@ -235,7 +258,7 @@ export default function StaffPortal() {
             className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all ${activeTab === 'dashboard' ? 'bg-brand-red text-white' : 'text-gray-400 hover:bg-white/5'}`}
           >
             <ClipboardList size={20} />
-            <span className="hidden md:block font-black text-xs uppercase tracking-widest">Worklog</span>
+            <span className="hidden md:block font-bold text-xs uppercase tracking-widest">Worklog</span>
           </button>
 
           {(staffData.role === 'Manager' || staffData.role === 'Waiter') && (
@@ -245,14 +268,14 @@ export default function StaffPortal() {
                 className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all ${activeTab === 'pos' ? 'bg-brand-red text-white' : 'text-gray-400 hover:bg-white/5'}`}
               >
                 <Plus size={20} />
-                <span className="hidden md:block font-black text-xs uppercase tracking-widest">Take Order</span>
+                <span className="hidden md:block font-bold text-xs uppercase tracking-widest">Take Order</span>
               </button>
               <button 
                 onClick={() => setActiveTab('tables')}
                 className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all ${activeTab === 'tables' ? 'bg-brand-red text-white' : 'text-gray-400 hover:bg-white/5'}`}
               >
                 <LayoutGrid size={20} />
-                <span className="hidden md:block font-black text-xs uppercase tracking-widest">Tables</span>
+                <span className="hidden md:block font-bold text-xs uppercase tracking-widest">Tables</span>
               </button>
             </>
           )}
@@ -263,14 +286,14 @@ export default function StaffPortal() {
               className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all ${activeTab === 'kitchen' ? 'bg-brand-red text-white' : 'text-gray-400 hover:bg-white/5'}`}
             >
               <ChefHat size={20} />
-              <span className="hidden md:block font-black text-xs uppercase tracking-widest">Kitchen</span>
+              <span className="hidden md:block font-bold text-xs uppercase tracking-widest">Kitchen</span>
             </button>
           )}
         </nav>
 
         <button onClick={handleLogout} className="w-full flex items-center gap-4 p-4 rounded-2xl text-red-400 hover:bg-red-400/10 transition-all mb-4">
           <LogOut size={20} />
-          <span className="hidden md:block font-black text-xs uppercase tracking-widest">Logout</span>
+          <span className="hidden md:block font-bold text-xs uppercase tracking-widest">Logout</span>
         </button>
       </aside>
 
@@ -281,7 +304,7 @@ export default function StaffPortal() {
           <div className="space-y-10">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-4xl font-black text-brand-text tracking-tighter uppercase">My Dashboard</h1>
+                <h1 className="text-4xl font-bold text-brand-text tracking-tighter uppercase">My Dashboard</h1>
                 <p className="text-brand-muted font-bold text-xs tracking-widest uppercase mt-1">{staffData.role} • {staffData.name}</p>
               </div>
               {staffData.role === 'Manager' && (
@@ -296,19 +319,19 @@ export default function StaffPortal() {
               {myOrders.map(order => (
                 <div key={order.id} className="glass p-6 rounded-3xl border-white flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-premium transition-all">
                   <div className="flex items-center gap-6">
-                    <div className="w-16 h-16 rounded-2xl bg-brand-bg flex items-center justify-center font-black text-brand-red">
+                    <div className="w-16 h-16 rounded-2xl bg-brand-bg flex items-center justify-center font-bold text-brand-red">
                       {order.orderId.slice(-3)}
                     </div>
                     <div>
-                      <h3 className="font-black text-xl text-brand-text">Order #{order.orderId}</h3>
+                      <h3 className="font-bold text-xl text-brand-text">Order #{order.orderId}</h3>
                       <p className="text-xs font-bold text-brand-muted uppercase tracking-widest leading-none mt-1">{order.customerName} • {order.type}</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <p className="text-xl font-black text-brand-text">₹{order.total}</p>
-                      <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-full ${order.status === 'Delivered' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
+                      <p className="text-xl font-bold text-brand-text">₹{order.total}</p>
+                      <span className={`text-[10px] font-bold uppercase px-3 py-1 rounded-full ${order.status === 'Delivered' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
                         {order.status}
                       </span>
                     </div>
@@ -318,7 +341,7 @@ export default function StaffPortal() {
                         {order.status === 'Ready' && (
                           <button 
                             onClick={() => updateOrderStatus(order.orderId, 'Delivered')}
-                            className="bg-green-500 text-white p-3 rounded-xl hover:bg-green-600 transition-all font-black text-[10px]"
+                            className="bg-green-500 text-white p-3 rounded-xl hover:bg-green-600 transition-all font-bold text-[10px]"
                           >
                             DELIVER
                           </button>
@@ -328,7 +351,7 @@ export default function StaffPortal() {
                   </div>
                 </div>
               ))}
-              {myOrders.length === 0 && <div className="p-20 text-center glass rounded-4xl text-brand-muted font-black uppercase tracking-[0.3em]">No active tasks</div>}
+              {myOrders.length === 0 && <div className="p-20 text-center glass rounded-4xl text-brand-muted font-bold uppercase tracking-[0.3em]">No active tasks</div>}
             </div>
           </div>
         )}
@@ -338,7 +361,7 @@ export default function StaffPortal() {
             {/* Menu Selection */}
             <div className="lg:col-span-2 space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-black text-brand-text tracking-tight uppercase">Quick Menu</h2>
+                <h2 className="text-3xl font-bold text-brand-text tracking-tight uppercase">Quick Menu</h2>
                 <div className="relative">
                   <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-muted" />
                   <input 
@@ -368,8 +391,8 @@ export default function StaffPortal() {
                     <div className="aspect-square rounded-2xl bg-brand-bg overflow-hidden mb-3">
                       <img src={item.image} className="w-full h-full object-cover group-hover:scale-110 transition-all" />
                     </div>
-                    <p className="font-black text-xs text-brand-text uppercase leading-tight line-clamp-1">{item.name}</p>
-                    <p className="font-black text-brand-red text-sm mt-1">₹{item.price}</p>
+                    <p className="font-bold text-xs text-brand-text uppercase leading-tight line-clamp-1">{item.name}</p>
+                    <p className="font-bold text-brand-red text-sm mt-1">₹{item.price}</p>
                   </button>
                 ))}
               </div>
@@ -377,7 +400,7 @@ export default function StaffPortal() {
 
             {/* Cart & Checkout */}
             <div className="glass p-8 rounded-4xl border-white h-fit sticky top-10 space-y-6">
-              <h3 className="text-xl font-black text-brand-text flex items-center gap-2 uppercase">
+              <h3 className="text-xl font-bold text-brand-text flex items-center gap-2 uppercase">
                 <ShoppingBag /> Current Order
               </h3>
               
@@ -385,10 +408,10 @@ export default function StaffPortal() {
                 {cart.map(item => (
                   <div key={item.id} className="flex justify-between items-center bg-white/50 p-4 rounded-2xl border border-brand-border">
                     <div>
-                      <p className="font-black text-xs uppercase">{item.name}</p>
+                      <p className="font-bold text-xs uppercase">{item.name}</p>
                       <p className="text-xs font-bold text-brand-muted">Qty: {item.quantity}</p>
                     </div>
-                    <p className="font-black text-brand-red">₹{item.price * item.quantity}</p>
+                    <p className="font-bold text-brand-red">₹{item.price * item.quantity}</p>
                   </div>
                 ))}
                 {cart.length === 0 && <p className="text-center py-10 text-brand-muted font-bold text-xs uppercase">Cart is Empty</p>}
@@ -397,19 +420,19 @@ export default function StaffPortal() {
               <div className="pt-6 border-t border-brand-border space-y-4">
                 <div className="flex items-center gap-2">
                   <div className="flex-1 bg-brand-bg p-4 rounded-2xl">
-                    <label className="text-[10px] font-black uppercase text-brand-muted block mb-1">Table #</label>
+                    <label className="text-[10px] font-bold uppercase text-brand-muted block mb-1">Table #</label>
                     <input 
                       type="text" 
                       value={posTable}
                       onChange={e => setPosTable(e.target.value)}
                       placeholder="E.G. 12"
-                      className="w-full bg-transparent outline-none font-black"
+                      className="w-full bg-transparent outline-none font-bold"
                     />
                   </div>
                   <select 
                     value={posPayment}
                     onChange={e => setPosPayment(e.target.value)}
-                    className="bg-brand-bg p-4 rounded-2xl font-black text-[10px] uppercase outline-none"
+                    className="bg-brand-bg p-4 rounded-2xl font-bold text-[10px] uppercase outline-none"
                   >
                     <option value="cash">Cash</option>
                     <option value="online">Online</option>
@@ -417,8 +440,8 @@ export default function StaffPortal() {
                 </div>
                 
                 <div className="flex justify-between items-center px-2">
-                  <span className="font-black text-sm uppercase">Total Amount</span>
-                  <span className="text-2xl font-black text-brand-text">₹{cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)}</span>
+                  <span className="font-bold text-sm uppercase">Total Amount</span>
+                  <span className="text-2xl font-bold text-brand-text">₹{cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)}</span>
                 </div>
 
                 <button 
@@ -435,15 +458,30 @@ export default function StaffPortal() {
 
         {activeTab === 'tables' && (
           <div className="space-y-10">
-            <h1 className="text-4xl font-black text-brand-text tracking-tighter uppercase">Table Occupancy</h1>
+            <h1 className="text-4xl font-bold text-brand-text tracking-tighter uppercase">Table Occupancy</h1>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-              {[1,2,3,4,5,6,7,8,9,10,11,12].map(num => (
-                <div key={num} className="glass p-8 rounded-4xl border-white text-center hover:shadow-premium transition-all">
-                  <Utensils size={32} className="mx-auto text-brand-red mb-4" />
-                  <p className="font-black text-xl text-brand-text">Table {num}</p>
-                  <span className="text-[10px] font-black text-green-600 bg-green-50 px-2 py-0.5 rounded-full uppercase">Available</span>
-                </div>
-              ))}
+              {tables.map(table => {
+                const isOccupied = orders.some(o => o.type === 'dining' && o.tableNumber == table.number && o.status !== 'Delivered') ||
+                                  reservations.some(r => {
+                                    if (r.tableId !== table.id) return false;
+                                    const now = new Date();
+                                    const resTime = new Date(`${r.date}T${r.time}`);
+                                    const end = new Date(resTime.getTime() + 2 * 60 * 60 * 1000);
+                                    return now >= resTime && now < end;
+                                  });
+
+                return (
+                  <div key={table.id} className={`glass p-8 rounded-4xl border-white text-center hover:shadow-premium transition-all border-2 ${isOccupied ? 'border-brand-red bg-red-50/50' : 'border-transparent'}`}>
+                    <Utensils size={32} className={`mx-auto mb-4 ${isOccupied ? 'text-brand-red' : 'text-green-500'}`} />
+                    <p className="font-bold text-xl text-brand-text uppercase tracking-tight">T-{table.number}</p>
+                    {isOccupied ? (
+                      <span className="text-[10px] font-bold text-brand-red bg-brand-red/10 px-2 py-0.5 rounded-full uppercase tracking-widest animate-pulse">Occupied</span>
+                    ) : (
+                      <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full uppercase tracking-widest">Free</span>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
@@ -451,10 +489,10 @@ export default function StaffPortal() {
         {activeTab === 'kitchen' && (
           <div className="space-y-10">
             <div className="flex items-center justify-between">
-              <h1 className="text-4xl font-black text-brand-text tracking-tighter uppercase">Kitchen Queue</h1>
+              <h1 className="text-4xl font-bold text-brand-text tracking-tighter uppercase">Kitchen Queue</h1>
               <div className="flex items-center gap-2 bg-brand-red/10 px-4 py-2 rounded-xl text-brand-red animate-pulse">
                 <div className="w-2 h-2 rounded-full bg-brand-red" />
-                <span className="text-xs font-black uppercase">Live Updates</span>
+                <span className="text-xs font-bold uppercase">Live Updates</span>
               </div>
             </div>
 
@@ -462,16 +500,16 @@ export default function StaffPortal() {
               {orders.filter(o => o.status === 'Pending' || o.status === 'Preparing').map(order => (
                 <div key={order.id} className="bg-white border-2 border-brand-border rounded-4xl p-8 hover:border-brand-red transition-all shadow-soft flex flex-col h-full">
                   <div className="flex justify-between items-start mb-6">
-                    <div className="w-12 h-12 rounded-2xl bg-brand-bg flex items-center justify-center font-black text-brand-red">
+                    <div className="w-12 h-12 rounded-2xl bg-brand-bg flex items-center justify-center font-bold text-brand-red">
                       {order.orderId.slice(-2)}
                     </div>
-                    <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase ${order.status === 'Preparing' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'}`}>
+                    <span className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase ${order.status === 'Preparing' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'}`}>
                       {order.status}
                     </span>
                   </div>
                   
                   <div className="flex-1 space-y-4 mb-8">
-                    <h3 className="font-black text-lg uppercase tracking-tight line-clamp-1">{order.customerName}</h3>
+                    <h3 className="font-bold text-lg uppercase tracking-tight line-clamp-1">{order.customerName}</h3>
                     <div className="space-y-2">
                        {JSON.parse(order.items || '[]').map((item: any, i: number) => (
                          <div key={i} className="flex justify-between text-sm font-bold border-b border-brand-bg pb-2">
@@ -485,14 +523,14 @@ export default function StaffPortal() {
                     {order.status === 'Pending' ? (
                       <button 
                          onClick={() => updateOrderStatus(order.orderId, 'Preparing')}
-                         className="w-full bg-brand-text text-white font-black py-4 rounded-2xl hover:bg-black transition-all uppercase text-xs tracking-widest"
+                         className="w-full bg-brand-text text-white font-bold py-4 rounded-2xl hover:bg-black transition-all uppercase text-xs tracking-widest"
                       >
                          Start Preparing
                       </button>
                     ) : (
                       <button 
                         onClick={() => updateOrderStatus(order.orderId, 'Ready')}
-                        className="w-full bg-green-500 text-white font-black py-4 rounded-2xl hover:bg-green-600 transition-all uppercase text-xs tracking-widest"
+                        className="w-full bg-green-500 text-white font-bold py-4 rounded-2xl hover:bg-green-600 transition-all uppercase text-xs tracking-widest"
                       >
                          Mark as Ready
                       </button>
@@ -503,7 +541,7 @@ export default function StaffPortal() {
               {orders.filter(o => o.status === 'Pending' || o.status === 'Preparing').length === 0 && (
                 <div className="col-span-full py-40 text-center glass rounded-4xl bg-brand-bg/20">
                     <ChefHat size={48} className="mx-auto text-brand-border mb-4 opacity-20" />
-                    <p className="text-brand-muted font-black uppercase tracking-[0.4em]">Kitchen is Clear</p>
+                    <p className="text-brand-muted font-bold uppercase tracking-[0.4em]">Kitchen is Clear</p>
                 </div>
               )}
             </div>

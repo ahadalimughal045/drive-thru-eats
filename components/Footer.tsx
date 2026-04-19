@@ -8,18 +8,18 @@ export default function Footer() {
   const pathname = usePathname();
 
   return (
-    <footer className="bg-white border-t border-brand-border mt-auto">
+    <footer id="footer" className="bg-white border-t border-brand-border mt-auto">
       {/* Feedback CTA - Shown ONLY on Home page */}
       {pathname === '/' && (
         <div className="relative group overflow-hidden">
-          <div 
+          <div
             className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110"
             style={{ backgroundImage: 'url(https://drive-thrueats.online/assets/img/gallery/cta-two-bg.png)' }}
           />
           <div className="absolute inset-0 bg-brand-text/60 backdrop-blur-sm" />
-          
+
           <div className="relative z-10 py-20 lg:py-32 text-center max-w-4xl mx-auto px-4">
-            <h3 className="text-white font-black text-4xl md:text-6xl mb-8 leading-tight tracking-tighter">
+            <h3 className="text-white font-bold text-4xl md:text-6xl mb-8 leading-tight tracking-tighter">
               Love the taste? <br />
               <span className="text-brand-red">Share your experience!</span>
             </h3>
@@ -37,10 +37,10 @@ export default function Footer() {
         {/* Brand */}
         <div className="col-span-1 md:col-span-1 space-y-8">
           <div className="flex items-center gap-3">
-            <img 
-              src="https://drive-thrueats.online/logo.png" 
-              alt="Drive Thru Eats Logo" 
-              className="h-16 w-auto object-contain" 
+            <img
+              src="https://drive-thrueats.online/logo.png"
+              alt="Drive Thru Eats Logo"
+              className="h-16 w-auto object-contain"
             />
           </div>
           <p className="text-brand-muted text-base font-medium leading-relaxed">
@@ -61,7 +61,7 @@ export default function Footer() {
 
         {/* Contact */}
         <div className="col-span-1 space-y-8">
-          <h4 className="text-brand-text font-black text-sm uppercase tracking-[0.2em]">Locate Us</h4>
+          <h4 className="text-brand-text font-bold text-sm uppercase tracking-[0.2em]">Locate Us</h4>
           <ul className="space-y-6">
             <li className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-xl bg-brand-bg flex items-center justify-center text-brand-red shrink-0 border border-brand-border">
@@ -85,7 +85,7 @@ export default function Footer() {
 
         {/* Support */}
         <div className="col-span-1 space-y-8">
-          <h4 className="text-brand-text font-black text-sm uppercase tracking-[0.2em]">Contact</h4>
+          <h4 className="text-brand-text font-bold text-sm uppercase tracking-[0.2em]">Contact</h4>
           <ul className="space-y-6">
             <li className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-xl bg-brand-bg flex items-center justify-center text-brand-red shrink-0 border border-brand-border">
@@ -108,10 +108,10 @@ export default function Footer() {
 
         {/* Quick Links */}
         <div className="col-span-1 space-y-8">
-          <h4 className="text-brand-text font-black text-sm uppercase tracking-[0.2em]">Experience</h4>
+          <h4 className="text-brand-text font-bold text-sm uppercase tracking-[0.2em]">Experience</h4>
           <ul className="grid grid-cols-1 gap-4">
             {[
-              { label: 'Our Menu', href: '/' },
+              { label: 'Menu Category', href: '/' },
               { label: 'Track Order', href: '/cart' },
               { label: 'Book Table', href: '/dining' },
               { label: 'Feedback', href: '/feedback' }
@@ -129,7 +129,7 @@ export default function Footer() {
 
       <div className="border-t border-brand-border bg-brand-bg py-8">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-brand-text font-black text-xs uppercase tracking-widest">
+          <p className="text-brand-text font-bold text-xs uppercase tracking-widest">
             © 2024 Drive Thru Eats. All Rights Reserved.
           </p>
           <div className="flex items-center gap-2 text-[10px] font-bold text-brand-muted uppercase tracking-widest">

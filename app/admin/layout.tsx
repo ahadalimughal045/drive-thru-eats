@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, ChefHat, Users, ShoppingBag, LogOut, ArrowLeft, LayoutGrid, Utensils } from 'lucide-react';
+import { LayoutDashboard, ChefHat, Users, ShoppingBag, LogOut, ArrowLeft, LayoutGrid, Utensils, Tag } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -13,14 +13,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Tables', href: '/admin/tables', icon: <LayoutGrid size={20} /> },
     { name: 'Kitchen', href: '/admin/kitchen', icon: <ChefHat size={20} /> },
     { name: 'Menu', href: '/admin/menu', icon: <Utensils size={20} /> },
-    { name: 'Customers', href: '/admin/users', icon: <Users size={20} /> },
+    { name: 'Coupons', href: '/admin/coupons', icon: <Tag size={20} /> },
     { name: 'Staff', href: '/admin/staff', icon: <Users size={20} /> },
   ];
 
   return (
-    <div className="min-h-screen bg-brand-bg flex">
+    <div className="h-screen bg-brand-bg flex overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#212529] text-white hidden md:flex flex-col">
+      <aside className="w-64 bg-[#212529] text-white hidden md:flex flex-col h-screen sticky top-0">
         <div className="p-8 border-b border-gray-800 flex flex-col items-center">
           <img 
             src="https://drive-thrueats.online/logo.png" 
@@ -29,12 +29,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             style={{ filter: 'brightness(0) invert(1)' }} 
           />
           <div className="mt-4 text-center">
-            <h2 className="text-xl font-black text-white tracking-widest uppercase">Admin</h2>
+            <h2 className="text-xl font-bold text-white tracking-widest uppercase">Admin</h2>
             <div className="h-1 w-12 bg-brand-red mx-auto mt-1 rounded-full" />
           </div>
         </div>
 
-        <nav className="flex-1 py-6 px-4 space-y-2">
+        <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto scrollbar-hide">
           {links.map((link) => (
             <Link
               key={link.name}
@@ -57,7 +57,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-h-screen overflow-hidden">
+      <main className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Mobile Header */}
         <header className="md:hidden bg-[#212529] text-white p-4 flex items-center justify-between">
           <img 

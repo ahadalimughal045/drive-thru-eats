@@ -86,7 +86,7 @@ export default function StaffPage() {
     <div className="max-w-6xl mx-auto space-y-8">
       <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-[#dee2e6]">
         <div>
-          <h1 className="text-3xl font-black text-[#212529]">Staff Management</h1>
+          <h1 className="text-3xl font-bold text-[#212529]">Staff Management</h1>
           <p className="text-[#6c757d] font-medium mt-1">Manage kitchen staff, delivery drivers, and managers.</p>
         </div>
         <div className="flex gap-3">
@@ -166,7 +166,7 @@ export default function StaffPage() {
                   s.role === 'Counter Staff' ? <UserCircle size={28} /> : <Truck size={28} />}
               </div>
               <div>
-                <h3 className="font-black text-lg text-[#212529] leading-tight">{s.name}</h3>
+                <h3 className="font-bold text-lg text-[#212529] leading-tight">{s.name}</h3>
                 <span className="text-xs font-bold text-[#6c757d] uppercase tracking-wider">{s.sid || s.id}</span>
               </div>
             </div>

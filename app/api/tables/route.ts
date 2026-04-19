@@ -16,7 +16,7 @@ export async function GET() {
       ];
       
       await Promise.all(defaultTables.map(t => 
-        prisma.table.create({ data: { ...t, status: 'available' } })
+        prisma.table.create({ data: { id: `T-${t.number}`, ...t, status: 'available' } })
       ));
       
       tables = await prisma.table.findMany();
@@ -34,6 +34,7 @@ export async function POST(req: Request) {
     const data = await req.json();
     const table = await prisma.table.create({
       data: {
+        id: 'TBL-' + Date.now(),
         number: data.number,
         seats: data.seats,
         type: data.type,

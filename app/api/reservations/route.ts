@@ -15,6 +15,7 @@ export async function POST(req: Request) {
     const data = await req.json();
     const res = await prisma.reservation.create({
       data: {
+        id: data.id || Math.random().toString(36).substr(2, 9),
         tableId: data.tableId,
         name: data.name,
         phone: data.phone,

@@ -4,7 +4,6 @@ import {
   ShoppingBag, Utensils, LayoutGrid, Plus, Minus,
   Search, X, Check, ArrowLeft, LogOut, Loader2
 } from 'lucide-react';
-import { useCart } from '@/components/CartContext';
 
 export default function WaiterPortal() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,14 +22,18 @@ export default function WaiterPortal() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [activeOrders, setActiveOrders] = useState<any[]>([]);
+  const [showCart, setShowCart] = useState(false);
 
   const fetchExistingOrder = async (tableNum: number) => {
     try {
-      const active = activeOrders.find((o: any) => o.tableNumber == tableNum);
+      const oRes = await fetch('/api/orders');
+      const oData = await oRes.json();
+      const active = oData.find((o: any) => o.tableNumber == tableNum && o.status !== 'Delivered' && o.status !== 'Cancelled');
+      
       if (active) {
         const items = Array.isArray(active.items) ? active.items : JSON.parse(active.items || '[]');
         setExistingOrderItems(items);
-        setExistingOrderId(active.orderId);
+        setExistingOrderId(active.orderId || active.id);
       } else {
         setExistingOrderItems([]);
         setExistingOrderId(null);
@@ -53,7 +56,11 @@ export default function WaiterPortal() {
 
     const oRes = await fetch('/api/orders');
     const oData = await oRes.json();
-    setActiveOrders(oData.filter((o: any) => o.status !== 'Delivered' && o.status !== 'Cancelled' && o.type === 'dining'));
+    if (Array.isArray(oData)) {
+      setActiveOrders(oData.filter((o: any) => o.status !== 'Delivered' && o.status !== 'Cancelled'));
+    } else {
+      setActiveOrders([]);
+    }
 
     const mRes = await fetch('/api/menu');
     const mData = await mRes.json();
@@ -63,8 +70,16 @@ export default function WaiterPortal() {
   useEffect(() => {
     const saved = localStorage.getItem('dte_waiter_session');
     if (saved) {
-      setWaiter(JSON.parse(saved));
-      setIsLoggedIn(true);
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.sid) {
+          setWaiter(parsed);
+          setIsLoggedIn(true);
+        }
+      } catch (e) {
+        console.error("Session restore error", e);
+        localStorage.removeItem('dte_waiter_session');
+      }
     }
 
     loadInitialData();
@@ -83,19 +98,26 @@ export default function WaiterPortal() {
         body: JSON.stringify({ sid, pin })
       });
       const data = await res.json();
-      if (data.success && (data.staff.role === 'Waiter' || data.staff.role === 'Kitchen Staff')) {
-        setWaiter(data.staff);
-        setIsLoggedIn(true);
-        localStorage.setItem('dte_waiter_session', JSON.stringify(data.staff));
-        // Force refresh data for the new user
-        window.location.reload();
-      } else {
-        const allowedRoles = ['Waiter', 'Kitchen Staff'];
-        if (!allowedRoles.includes(data.staff?.role)) {
-          alert(`Login failed: Role '${data.staff?.role}' does not have access to this portal.`);
+      if (data.success) {
+        const staff = data.staff;
+        // Expanded list of allowed roles or just accept standard ones + anything user might have added like "Manager"
+        const isAuthorized = staff.role === 'Waiter' ||
+          staff.role === 'Kitchen Staff' ||
+          staff.role === 'Manager' ||
+          staff.role.toLowerCase().includes('waiter') ||
+          staff.role.toLowerCase().includes('staff');
+
+        if (isAuthorized) {
+          setWaiter(staff);
+          setIsLoggedIn(true);
+          localStorage.setItem('dte_waiter_session', JSON.stringify(staff));
+          // Force refresh data for the new user
+          loadInitialData();
         } else {
-          alert('Invalid ID or PIN');
+          alert(`Access Denied: Role '${staff.role}' is not authorized for the Waiter Portal.`);
         }
+      } else {
+        alert(data.error || 'Invalid ID or PIN');
       }
     } catch (err) {
       alert('Login failed');
@@ -113,6 +135,13 @@ export default function WaiterPortal() {
     }
   };
 
+  const isBeverage = (item: any) => {
+    const cat = (item.categoryName || item.category || '').toLowerCase();
+    return cat.includes('beverage') || cat.includes('drink') || cat.includes('juice') ||
+           cat.includes('shake') || cat.includes('water') || cat.includes('shakes') ||
+           cat.includes('juices') || cat.includes('ice cream');
+  };
+
   const updateQty = (id: string, delta: number) => {
     setCart(cart.map(c => {
       if (c.id === id) {
@@ -121,6 +150,36 @@ export default function WaiterPortal() {
       }
       return c;
     }).filter(c => c.quantity > 0));
+  };
+
+  const updateExistingQty = async (itemId: string, delta: number) => {
+    if (!existingOrderId) return;
+    
+    // Optimistic local UI update
+    const newItems = existingOrderItems.map((c: any) => {
+      if (c.id === itemId) return { ...c, quantity: Math.max(0, c.quantity + delta) };
+      return c;
+    }).filter((c: any) => c.quantity > 0);
+    
+    setExistingOrderItems(newItems);
+    const newTotal = newItems.reduce((sum: number, it: any) => sum + (it.price * it.quantity), 0);
+    
+    try {
+      await fetch('/api/orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: existingOrderId,
+          updates: {
+            items: JSON.stringify(newItems),
+            total: newTotal
+          }
+        })
+      });
+      loadInitialData(); // subtle refresh
+    } catch(e) {
+      console.error('Failed to update DB quantity', e);
+    }
   };
 
   const submitOrder = async () => {
@@ -139,10 +198,14 @@ export default function WaiterPortal() {
       );
 
       if (activeOrder) {
-        // 2. MERGE: Update Existing Order
+        // 2. MERGE: Update Existing Order - include ALL cart items (beverages + food) in bill
         const existingItems = Array.isArray(activeOrder.items) ? activeOrder.items : JSON.parse(activeOrder.items || '[]');
         const mergedItems = [...existingItems, ...cart];
         const newTotal = activeOrder.total + cart.reduce((sum, it) => sum + (it.price * it.quantity), 0);
+
+        // Only send non-beverage items to kitchen (beverages don't need preparation)
+        const kitchenItems = cart.filter(it => !isBeverage(it));
+        const kitchenStatus = kitchenItems.length > 0 ? 'Pending' : activeOrder.status;
 
         await fetch('/api/orders', {
           method: 'PATCH',
@@ -152,23 +215,24 @@ export default function WaiterPortal() {
             updates: {
               items: JSON.stringify(mergedItems),
               total: newTotal,
-              status: 'Pending' // Reset to pending so kitchen sees new items
+              status: kitchenStatus
             }
           })
         });
-        alert('Items added to existing Table Order!');
+        alert(kitchenItems.length > 0 ? 'Items added to existing Table Order!' : 'Beverages added to bill!');
       } else {
-        // 3. CREATE: New Order
+        // 3. CREATE: New Order - include ALL items in bill
+        const kitchenItems = cart.filter(it => !isBeverage(it));
         const orderData = {
           id: 'DINE-' + Date.now(),
           customerName: `Table ${selectedTable.number} Guest`,
           phone: 'N/A',
           type: 'dining',
           tableNumber: String(selectedTable.number),
-          items: cart,
+          items: cart, // all items go to bill
           total: cart.reduce((sum, it) => sum + (it.price * it.quantity), 0),
           paymentMethod: 'cash',
-          status: 'Pending',
+          status: kitchenItems.length > 0 ? 'Pending' : 'Delivered', // beverages-only = skip kitchen
           waiter: waiter.name
         };
 
@@ -177,12 +241,18 @@ export default function WaiterPortal() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(orderData)
         });
-        alert('Order sent to kitchen!');
+        alert(kitchenItems.length > 0 ? 'Order sent to kitchen!' : 'Beverages added to bill!');
       }
 
+      // 4. Refresh local state
       setCart([]);
-      setSelectedTable(null);
-      setStep('tables');
+      setShowCart(false);
+
+      // Sync data to show new items in "Already Ordered" section
+      await loadInitialData();
+      if (selectedTable) {
+        await fetchExistingOrder(selectedTable.number);
+      }
     } catch (err) {
       console.error(err);
       alert('Failed to process order');
@@ -205,7 +275,7 @@ export default function WaiterPortal() {
               <div className="w-20 h-20 bg-gradient-to-br from-brand-red to-orange-500 rounded-3xl mx-auto flex items-center justify-center mb-8 shadow-lg shadow-brand-red/20 rotate-3">
                 <Utensils className="text-white" size={40} />
               </div>
-              <h1 className="text-3xl font-black text-white tracking-tighter uppercase mb-2">Staff Portal</h1>
+              <h1 className="text-3xl font-bold text-white tracking-tighter uppercase mb-2">Staff Portal</h1>
               <p className="text-slate-400 font-medium text-xs uppercase tracking-[0.2em]">Secure Hardware Access</p>
             </div>
 
@@ -228,12 +298,12 @@ export default function WaiterPortal() {
                   maxLength={4}
                   value={pin}
                   onChange={e => setPin(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-black tracking-[1em] outline-none focus:border-brand-red/50 focus:bg-white/10 transition-all text-center placeholder:text-slate-500 placeholder:tracking-normal"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold tracking-[1em] outline-none focus:border-brand-red/50 focus:bg-white/10 transition-all text-center placeholder:text-slate-500 placeholder:tracking-normal"
                 />
               </div>
               <button
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-brand-red to-orange-600 hover:scale-[1.02] active:scale-[0.98] text-white font-black py-5 rounded-2xl transition-all shadow-xl shadow-brand-red/20 disabled:opacity-50 mt-4 flex items-center justify-center gap-3 uppercase tracking-widest text-xs"
+                className="w-full bg-gradient-to-r from-brand-red to-orange-600 hover:scale-[1.02] active:scale-[0.98] text-white font-bold py-5 rounded-2xl transition-all shadow-xl shadow-brand-red/20 disabled:opacity-50 mt-4 flex items-center justify-center gap-3 uppercase tracking-widest text-xs"
               >
                 {loading ? <Loader2 className="animate-spin" /> : 'Enter Dashboard'}
               </button>
@@ -246,24 +316,39 @@ export default function WaiterPortal() {
           <header className="px-8 py-5 border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-50 flex items-center justify-between">
             <div className="flex items-center gap-5">
               <div className="relative">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-red to-orange-500 flex items-center justify-center text-white font-black text-lg shadow-lg shadow-brand-red/20">
-                  {waiter.name[0]}
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-red to-orange-500 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-brand-red/20">
+                  {waiter?.name?.[0] || 'W'}
                 </div>
                 <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
               </div>
               <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Authenticated</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Authenticated</p>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-base font-black text-slate-800 tracking-tight">{waiter.name}</h2>
-                  <span className="px-2 py-0.5 bg-slate-100 text-[8px] font-black text-slate-500 rounded uppercase tracking-tighter border border-slate-200">{waiter.role}</span>
+                  <h2 className="text-base font-bold text-slate-800 tracking-tight">{waiter?.name || 'Staff'}</h2>
+                  <span className="px-2 py-0.5 bg-slate-100 text-[8px] font-bold text-slate-500 rounded uppercase tracking-tighter border border-slate-200">{waiter?.role || 'Staff'}</span>
                 </div>
               </div>
             </div>
 
             <div className="flex items-center gap-4">
+              {step !== 'tables' && (
+                <button
+                  onClick={() => setShowCart(true)}
+                  className="relative group flex items-center gap-3 px-6 py-3 bg-brand-red text-white rounded-2xl shadow-lg shadow-brand-red/20 transition-all hover:scale-105 active:scale-95"
+                >
+                  <ShoppingBag size={18} />
+                  <span className="font-bold text-xs uppercase tracking-widest text-white">View Order</span>
+                  {(cart.length > 0 || existingOrderItems.length > 0) && (
+                    <span className="absolute -top-2 -right-2 bg-white text-brand-red text-[10px] font-bold rounded-full h-6 px-2 flex items-center justify-center border-2 border-brand-red shadow-soft">
+                      {cart.length + existingOrderItems.length}
+                    </span>
+                  )}
+                </button>
+              )}
+
               <div className="hidden md:flex flex-col items-end mr-4">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">System Status</p>
-                <p className="text-[10px] font-black text-green-500 uppercase flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Network Active</p>
+                <p className="text-[10px] font-bold text-green-500 uppercase flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Network Active</p>
               </div>
               <button
                 onClick={() => { localStorage.removeItem('dte_waiter_session'); setIsLoggedIn(false); }}
@@ -275,16 +360,16 @@ export default function WaiterPortal() {
           </header>
 
           {/* Main Content Area */}
-          <main className="flex-1 overflow-hidden p-8 flex flex-col">
-            {waiter.role === 'Kitchen Staff' ? (
+          <main className="flex-1 overflow-y-auto p-8 flex flex-col scrollbar-custom">
+            {waiter?.role === 'Kitchen Staff' ? (
               <div className="space-y-8 animate-fade-in flex-1 flex flex-col h-full">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h1 className="text-4xl font-black text-slate-800 tracking-tighter uppercase leading-none">Kitchen Operations</h1>
+                    <h1 className="text-4xl font-bold text-slate-800 tracking-tighter uppercase leading-none">Kitchen Operations</h1>
                     <div className="flex items-center gap-4 mt-3">
                       <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em]">Preparation Heartbeat</p>
                       <div className="h-[2px] w-12 bg-slate-200"></div>
-                      <div className="flex items-center gap-2 text-[10px] font-black text-brand-red bg-brand-red/5 px-3 py-1 rounded-full uppercase italic">
+                      <div className="flex items-center gap-2 text-[10px] font-bold text-brand-red bg-brand-red/5 px-3 py-1 rounded-full uppercase italic">
                         Live Update Stream
                       </div>
                     </div>
@@ -298,21 +383,26 @@ export default function WaiterPortal() {
                     {/* 1. Pending Column */}
                     <div className="w-[380px] flex flex-col gap-5 bg-slate-200/50 backdrop-blur-sm p-6 rounded-[3rem] border border-slate-200/60 shadow-inner">
                       <div className="flex items-center justify-between px-4">
-                        <h2 className="font-black text-slate-500 text-xs uppercase tracking-widest flex items-center gap-2">
+                        <h2 className="font-bold text-slate-500 text-xs uppercase tracking-widest flex items-center gap-2">
                           <LayoutGrid size={14} className="text-slate-400" /> Incoming orders
                         </h2>
-                        <span className="bg-white text-slate-800 text-[10px] font-black px-2 py-0.5 rounded-lg border border-slate-200 shadow-sm">
+                        <span className="bg-white text-slate-800 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-slate-200 shadow-sm">
                           {activeOrders.filter(o => o.status === 'Pending').length}
                         </span>
                       </div>
 
                       <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar">
+                        {activeOrders.filter(o => o.status === 'Pending').length === 0 && (
+                          <div className="h-40 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-3xl opacity-50">
+                            <span className="text-xs font-bold uppercase tracking-widest text-slate-400">No New Orders</span>
+                          </div>
+                        )}
                         {activeOrders.filter(o => o.status === 'Pending').map(order => (
                           <div key={order.id} className="bg-white p-7 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-xl hover:scale-[1.01] transition-all group animate-slide-up">
                             <div className="flex justify-between items-start mb-6">
                               <div>
-                                <span className="font-black text-xl text-slate-800 tracking-tighter line-clamp-1">{order.orderId}</span>
-                                <p className="text-[10px] font-black text-brand-red/50 uppercase tracking-widest mt-1">
+                                <span className="font-bold text-xl text-slate-800 tracking-tighter line-clamp-1">{order.orderId}</span>
+                                <p className="text-[10px] font-bold text-brand-red/50 uppercase tracking-widest mt-1">
                                   {order.tableNumber ? `Dining • Table ${order.tableNumber}` : `${order.type} order`}
                                 </p>
                               </div>
@@ -322,12 +412,13 @@ export default function WaiterPortal() {
                             </div>
 
                             <ul className="space-y-2.5 mb-8">
-                              {(Array.isArray(order.items) ? order.items : []).filter((it: any) =>
-                                !it.category?.toLowerCase().includes('beverage') && !it.category?.toLowerCase().includes('drink')
-                              ).map((item, i) => (
+                              {(Array.isArray(order.items) ? order.items : []).filter((it: any) => {
+                                const catName = (it.categoryName || '').toLowerCase();
+                                return !catName.includes('beverage') && !catName.includes('drink');
+                              }).map((item: any, i: number) => (
                                 <li key={i} className="text-sm font-bold text-slate-700 flex justify-between items-center bg-slate-50/50 px-4 py-2.5 rounded-xl border border-dotted border-slate-200">
                                   <span className="uppercase tracking-tight truncate">{item.name}</span>
-                                  <span className="text-brand-red font-black text-xs brightness-90">x{item.quantity}</span>
+                                  <span className="text-brand-red font-bold text-xs brightness-90">x{item.quantity}</span>
                                 </li>
                               ))}
                             </ul>
@@ -337,13 +428,13 @@ export default function WaiterPortal() {
                                 await fetch('/api/orders', {
                                   method: 'PATCH',
                                   headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ id: order.orderId, updates: { status: 'Preparing', chef: waiter.name } })
+                                  body: JSON.stringify({ id: order.orderId, updates: { status: 'Preparing', chef: waiter?.name || 'Chef' } })
                                 });
                                 loadInitialData();
                               }}
-                              className="w-full bg-slate-900 border-2 border-slate-900 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-slate-200 hover:bg-brand-red hover:border-brand-red transition-all active:scale-[0.97]"
+                              className="w-full bg-slate-900 border-2 border-slate-900 text-white py-4 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-slate-200 hover:bg-brand-red hover:border-brand-red transition-all active:scale-[0.97]"
                             >
-                              Fire Order
+                              Make Order
                             </button>
                           </div>
                         ))}
@@ -353,27 +444,33 @@ export default function WaiterPortal() {
                     {/* 2. Preparing Column */}
                     <div className="w-[380px] flex flex-col gap-5 bg-orange-100/40 backdrop-blur-sm p-6 rounded-[3rem] border border-orange-200/30">
                       <div className="flex items-center justify-between px-4">
-                        <h2 className="font-black text-orange-600 text-xs uppercase tracking-widest flex items-center gap-2">
-                          <Loader2 size={14} className="animate-spin" /> In preparation
+                        <h2 className="font-bold text-orange-600 text-xs uppercase tracking-widest flex items-center gap-2">
+                          In preparation
                         </h2>
                       </div>
 
                       <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar">
+                        {activeOrders.filter(o => o.status === 'Preparing').length === 0 && (
+                          <div className="h-40 flex items-center justify-center border-2 border-dashed border-orange-200 rounded-3xl opacity-50">
+                            <span className="text-xs font-bold uppercase tracking-widest text-orange-400">No Orders Here</span>
+                          </div>
+                        )}
                         {activeOrders.filter(o => o.status === 'Preparing').map(order => (
                           <div key={order.id} className="bg-white p-7 rounded-[2.5rem] shadow-xl shadow-orange-500/5 border-l-8 border-orange-500 group animate-pulse-subtle">
                             <div className="flex justify-between items-start mb-6">
                               <div>
-                                <span className="font-black text-xl text-slate-800 tracking-tighter line-clamp-1">{order.orderId}</span>
-                                <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest mt-1">Cooking • {order.chef || 'Chef'}</p>
+                                <span className="font-bold text-xl text-slate-800 tracking-tighter line-clamp-1">{order.orderId}</span>
+                                <p className="text-[10px] font-bold text-orange-500 uppercase tracking-widest mt-1">Cooking • {order.chef || 'Chef'}</p>
                               </div>
                             </div>
 
                             <ul className="space-y-2 mb-8">
-                              {(Array.isArray(order.items) ? order.items : []).filter((it: any) =>
-                                !it.category?.toLowerCase().includes('beverage') && !it.category?.toLowerCase().includes('drink')
-                              ).map((item, i) => (
+                              {(Array.isArray(order.items) ? order.items : []).filter((it: any) => {
+                                const catName = (it.categoryName || '').toLowerCase();
+                                return !catName.includes('beverage') && !catName.includes('drink');
+                              }).map((item: any, i: number) => (
                                 <li key={i} className="text-sm font-bold text-slate-700 bg-orange-50/50 px-4 py-2 rounded-xl">
-                                  <span className="text-orange-600 font-black mr-2">x{item.quantity}</span> {item.name}
+                                  <span className="text-orange-600 font-bold mr-2">x{item.quantity}</span> {item.name}
                                 </li>
                               ))}
                             </ul>
@@ -387,7 +484,7 @@ export default function WaiterPortal() {
                                 });
                                 loadInitialData();
                               }}
-                              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-orange-200 hover:scale-[1.02] transition-all"
+                              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-orange-200 hover:scale-[1.02] transition-all"
                             >
                               Complete Task
                             </button>
@@ -398,17 +495,22 @@ export default function WaiterPortal() {
 
                     {/* 3. Ready Column */}
                     <div className="w-[380px] flex flex-col gap-5 bg-emerald-100/30 backdrop-blur-sm p-6 rounded-[3rem] border border-emerald-200/20">
-                      <h2 className="font-black text-emerald-600 text-xs uppercase tracking-widest px-4">Out to guest</h2>
+                      <h2 className="font-bold text-emerald-600 text-xs uppercase tracking-widest px-4">Out to guest</h2>
                       <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar">
+                        {activeOrders.filter(o => o.status === 'Ready').length === 0 && (
+                          <div className="h-40 flex items-center justify-center border-2 border-dashed border-emerald-200 rounded-3xl opacity-50">
+                            <span className="text-xs font-bold uppercase tracking-widest text-emerald-500">Nothing to Serve</span>
+                          </div>
+                        )}
                         {activeOrders.filter(o => o.status === 'Ready').map(order => (
                           <div key={order.id} className="bg-white/80 p-7 rounded-[2.5rem] shadow-sm border border-emerald-100 scale-95 opacity-80 filter grayscale-[0.5]">
                             <div className="flex justify-between items-center mb-4">
-                              <span className="font-black text-base text-emerald-600 uppercase tracking-tighter">{order.orderId}</span>
+                              <span className="font-bold text-base text-emerald-600 uppercase tracking-tighter">{order.orderId}</span>
                               <Check size={16} className="text-emerald-500" />
                             </div>
-                            <p className="text-[10px] font-black text-slate-500 uppercase mb-4">Transfer: Table {order.tableNumber}</p>
+                            <p className="text-[10px] font-bold text-slate-500 uppercase mb-4">Transfer: Table {order.tableNumber}</p>
                             <div className="bg-emerald-50 py-3 rounded-2xl text-center border border-emerald-100">
-                              <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Handover Ready</p>
+                              <p className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Handover Ready</p>
                             </div>
                           </div>
                         ))}
@@ -423,19 +525,19 @@ export default function WaiterPortal() {
                   <div className="space-y-12 max-w-6xl mx-auto w-full pt-4">
                     <div className="flex justify-between items-end">
                       <div>
-                        <h1 className="text-5xl font-black text-slate-800 tracking-tighter uppercase leading-none">Floor Map</h1>
-                        <p className="text-slate-400 font-bold text-xs uppercase tracking-[0.4em] mt-4 flex items-center gap-2">
+                        <h1 className="text-5xl font-bold text-slate-800 tracking-tighter uppercase leading-none">Floor Map</h1>
+                        <div className="text-slate-400 font-bold text-xs uppercase tracking-[0.4em] mt-4 flex items-center gap-2">
                           Restaurant Intelligence System <div className="w-8 h-[1px] bg-slate-200"></div>
-                        </p>
+                        </div>
                       </div>
                       <div className="flex gap-4">
                         <div className="bg-white border border-slate-200 rounded-2xl px-6 py-3 flex items-center gap-4 shadow-sm group hover:border-brand-red transition-all">
                           <div className="w-3 h-3 rounded-full bg-slate-200 border-2 border-white group-hover:bg-brand-red transition-colors"></div>
-                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Available Seats</span>
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Available Seats</span>
                         </div>
                         <div className="bg-white border border-slate-200 rounded-2xl px-6 py-3 flex items-center gap-4 shadow-sm group hover:border-orange-500 transition-all">
                           <div className="w-3 h-3 rounded-full bg-orange-500 border-2 border-white animate-pulse"></div>
-                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Live Sessions</span>
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Live Sessions</span>
                         </div>
                       </div>
                     </div>
@@ -449,13 +551,13 @@ export default function WaiterPortal() {
                             onClick={() => handleTableSelect(t)}
                             style={{ animationDelay: `${idx * 50}ms` }}
                             className={`relative bg-white aspect-square rounded-[3.5rem] border-2 transition-all p-10 flex flex-col items-center justify-center gap-5 shadow-sm group animate-slide-up ${isOccupied
-                                ? 'border-orange-500 ring-8 ring-orange-500/5 shadow-orange-500/10'
-                                : 'border-transparent hover:border-brand-red hover:shadow-2xl hover:shadow-brand-red/10'
+                              ? 'border-orange-500 ring-8 ring-orange-500/5 shadow-orange-500/10'
+                              : 'border-transparent hover:border-brand-red hover:shadow-2xl hover:shadow-brand-red/10'
                               }`}
                           >
                             {isOccupied && (
                               <div className="absolute top-8 right-8">
-                                <div className="bg-orange-500 text-white text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-orange-500/30">Busy</div>
+                                <div className="bg-orange-500 text-white text-[8px] font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-orange-500/30">Busy</div>
                               </div>
                             )}
                             <div className={`p-6 rounded-[2rem] transition-all transform group-hover:scale-110 group-hover:rotate-6 ${isOccupied ? 'bg-orange-50 text-orange-500' : 'bg-slate-50 text-slate-300 group-hover:bg-brand-red group-hover:text-white'
@@ -463,7 +565,7 @@ export default function WaiterPortal() {
                               <Utensils size={32} />
                             </div>
                             <div className="text-center">
-                              <p className={`font-black text-3xl tracking-tighter ${isOccupied ? 'text-orange-600' : 'text-slate-800'}`}>T-{t.number}</p>
+                              <p className={`font-bold text-3xl tracking-tighter ${isOccupied ? 'text-orange-600' : 'text-slate-800'}`}>T-{t.number}</p>
                               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{t.seats} SEATS</span>
                             </div>
                           </button>
@@ -474,25 +576,25 @@ export default function WaiterPortal() {
                 )}
 
                 {step === 'menu' && (
-                  <div className="flex gap-10 h-full animate-fade-in overflow-hidden pr-2">
-                    {/* 60% Left: High-Performance Menu */}
-                    <div className="w-[62%] flex flex-col gap-8 pb-4">
+                  <div className="flex flex-col h-full animate-fade-in overflow-hidden relative">
+                    {/* Full Width Menu Area */}
+                    <div className="w-full h-full flex flex-col gap-8 pb-4">
                       <div className="flex items-center justify-between">
                         <button
                           onClick={() => setStep('tables')}
-                          className="flex items-center gap-3 text-slate-400 hover:text-slate-800 font-black text-[10px] uppercase tracking-widest transition-all group"
+                          className="flex items-center gap-3 text-slate-400 hover:text-slate-800 font-bold text-[10px] uppercase tracking-widest transition-all group"
                         >
                           <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:bg-slate-50">
                             <ArrowLeft size={16} />
                           </div>
                           Return to floor
                         </button>
-                        <div className="bg-slate-900 shadow-xl shadow-slate-200 text-white px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-widest border border-white/10">
+                        <div className="bg-slate-900 shadow-xl shadow-slate-200 text-white px-6 py-2 rounded-full font-bold text-[10px] uppercase tracking-widest border border-white/10">
                           Editing Table {selectedTable?.number}
                         </div>
                       </div>
 
-                      <div className="relative group">
+                      <div className="relative group max-w-2xl">
                         <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-red transition-colors" size={20} />
                         <input
                           type="text"
@@ -505,14 +607,14 @@ export default function WaiterPortal() {
 
                       <div className="flex-1 overflow-y-auto space-y-10 scrollbar-custom pr-4">
                         {categories.map((cat, cIdx) => {
-                          const filteredItems = (cat.items || []).filter((it: any) => it.name.toLowerCase().includes(search.toLowerCase()));
+                          const filteredItems = (cat.items || []).filter((it: any) => (it.name || '').toLowerCase().includes(search.toLowerCase()));
                           if (filteredItems.length === 0) return null;
                           return (
                             <div key={cat.id} style={{ animationDelay: `${cIdx * 100}ms` }} className="animate-fade-in">
-                              <h3 className="font-black text-[10px] uppercase tracking-[0.3em] text-slate-400 mb-6 flex items-center gap-4 ml-2">
+                              <h3 className="font-bold text-[10px] uppercase tracking-[0.3em] text-slate-400 mb-6 flex items-center gap-4 ml-2">
                                 {cat.name} <div className="h-[1px] flex-1 bg-slate-100"></div>
                               </h3>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                                 {filteredItems.map((it: any) => (
                                   <div key={it.id} className="bg-white p-4 rounded-3xl shadow-sm border border-transparent flex justify-between items-center group hover:border-brand-red/20 hover:shadow-xl hover:shadow-brand-red/5 hover:-translate-y-1 transition-all duration-300">
                                     <div className="flex items-center gap-4">
@@ -521,11 +623,9 @@ export default function WaiterPortal() {
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                                       </div>
                                       <div>
-                                        <p className="font-black text-xs text-slate-800 uppercase leading-none mb-1.5">{it.name}</p>
+                                        <p className="font-bold text-xs text-slate-800 uppercase leading-none mb-1.5">{it.name}</p>
                                         <div className="flex items-center gap-2">
-                                          <span className="font-black text-brand-red text-xs">₹{it.price}</span>
-                                          <span className="w-1 h-1 rounded-full bg-slate-200"></span>
-                                          <span className="text-[9px] font-bold text-slate-400 tracking-widest uppercase">Popular</span>
+                                          <span className="font-bold text-brand-red text-xs">₹{it.price}</span>
                                         </div>
                                       </div>
                                     </div>
@@ -544,130 +644,155 @@ export default function WaiterPortal() {
                       </div>
                     </div>
 
-                    {/* 40% Right: POS Glass Sidebar */}
-                    <div className="w-[38%] bg-white/40 backdrop-blur-xl rounded-[3.5rem] flex flex-col shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden border border-white relative group/sidebar">
-                      <div className="p-8 pb-6 bg-white/60">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-black text-xl text-slate-800 tracking-tighter uppercase">Live Session</h3>
-                          <div className="w-10 h-6 bg-brand-red/10 text-brand-red flex items-center justify-center rounded-lg text-[10px] font-black">T{selectedTable?.number}</div>
-                        </div>
-                        <p className="text-slate-400 font-bold text-[9px] uppercase tracking-widest flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span> Active Ticket Processing
-                        </p>
-                      </div>
+                    {/* Floating Side Panel for Order Tracking */}
+                    {showCart && (
+                      <div className="absolute inset-0 z-[100] flex justify-end animate-fade-in">
+                        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowCart(false)}></div>
+                        <div className="w-full max-w-md bg-white h-full shadow-2xl relative animate-slide-left flex flex-col">
+                          <div className="p-8 pb-6 border-b border-slate-100 flex items-center justify-between">
+                            <div>
+                              <h3 className="font-bold text-2xl text-slate-800 tracking-tighter uppercase">Bill Details</h3>
+                              <p className="text-slate-400 font-bold text-[9px] uppercase tracking-widest flex items-center gap-2 mt-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span> Table {selectedTable?.number} Session
+                              </p>
+                            </div>
+                            <button onClick={() => setShowCart(false)} className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-brand-red hover:text-white transition-all">
+                              <X size={20} />
+                            </button>
+                          </div>
 
-                      <div className="flex-1 overflow-y-auto p-8 pt-2 space-y-8 scrollbar-custom">
-                        {/* Existing Items Table - Condensed & Elegant */}
-                        {existingOrderItems.length > 0 && (
-                          <div className="space-y-4 animate-fade-in">
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 ml-1 flex items-center gap-2">
-                              Delivered Items <div className="h-[1px] flex-1 bg-slate-100"></div>
-                            </p>
-                            <div className="bg-slate-700/5 rounded-3xl p-5 space-y-3.5 border border-slate-200/50">
-                              {existingOrderItems.map((item, i) => (
-                                <div key={i} className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-                                  <span className="uppercase flex items-center gap-3 truncate pr-4 text-slate-400 font-black">
-                                    <div className="w-1 h-1 rounded-full bg-slate-300"></div> {item.quantity}x {item.name}
-                                  </span>
-                                  <span className="font-mono text-xs">₹{item.price * item.quantity}</span>
+                          <div className="flex-1 overflow-y-auto p-8 space-y-8 scrollbar-custom">
+                            {/* Existing Items */}
+                            {existingOrderItems.length > 0 && (
+                              <div className="space-y-4">
+                                <div className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3 ml-1 flex items-center gap-2">
+                                  Already Ordered <div className="h-[1px] flex-1 bg-slate-100"></div>
                                 </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
+                                  <div className="space-y-3 mt-4">
+                                    {existingOrderItems.map((item, i) => (
+                                      <div key={i} className="group/item flex justify-between items-center gap-5 bg-slate-50 p-3 px-4 rounded-[1.5rem] border border-slate-100/60 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all">
+                                        <div className="flex-1 min-w-0 flex items-center gap-3">
+                                          <div className="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
+                                          <h4 className="font-bold text-[10px] text-slate-500 uppercase truncate">{item.name}</h4>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-4">
+                                          <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-100 shadow-sm">
+                                            <button disabled className="w-6 h-6 rounded-lg bg-slate-50 text-slate-300 flex items-center justify-center cursor-not-allowed">
+                                              <Minus size={12} />
+                                            </button>
+                                            <span className="font-bold text-xs w-5 text-center text-slate-800">{item.quantity}</span>
+                                            <button onClick={() => updateExistingQty(item.id, 1)} className="w-6 h-6 rounded-lg bg-slate-50/50 text-slate-400 hover:text-brand-red hover:bg-brand-red/10 flex items-center justify-center transition-all">
+                                              <Plus size={12} />
+                                            </button>
+                                          </div>
+                                          <p className="font-mono text-xs font-bold text-slate-500 tracking-wider w-12 text-right">₹{item.price * item.quantity}</p>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                              </div>
+                            )}
 
-                        {/* New Selections - High Visibility Cards */}
-                        {cart.length > 0 ? (
-                          <div className="space-y-4 pt-2">
-                            <p className="text-[9px] font-black text-brand-red uppercase tracking-[0.2em] mb-4 ml-1 flex items-center gap-2">
-                              Current Selection <div className="h-[1px] flex-1 bg-brand-red/10"></div>
-                            </p>
-                            <div className="space-y-4">
-                              {cart.map(item => (
-                                <div key={item.id} className="group/item flex justify-between items-center gap-5 bg-white p-4 rounded-[2rem] border border-brand-red/10 shadow-lg shadow-brand-red/5 hover:-translate-y-0.5 transition-all animate-slide-left">
-                                  <div className="flex-1 min-w-0">
-                                    <h4 className="font-black text-xs text-slate-800 uppercase truncate mb-1">{item.name}</h4>
-                                    <p className="font-mono text-[10px] font-bold text-brand-red/60 italic tracking-wider">₹{item.price * item.quantity}</p>
-                                  </div>
-                                  <div className="flex items-center gap-1.5 bg-slate-50 p-1.5 rounded-2xl border border-slate-100 transition-colors group-hover/item:bg-red-50">
-                                    <button onClick={() => updateQty(item.id, -1)} className="w-7 h-7 rounded-xl bg-white text-slate-400 hover:text-brand-red shadow-sm flex items-center justify-center transition-all hover:scale-110 active:scale-90">
-                                      <Minus size={14} />
-                                    </button>
-                                    <span className="font-black text-sm w-6 text-center text-slate-800">{item.quantity}</span>
-                                    <button onClick={() => updateQty(item.id, 1)} className="w-7 h-7 rounded-xl bg-white text-slate-400 hover:text-brand-red shadow-sm flex items-center justify-center transition-all hover:scale-110 active:scale-90">
-                                      <Plus size={14} />
-                                    </button>
-                                  </div>
+                            {/* New Items */}
+                            {cart.length > 0 ? (
+                              <div className="space-y-4">
+                                <div className="text-[9px] font-bold text-brand-red uppercase tracking-[0.2em] mb-4 ml-1 flex items-center gap-2">
+                                  New Selection <div className="h-[1px] flex-1 bg-brand-red/10"></div>
                                 </div>
-                              ))}
+                                <div className="space-y-4">
+                                  {cart.map(item => (
+                                    <div key={item.id} className="group/item flex justify-between items-center gap-5 bg-white p-4 rounded-[2rem] border border-brand-red/10 shadow-lg shadow-brand-red/5 hover:-translate-y-0.5 transition-all">
+                                      <div className="flex-1 min-w-0">
+                                        <h4 className="font-bold text-xs text-slate-800 uppercase truncate mb-1">{item.name}</h4>
+                                        <p className="font-mono text-[10px] font-bold text-brand-red/60 tracking-wider">₹{item.price * item.quantity}</p>
+                                      </div>
+                                      <div className="flex items-center gap-1.5 bg-slate-50 p-1.5 rounded-2xl border border-slate-100">
+                                        <button onClick={() => updateQty(item.id, -1)} className="w-7 h-7 rounded-xl bg-white text-slate-400 hover:text-brand-red shadow-sm flex items-center justify-center transition-all">
+                                          <Minus size={14} />
+                                        </button>
+                                        <span className="font-bold text-sm w-6 text-center text-slate-800">{item.quantity}</span>
+                                        <button onClick={() => updateQty(item.id, 1)} className="w-7 h-7 rounded-xl bg-white text-slate-400 hover:text-brand-red shadow-sm flex items-center justify-center transition-all">
+                                          <Plus size={14} />
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            ) : (
+                              existingOrderItems.length === 0 && (
+                                <div className="h-full flex flex-col items-center justify-center text-center opacity-30 py-32 grayscale">
+                                  <ShoppingBag size={40} className="text-slate-300 mb-4" />
+                                  <p className="font-bold text-xs uppercase tracking-widest text-slate-400">Cart is Empty</p>
+                                </div>
+                              )
+                            )}
+                          </div>
+
+                          <div className="p-8 bg-slate-50 border-t border-slate-100 space-y-6">
+                            <div className="flex justify-between items-center px-2">
+                              <div>
+                                <span className="font-bold text-slate-400 uppercase tracking-widest text-[8px] mb-2 block">Total Bill Amount</span>
+                                <span className="text-3xl font-bold text-slate-900 tracking-tighter leading-none">
+                                  ₹{existingOrderItems.reduce((s, it) => s + (it.price * it.quantity), 0) + cart.reduce((s, it) => s + (it.price * it.quantity), 0)}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-3">
+                              {/* Only show Send to Kitchen if there are non-beverage items in cart */}
+                              {cart.some(it => !isBeverage(it)) && (
+                                <button
+                                  onClick={submitOrder}
+                                  disabled={loading}
+                                  className="bg-brand-red text-white font-bold py-5 rounded-[2rem] shadow-xl shadow-brand-red/20 tracking-widest uppercase text-xs flex items-center justify-center gap-4 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-30"
+                                >
+                                  {loading ? <Loader2 className="animate-spin" /> : <><Check size={20} /> Send to Kitchen</>}
+                                </button>
+                              )}
+                              {/* If only beverages, show an Add to Bill button instead */}
+                              {cart.length > 0 && cart.every(it => isBeverage(it)) && (
+                                <button
+                                  onClick={submitOrder}
+                                  disabled={loading}
+                                  className="bg-slate-800 text-white font-bold py-5 rounded-[2rem] shadow-xl tracking-widest uppercase text-xs flex items-center justify-center gap-4 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-30"
+                                >
+                                  {loading ? <Loader2 className="animate-spin" /> : <><Check size={20} /> Add to Bill</>}
+                                </button>
+                              )}
+
+                              <button
+                                onClick={async () => {
+                                  if (confirm("Finalize transaction and clear table status?")) {
+                                    try {
+                                      await fetch('/api/orders', {
+                                        method: 'PATCH',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                          id: existingOrderId,
+                                          updates: { status: 'Delivered' }
+                                        })
+                                      });
+                                      alert("Bill Finalized!");
+                                      window.print();
+                                      setStep('tables');
+                                      setShowCart(false);
+                                    } catch (err) {
+                                      alert("Error finalizing bill");
+                                    }
+                                  }
+                                }}
+                                disabled={!existingOrderId || loading}
+                                className="bg-white text-slate-400 hover:bg-slate-900 hover:text-white font-bold py-4 rounded-2xl tracking-widest uppercase text-[10px] flex items-center justify-center gap-3 transition-all border border-slate-200"
+                              >
+                                <ShoppingBag size={16} /> Close & Finalize Bill
+                              </button>
                             </div>
                           </div>
-                        ) : null}
-
-                        {existingOrderItems.length === 0 && cart.length === 0 && (
-                          <div className="h-full flex flex-col items-center justify-center text-center opacity-30 py-32 grayscale">
-                            <div className="w-24 h-24 rounded-[3rem] bg-slate-100 flex items-center justify-center mb-6">
-                              <ShoppingBag size={40} className="text-slate-300" />
-                            </div>
-                            <p className="font-black text-xs uppercase tracking-[0.4em] text-slate-400">Ready for service</p>
-                            <p className="text-[10px] font-bold text-slate-300 uppercase mt-2">Select items to begin ticket</p>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* POS Action Hub - Premium Footer */}
-                      <div className="p-8 bg-white border-t border-slate-100 shadow-[0_-10px_30px_rgba(0,0,0,0.02)] space-y-6">
-                        <div className="flex justify-between items-center px-2">
-                          <div>
-                            <span className="font-bold text-slate-300 uppercase tracking-[0.3em] text-[8px] leading-none mb-2 block">Unified Total Bill</span>
-                            <span className="text-3xl font-black text-slate-900 tracking-tighter leading-none">
-                              ₹{existingOrderItems.reduce((s, it) => s + (it.price * it.quantity), 0) + cart.reduce((s, it) => s + (it.price * it.quantity), 0)}
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-end">
-                            <span className="text-[10px] font-black text-green-500 uppercase tracking-tighter bg-green-50 px-3 py-1 rounded-full mb-1">Calculated</span>
-                            <span className="text-[9px] font-bold text-slate-300 uppercase">Inc. Taxes</span>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col gap-3">
-                          <button
-                            onClick={submitOrder}
-                            disabled={cart.length === 0 || loading}
-                            className="bg-brand-red group/btn relative overflow-hidden text-white font-black py-5 rounded-[2rem] shadow-2xl shadow-brand-red/30 tracking-[0.2em] uppercase text-xs flex items-center justify-center gap-4 hover:shadow-brand-red/50 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-30 disabled:grayscale"
-                          >
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:animate-shimmer"></div>
-                            {loading ? <Loader2 className="animate-spin size={20}" /> : <><Check size={20} /> Deploy to Kitchen</>}
-                          </button>
-
-                          <button
-                            onClick={async () => {
-                              if (confirm("Finalize transaction and clear table status?")) {
-                                try {
-                                  await fetch('/api/orders', {
-                                    method: 'PATCH',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                      id: existingOrderId,
-                                      updates: { status: 'Delivered' }
-                                    })
-                                  });
-                                  alert("Bill Finalized! Session Closed.");
-                                  window.print();
-                                  setStep('tables');
-                                } catch (err) {
-                                  alert("System fault: Retry finalization");
-                                }
-                              }
-                            }}
-                            disabled={!existingOrderId || loading}
-                            className="bg-slate-100 text-slate-400 hover:bg-slate-900 hover:text-white font-black py-4 rounded-2xl tracking-[0.15em] uppercase text-[10px] flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-30"
-                          >
-                            <ShoppingBag size={16} /> Close & Finalize Bill
-                          </button>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -676,8 +801,77 @@ export default function WaiterPortal() {
         </div>
       )}
 
-      {/* Global CSS for Animations */}
+      {/* Receipt for Printing (Thermal Style) */}
+      <div id="receipt-print" className="hidden print:block p-8 bg-white text-black font-mono text-sm max-w-[80mm] mx-auto border border-gray-200">
+        <div className="text-center mb-6">
+          <h2 className="text-xl font-bold uppercase">Drive Thru Eats</h2>
+          <p className="text-xs">Burger Arena - Premium Flavors</p>
+          <div className="border-b border-dashed border-gray-400 my-4" />
+          <p className="text-[10px] uppercase font-bold">Sales Receipt</p>
+          <p className="text-[10px]" suppressHydrationWarning>Date: {new Date().toLocaleString()}</p>
+          {existingOrderId && <p className="text-[10px]">Order ID: {existingOrderId}</p>}
+          <p className="text-[10px]">Server: {waiter?.name || 'Staff'}</p>
+          <p className="text-[10px]">Table: {selectedTable?.number}</p>
+        </div>
+
+        <div className="border-b border-dashed border-gray-400 mb-4" />
+
+        <table className="w-full text-[11px] mb-6">
+          <thead>
+            <tr className="border-b border-gray-200">
+              <th className="text-left py-2 font-bold uppercase">Item</th>
+              <th className="text-center py-2 font-bold uppercase">Qty</th>
+              <th className="text-right py-2 font-bold uppercase">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[...existingOrderItems, ...cart].map((item, i) => (
+              <tr key={i}>
+                <td className="py-2 uppercase font-medium">{item.name}</td>
+                <td className="text-center py-2">{item.quantity}</td>
+                <td className="text-right py-2">₹{item.price * item.quantity}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="border-t border-dashed border-gray-400 pt-4 space-y-2">
+          <div className="flex justify-between text-xs font-bold uppercase">
+            <span>Subtotal</span>
+            <span>₹{existingOrderItems.reduce((s, it) => s + (it.price * it.quantity), 0) + cart.reduce((s, it) => s + (it.price * it.quantity), 0)}</span>
+          </div>
+          <div className="flex justify-between text-xs font-bold uppercase">
+            <span>Tax (0%)</span>
+            <span>₹0</span>
+          </div>
+          <div className="flex justify-between text-lg font-bold uppercase pt-2 border-t border-gray-200">
+            <span>Total</span>
+            <span>₹{existingOrderItems.reduce((s, it) => s + (it.price * it.quantity), 0) + cart.reduce((s, it) => s + (it.price * it.quantity), 0)}</span>
+          </div>
+        </div>
+
+        <div className="mt-10 text-center text-[10px] space-y-2">
+          <div className="border-b border-dashed border-gray-400 my-4" />
+          <p className="font-bold">THANK YOU FOR DINING WITH US!</p>
+          <p className="italic">Hope to see you again soon.</p>
+        </div>
+      </div>
+
+      {/* Global CSS for Animations and Printing */}
       <style jsx global>{`
+        @media print {
+          body * { visibility: hidden; }
+          #receipt-print, #receipt-print * { visibility: visible; }
+          #receipt-print { 
+            position: absolute; 
+            left: 0; 
+            top: 0; 
+            width: 100%;
+            display: block !important;
+          }
+          @page { size: auto; margin: 0; }
+        }
+
         @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slide-left { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }

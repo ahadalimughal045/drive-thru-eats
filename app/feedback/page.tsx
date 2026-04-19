@@ -58,7 +58,7 @@ export default function FeedbackPage() {
         <div className="w-32 h-32 bg-brand-bg rounded-full flex items-center justify-center mb-10 translate-y-0 animate-bounce transition-all shadow-premium">
           <Sparkles size={64} className="text-brand-red animate-pulse" />
         </div>
-        <h1 className="text-5xl lg:text-7xl font-black text-brand-text mb-6 tracking-tighter leading-none">
+        <h1 className="text-5xl lg:text-7xl font-bold text-brand-text mb-6 tracking-tighter leading-none">
           YOU&apos;RE <br />
           <span className="text-brand-red">ABSOLUTE MAGIC!</span>
         </h1>
@@ -88,10 +88,10 @@ export default function FeedbackPage() {
 
       <div className="max-w-4xl mx-auto px-4 relative z-10">
         <div className="mb-12 text-center pt-16 md:pt-20">
-          <Link href="/" className="group inline-flex items-center gap-2 text-brand-muted hover:text-brand-red transition-all font-black text-[9px] uppercase tracking-[0.3em] mb-6 bg-brand-bg px-4 py-1.5 rounded-full border border-brand-border">
+          <Link href="/" className="group inline-flex items-center gap-2 text-brand-muted hover:text-brand-red transition-all font-bold text-[9px] uppercase tracking-[0.3em] mb-6 bg-brand-bg px-4 py-1.5 rounded-full border border-brand-border">
             <ArrowLeft size={14} /> Back to Dashboard
           </Link>
-          <h1 className="text-4xl lg:text-6xl font-black text-brand-text tracking-tighter leading-[0.9] mb-4">
+          <h1 className="text-4xl lg:text-6xl font-bold text-brand-text tracking-tighter leading-[0.9] mb-4">
             Help Us Become <br />
             <span className="text-brand-red">The Ultimate.</span>
           </h1>
@@ -116,12 +116,12 @@ export default function FeedbackPage() {
             {currentStep === 1 && (
               <div className="space-y-10 animate-slide-up">
                 <div className="text-center space-y-1">
-                  <h3 className="text-xl font-black text-brand-text uppercase tracking-tight">Who are we talking to?</h3>
+                  <h3 className="text-xl font-bold text-brand-text uppercase tracking-tight">Who are we talking to?</h3>
                   <p className="text-brand-muted text-sm font-medium">This helps us personalize our response to you.</p>
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[9px] font-black text-brand-muted uppercase tracking-[0.15em] ml-2">Full Legal Name</label>
+                    <label className="text-[9px] font-bold text-brand-muted uppercase tracking-[0.15em] ml-2">Full Legal Name</label>
                     <input
                       type="text"
                       name="fullName"
@@ -132,7 +132,7 @@ export default function FeedbackPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[9px] font-black text-brand-muted uppercase tracking-[0.15em] ml-2">Mobile Hotline</label>
+                    <label className="text-[9px] font-bold text-brand-muted uppercase tracking-[0.15em] ml-2">Mobile Hotline</label>
                     <input
                       type="tel"
                       name="mobileNumber"
@@ -153,7 +153,7 @@ export default function FeedbackPage() {
             {currentStep === 2 && (
               <div className="space-y-10 animate-slide-up">
                 <div className="text-center space-y-1">
-                  <h3 className="text-xl font-black text-brand-text uppercase tracking-tight">The Experience Scale</h3>
+                  <h3 className="text-xl font-bold text-brand-text uppercase tracking-tight">The Experience Scale</h3>
                   <p className="text-brand-muted text-sm font-medium">Select to express your legendary feelings.</p>
                 </div>
                 
@@ -164,7 +164,7 @@ export default function FeedbackPage() {
                         <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center text-brand-red shadow-soft">
                           <type.icon size={18} />
                         </div>
-                        <h4 className="text-[11px] font-black text-brand-text uppercase tracking-widest">{type.label}</h4>
+                        <h4 className="text-[11px] font-bold text-brand-text uppercase tracking-widest">{type.label}</h4>
                       </div>
                       <div className="flex justify-between gap-1.5 max-w-lg mx-auto">
                         {RATING_LEVELS.map((level) => (
@@ -179,7 +179,7 @@ export default function FeedbackPage() {
                             }`}
                           >
                             <div className="scale-75 md:scale-90">{level.emoji}</div>
-                            <span className="text-[8px] font-black uppercase tracking-tight">{level.label}</span>
+                            <span className="text-[8px] font-bold uppercase tracking-tight">{level.label}</span>
                           </button>
                         ))}
                       </div>
@@ -198,14 +198,14 @@ export default function FeedbackPage() {
             {currentStep === 3 && (
               <div className="space-y-10 animate-slide-up">
                 <div className="text-center space-y-1">
-                  <h3 className="text-xl font-black text-brand-text uppercase tracking-tight">Final Words of Wisdom</h3>
+                  <h3 className="text-xl font-bold text-brand-text uppercase tracking-tight">Final Words of Wisdom</h3>
                   <p className="text-brand-muted text-sm font-medium">Anything else on your mind?</p>
                 </div>
                 
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 ml-3">
                     <MessageSquare size={20} className="text-brand-red" />
-                    <span className="text-[9px] font-black text-brand-muted uppercase tracking-[0.15em]">Open Mic Section</span>
+                    <span className="text-[9px] font-bold text-brand-muted uppercase tracking-[0.15em]">Open Mic Section</span>
                   </div>
                   <textarea
                     name="comments"
@@ -230,13 +230,13 @@ export default function FeedbackPage() {
 
         {/* Support Section */}
         <div className="mt-20 text-center space-y-6">
-          <p className="text-[10px] font-black text-brand-muted uppercase tracking-[0.4em]">Want to talk to a human?</p>
+          <p className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.4em]">Want to talk to a human?</p>
           <div className="flex justify-center gap-8">
-            <Link href="https://wa.link/mnta3l" target="_blank" className="flex items-center gap-3 text-brand-text hover:text-brand-red font-black text-xs uppercase tracking-widest transition-all">
+            <Link href="https://wa.link/mnta3l" target="_blank" className="flex items-center gap-3 text-brand-text hover:text-brand-red font-bold text-xs uppercase tracking-widest transition-all">
               <Zap size={16} /> WhatsApp Support
             </Link>
             <div className="w-px h-4 bg-brand-border" />
-            <Link href="mailto:support@drive-thru.com" className="flex items-center gap-3 text-brand-text hover:text-brand-red font-black text-xs uppercase tracking-widest transition-all">
+            <Link href="mailto:support@drive-thru.com" className="flex items-center gap-3 text-brand-text hover:text-brand-red font-bold text-xs uppercase tracking-widest transition-all">
               <MessageSquare size={16} /> Email Direct
             </Link>
           </div>

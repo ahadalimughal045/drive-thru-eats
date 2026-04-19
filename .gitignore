@@ -1,40 +1,91 @@
-# dependencies
+# ===========================
+# Dependencies
+# ===========================
 /node_modules
 /.pnp
 .pnp.js
 
-# testing
-/coverage
-
-# next.js
+# ===========================
+# Next.js Build Output
+# ===========================
 /.next/
 /out/
-
-# production
 /build
 
-# misc
-.DS_Store
-*.pem
+# ===========================
+# Environment Variables (NEVER commit these)
+# ===========================
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test.local
+.env.production
+.env.production.local
 
-# debug
+# ===========================
+# Prisma Generated Client
+# ===========================
+/lib/generated/
+
+# ===========================
+# Database & Logs
+# ===========================
+/data/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env*.local
-
-# logs
-/data/*.log
-
-# vercel
-.vercel
-
-# typescript
+# ===========================
+# TypeScript
+# ===========================
 *.tsbuildinfo
 next-env.d.ts
 
-# temp/private
+# ===========================
+# OS Files
+# ===========================
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===========================
+# IDE & Editor
+# ===========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.suo
+
+# ===========================
+# Vercel
+# ===========================
+.vercel
+
+# ===========================
+# Temp / Scratch Files
+# ===========================
 /scratch/
-/lib/generated/
+*.tmp
+*.temp
+/target.html
+/target2.html
+/temp.html
+/awais.js
+/cats.js
+/extract.js
+/website_source.html
+/website_source2.html
+/scratch_debug_prisma.ts
+/seed_staff.js
+/theme.css
+
+# ===========================
+# Testing
+# ===========================
+/coverage

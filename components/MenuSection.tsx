@@ -71,7 +71,7 @@ export default function MenuSection() {
     return items;
   };
 
-  if (loading) return <div className="py-20 text-center font-black animate-pulse text-brand-muted tracking-[0.5em]">PREPARING FRESH MENU...</div>;
+  if (loading) return <div className="py-20 text-center font-bold animate-pulse text-brand-muted tracking-[0.5em]">PREPARING FRESH MENU...</div>;
 
   return (
     <section id="menu" className="bg-brand-bg section-padding relative">
@@ -83,7 +83,7 @@ export default function MenuSection() {
         <div className="flex flex-col mb-16 space-y-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-4">
-              <h2 className="text-4xl lg:text-6xl font-black text-brand-text tracking-tighter">
+              <h2 className="text-4xl lg:text-6xl font-bold text-brand-text tracking-tighter">
                 Explore Our <br />
                 <span className="text-brand-red">Legendary Menu</span>
               </h2>
@@ -116,7 +116,7 @@ export default function MenuSection() {
                   <button
                     key={cat.id}
                     onClick={() => scrollToCategory(cat.id)}
-                    className={`flex items-center gap-3 px-6 py-3.5 rounded-2xl text-sm font-black whitespace-nowrap transition-all ${
+                    className={`flex items-center gap-3 px-6 py-3.5 rounded-2xl text-sm font-bold whitespace-nowrap transition-all ${
                       activeCategory === cat.id
                         ? 'bg-brand-text text-white shadow-premium scale-105'
                         : 'bg-white border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-text'
@@ -137,7 +137,7 @@ export default function MenuSection() {
                 {getFilteredItems().length === 0 ? (
                   <div className="text-center py-24 bg-white rounded-4xl border-2 border-dashed border-brand-border">
                     <div className="text-8xl mb-6">🤌</div>
-                    <h3 className="text-2xl font-black text-brand-text mb-2">Non found, Chef!</h3>
+                    <h3 className="text-2xl font-bold text-brand-text mb-2">Non found, Chef!</h3>
                     <p className="text-brand-muted mb-8">Maybe try searching for 'Burger' or 'Pizza'?</p>
                     <button 
                       onClick={() => setSearchQuery('')}
@@ -152,7 +152,7 @@ export default function MenuSection() {
                       <div className="h-12 w-12 rounded-2xl bg-brand-red/10 flex items-center justify-center text-brand-red">
                         <Search size={24} />
                       </div>
-                      <h2 className="text-brand-text font-black text-3xl tracking-tight">
+                      <h2 className="text-brand-text font-bold text-3xl tracking-tight">
                         Results for "{searchQuery}"
                         <span className="ml-3 text-sm font-bold text-brand-muted bg-brand-bg px-3 py-1 rounded-full border border-brand-border uppercase tracking-widest">{getFilteredItems().length} Items</span>
                       </h2>
@@ -184,12 +184,12 @@ export default function MenuSection() {
                         {cat.icon}
                       </div>
                       <div>
-                        <h2 className="text-brand-text font-black text-3xl lg:text-4xl tracking-tight">{cat.name}</h2>
+                        <h2 className="text-brand-text font-bold text-3xl lg:text-4xl tracking-tight">{cat.name}</h2>
                         <p className="text-brand-muted text-sm font-bold uppercase tracking-[0.2em]">{items.length} Options Available</p>
                       </div>
                     </div>
                     <div className="hidden md:flex flex-1 h-px bg-brand-border" />
-                    <button className="hidden md:flex items-center gap-2 text-brand-red font-black text-sm uppercase tracking-widest hover:translate-x-2 transition-transform">
+                    <button className="hidden md:flex items-center gap-2 text-brand-red font-bold text-sm uppercase tracking-widest hover:translate-x-2 transition-transform">
                       View All <ArrowRight size={16} />
                     </button>
                   </div>

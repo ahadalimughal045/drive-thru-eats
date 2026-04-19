@@ -9,6 +9,7 @@ export default function TablesPage() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [tablesList, setTablesList] = useState<Table[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // New Table State
   const [newNumber, setNewNumber] = useState('');
@@ -45,7 +46,6 @@ export default function TablesPage() {
     return () => clearInterval(timer);
   }, []);
 
-  const [loading, setLoading] = useState(true);
 
   const addTable = (e: React.FormEvent) => {
     e.preventDefault();
@@ -211,7 +211,7 @@ export default function TablesPage() {
     <div className="max-w-6xl mx-auto space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-black text-[#212529]">Tables Management</h1>
+          <h1 className="text-3xl font-bold text-[#212529]">Tables Management</h1>
           <p className="text-[#6c757d] font-medium mt-1">Live overview of seating availability and reservations.</p>
         </div>
         <button 
@@ -277,7 +277,7 @@ export default function TablesPage() {
                       <LayoutGrid size={24} />
                     </div>
                     <div>
-                      <h3 className="font-black text-xl text-[#212529]">Table {table.number}</h3>
+                      <h3 className="font-bold text-xl text-[#212529]">Table {table.number}</h3>
                       <span className="text-xs font-bold text-[#6c757d] uppercase tracking-wider">{table.type}</span>
                     </div>
                   </div>
@@ -293,7 +293,7 @@ export default function TablesPage() {
                     <span className="text-sm font-bold text-[#6c757d] flex items-center gap-2">
                       <Users size={16} /> Capacity
                     </span>
-                    <span className="text-sm font-black text-[#212529]">{table.seats} Persons</span>
+                    <span className="text-sm font-bold text-[#212529]">{table.seats} Persons</span>
                   </div>
 
                   {isOccupied && activeRes ? (
@@ -312,7 +312,7 @@ export default function TablesPage() {
                         >
                           <Printer size={18} />
                         </button>
-                        <span className="text-lg font-black text-brand-red">{timeLeft}</span>
+                        <span className="text-lg font-bold text-brand-red">{timeLeft}</span>
                       </div>
                     </div>
                   ) : (
@@ -320,7 +320,7 @@ export default function TablesPage() {
                       <span className="text-sm font-bold text-[#6c757d] flex items-center gap-2">
                         <Clock size={16} /> Will be Free In
                       </span>
-                      <span className="text-sm font-black text-[#6c757d]">-</span>
+                      <span className="text-sm font-bold text-[#6c757d]">-</span>
                     </div>
                   )}
                 </div>
@@ -328,7 +328,68 @@ export default function TablesPage() {
             );
           })}
         </div>
+      {/* Reservations List Section */}
+      <div className="bg-white border border-[#dee2e6] rounded-2xl shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-[#dee2e6] flex justify-between items-center bg-gray-50/50">
+          <h2 className="text-xl font-bold text-[#212529]">All Table Reservations</h2>
+          <span className="bg-brand-red text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">{reservations.length} total</span>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-white text-[#6c757d] text-[10px] uppercase font-bold tracking-widest border-b border-[#dee2e6]">
+                <th className="p-6">Customer</th>
+                <th className="p-6">Table</th>
+                <th className="p-6">Date & Time</th>
+                <th className="p-6">Guests</th>
+                <th className="p-6 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#dee2e6]">
+              {reservations.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="p-12 text-center text-[#6c757d] font-bold">No reservations found in database.</td>
+                </tr>
+              ) : [...reservations].sort((a,b) => {
+                const dateA = new Date(`${a.date || '2000-01-01'}T${a.time?.includes(' ') ? a.time : (a.time || '00:00')}`).getTime() || 0;
+                const dateB = new Date(`${b.date || '2000-01-01'}T${b.time?.includes(' ') ? b.time : (b.time || '00:00')}`).getTime() || 0;
+                return dateB - dateA;
+              }).map(res => (
+                <tr key={res.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="p-6">
+                    <p className="font-bold text-[#212529]">{res.name}</p>
+                    <p className="text-xs text-[#6c757d]">{res.phone}</p>
+                  </td>
+                  <td className="p-6">
+                    <div className="inline-flex items-center gap-2 bg-brand-bg px-3 py-1 rounded-lg border border-[#dee2e6]">
+                      <span className="text-xs font-bold text-brand-red">Table {tablesList.find(t => t.id === res.tableId)?.number || res.id.substring(0,4)}</span>
+                    </div>
+                  </td>
+                  <td className="p-6">
+                    <p className="text-sm font-bold text-[#212529]">{res.date}</p>
+                    <p className="text-xs text-[#6c757d]">{res.time}</p>
+                  </td>
+                  <td className="p-6">
+                    <span className="text-sm font-bold text-[#212529]">{res.guests} Persons</span>
+                  </td>
+                  <td className="p-6 text-right">
+                    <button 
+                      onClick={() => {
+                        const table = tablesList.find(t => t.id === res.tableId);
+                        if (table) printReceipt(res, table);
+                      }}
+                      className="p-2 bg-gray-100 rounded-lg hover:bg-brand-red hover:text-white transition-all text-gray-500"
+                    >
+                      <Printer size={16} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  );
+  </div>
+);
 }

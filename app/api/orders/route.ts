@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import fs from 'fs';
-import path from 'path';
 
 export async function GET(req: Request) {
   try {
@@ -25,7 +23,18 @@ export async function GET(req: Request) {
       orderBy: { timestamp: 'desc' },
       take: limit
     });
-    return NextResponse.json(orders);
+    
+    const parsedOrders = orders.map(order => {
+      let parsedItems = [];
+      try {
+        parsedItems = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+      } catch (e) {
+        parsedItems = [];
+      }
+      return { ...order, items: parsedItems };
+    });
+
+    return NextResponse.json(parsedOrders);
   } catch (error) {
     console.error("Orders API Error:", error);
     return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
@@ -33,12 +42,9 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const LOG_FILE = path.join(process.cwd(), 'data', 'order_error.log');
-  if (!fs.existsSync(path.join(process.cwd(), 'data'))) fs.mkdirSync(path.join(process.cwd(), 'data'));
-
   try {
     const data = await req.json();
-    fs.appendFileSync(LOG_FILE, `[${new Date().toISOString()}] ATTEMPTING ORDER: ${JSON.stringify(data.id || 'new')}\n`);
+    console.log(`[ORDER] Attempting: ${data.id || 'new'}`);
 
     const newOrder = await prisma.order.create({
       data: {
@@ -62,12 +68,10 @@ export async function POST(req: Request) {
       }
     });
     
-    fs.appendFileSync(LOG_FILE, `[${new Date().toISOString()}] SUCCESS ORDER: ${newOrder.id}\n`);
+    console.log(`[ORDER] Success: ${newOrder.id}`);
     return NextResponse.json({ success: true, order: newOrder });
   } catch (error: any) {
-    const errorMsg = `[${new Date().toISOString()}] ORDER FAILED: ${error.message}\n${error.stack}\n`;
-    fs.appendFileSync(LOG_FILE, errorMsg);
-    console.error('Order creation failed:', error);
+    console.error('Order creation failed:', error.message);
     return NextResponse.json({ error: 'Failed to create order', detail: error.message }, { status: 500 });
   }
 }
