@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../lib/generated/client_v2"
 }
 
 datasource db {
@@ -92,4 +91,12 @@ model coupon {
   discount    Int
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
+}
+
+model settings {
+  id        String   @id @default("restaurant_config")
+  isOpen    Boolean  @default(true)
+  mode      String   @default("auto")
+  openTime  String   @default("09:00")
+  closeTime String   @default("22:00")
 }

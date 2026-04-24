@@ -24,6 +24,11 @@ export default function WaiterPortal() {
   const [activeOrders, setActiveOrders] = useState<any[]>([]);
   const [showCart, setShowCart] = useState(false);
 
+  // Payment states
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'online'>('cash');
+  const [accountType, setAccountType] = useState('');
+  const [transactionId, setTransactionId] = useState('');
+
   const fetchExistingOrder = async (tableNum: number) => {
     try {
       const oRes = await fetch('/api/orders');
@@ -83,7 +88,7 @@ export default function WaiterPortal() {
     }
 
     loadInitialData();
-    const interval = setInterval(loadInitialData, 30000); // Refresh every 30s
+    const interval = setInterval(loadInitialData, 30000); 
     return () => clearInterval(interval);
   }, []);
 
@@ -100,7 +105,6 @@ export default function WaiterPortal() {
       const data = await res.json();
       if (data.success) {
         const staff = data.staff;
-        // Expanded list of allowed roles or just accept standard ones + anything user might have added like "Manager"
         const isAuthorized = staff.role === 'Waiter' ||
           staff.role === 'Kitchen Staff' ||
           staff.role === 'Manager' ||
@@ -111,7 +115,6 @@ export default function WaiterPortal() {
           setWaiter(staff);
           setIsLoggedIn(true);
           localStorage.setItem('dte_waiter_session', JSON.stringify(staff));
-          // Force refresh data for the new user
           loadInitialData();
         } else {
           alert(`Access Denied: Role '${staff.role}' is not authorized for the Waiter Portal.`);
@@ -155,7 +158,6 @@ export default function WaiterPortal() {
   const updateExistingQty = async (itemId: string, delta: number) => {
     if (!existingOrderId) return;
     
-    // Optimistic local UI update
     const newItems = existingOrderItems.map((c: any) => {
       if (c.id === itemId) return { ...c, quantity: Math.max(0, c.quantity + delta) };
       return c;
@@ -176,7 +178,7 @@ export default function WaiterPortal() {
           }
         })
       });
-      loadInitialData(); // subtle refresh
+      loadInitialData();
     } catch(e) {
       console.error('Failed to update DB quantity', e);
     }
@@ -187,7 +189,6 @@ export default function WaiterPortal() {
     setLoading(true);
 
     try {
-      // 1. Check if there's an active order for this table
       const ordersRes = await fetch('/api/orders');
       const orders = await ordersRes.json();
       const activeOrder = orders.find((o: any) =>
@@ -198,12 +199,10 @@ export default function WaiterPortal() {
       );
 
       if (activeOrder) {
-        // 2. MERGE: Update Existing Order - include ALL cart items (beverages + food) in bill
         const existingItems = Array.isArray(activeOrder.items) ? activeOrder.items : JSON.parse(activeOrder.items || '[]');
         const mergedItems = [...existingItems, ...cart];
         const newTotal = activeOrder.total + cart.reduce((sum, it) => sum + (it.price * it.quantity), 0);
 
-        // Only send non-beverage items to kitchen (beverages don't need preparation)
         const kitchenItems = cart.filter(it => !isBeverage(it));
         const kitchenStatus = kitchenItems.length > 0 ? 'Pending' : activeOrder.status;
 
@@ -221,7 +220,6 @@ export default function WaiterPortal() {
         });
         alert(kitchenItems.length > 0 ? 'Items added to existing Table Order!' : 'Beverages added to bill!');
       } else {
-        // 3. CREATE: New Order - include ALL items in bill
         const kitchenItems = cart.filter(it => !isBeverage(it));
         const orderData = {
           id: 'DINE-' + Date.now(),
@@ -229,10 +227,10 @@ export default function WaiterPortal() {
           phone: 'N/A',
           type: 'dining',
           tableNumber: String(selectedTable.number),
-          items: cart, // all items go to bill
+          items: cart,
           total: cart.reduce((sum, it) => sum + (it.price * it.quantity), 0),
           paymentMethod: 'cash',
-          status: kitchenItems.length > 0 ? 'Pending' : 'Delivered', // beverages-only = skip kitchen
+          status: kitchenItems.length > 0 ? 'Pending' : 'Delivered',
           waiter: waiter.name
         };
 
@@ -244,11 +242,8 @@ export default function WaiterPortal() {
         alert(kitchenItems.length > 0 ? 'Order sent to kitchen!' : 'Beverages added to bill!');
       }
 
-      // 4. Refresh local state
       setCart([]);
       setShowCart(false);
-
-      // Sync data to show new items in "Already Ordered" section
       await loadInitialData();
       if (selectedTable) {
         await fetchExistingOrder(selectedTable.number);
@@ -260,7 +255,6 @@ export default function WaiterPortal() {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans selection:bg-brand-red/10 overflow-hidden">
@@ -661,7 +655,7 @@ export default function WaiterPortal() {
                             </button>
                           </div>
 
-                          <div className="flex-1 overflow-y-auto p-8 space-y-8 scrollbar-custom">
+                          <div className="flex-1 min-h-0 overflow-y-auto p-8 space-y-8 scrollbar-custom">
                             {/* Existing Items */}
                             {existingOrderItems.length > 0 && (
                               <div className="space-y-4">
@@ -730,40 +724,92 @@ export default function WaiterPortal() {
                             )}
                           </div>
 
-                          <div className="p-8 bg-slate-50 border-t border-slate-100 space-y-6">
-                            <div className="flex justify-between items-center px-2">
+                          <div className="p-6 bg-slate-50 border-t border-slate-100 flex-shrink-0 space-y-4">
+                            <div className="flex justify-between items-center">
                               <div>
-                                <span className="font-bold text-slate-400 uppercase tracking-widest text-[8px] mb-2 block">Total Bill Amount</span>
-                                <span className="text-3xl font-bold text-slate-900 tracking-tighter leading-none">
+                                <span className="font-bold text-slate-400 uppercase tracking-widest text-[8px] mb-1 block">Total Bill Amount</span>
+                                <span className="text-2xl font-bold text-slate-900 tracking-tighter leading-none">
                                   ₹{existingOrderItems.reduce((s, it) => s + (it.price * it.quantity), 0) + cart.reduce((s, it) => s + (it.price * it.quantity), 0)}
                                 </span>
                               </div>
                             </div>
 
-                            <div className="flex flex-col gap-3">
-                              {/* Only show Send to Kitchen if there are non-beverage items in cart */}
+                            {/* Payment Method Selection */}
+                            <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-3">
+                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Payment Method</p>
+                              <div className="grid grid-cols-2 gap-2">
+                                <button
+                                  onClick={() => setPaymentMethod('cash')}
+                                  className={`py-2 rounded-xl font-bold text-[10px] transition-all border-2 ${paymentMethod === 'cash'
+                                    ? 'bg-slate-900 text-white border-slate-900'
+                                    : 'bg-white text-slate-400 border-slate-100 hover:border-slate-200'
+                                    }`}
+                                >
+                                  CASH
+                                </button>
+                                <button
+                                  onClick={() => setPaymentMethod('online')}
+                                  className={`py-2 rounded-xl font-bold text-[10px] transition-all border-2 ${paymentMethod === 'online'
+                                    ? 'bg-slate-900 text-white border-slate-900'
+                                    : 'bg-white text-slate-400 border-slate-100 hover:border-slate-200'
+                                    }`}
+                                >
+                                  ONLINE
+                                </button>
+                              </div>
+
+                              {paymentMethod === 'online' && (
+                                <div className="grid grid-cols-2 gap-2 pt-1 animate-fade-in">
+                                  <div className="space-y-1">
+                                    <label className="text-[8px] font-bold text-slate-400 uppercase ml-1">Account</label>
+                                    <input
+                                      type="text"
+                                      placeholder="e.g. JazzCash"
+                                      value={accountType}
+                                      onChange={(e) => setAccountType(e.target.value)}
+                                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-[10px] font-bold outline-none focus:border-brand-red/50"
+                                    />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <label className="text-[8px] font-bold text-slate-400 uppercase ml-1">TRX ID</label>
+                                    <input
+                                      type="text"
+                                      placeholder="ID"
+                                      value={transactionId}
+                                      onChange={(e) => setTransactionId(e.target.value)}
+                                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-[10px] font-bold font-mono outline-none focus:border-brand-red/50"
+                                    />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex flex-col gap-2">
                               {cart.some(it => !isBeverage(it)) && (
                                 <button
                                   onClick={submitOrder}
                                   disabled={loading}
-                                  className="bg-brand-red text-white font-bold py-5 rounded-[2rem] shadow-xl shadow-brand-red/20 tracking-widest uppercase text-xs flex items-center justify-center gap-4 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-30"
+                                  className="bg-brand-red text-white font-bold py-4 rounded-2xl shadow-lg shadow-brand-red/10 tracking-widest uppercase text-[10px] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-30"
                                 >
-                                  {loading ? <Loader2 className="animate-spin" /> : <><Check size={20} /> Send to Kitchen</>}
+                                  {loading ? <Loader2 className="animate-spin" /> : <><Check size={16} /> Send to Kitchen</>}
                                 </button>
                               )}
-                              {/* If only beverages, show an Add to Bill button instead */}
                               {cart.length > 0 && cart.every(it => isBeverage(it)) && (
                                 <button
                                   onClick={submitOrder}
                                   disabled={loading}
-                                  className="bg-slate-800 text-white font-bold py-5 rounded-[2rem] shadow-xl tracking-widest uppercase text-xs flex items-center justify-center gap-4 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-30"
+                                  className="bg-slate-800 text-white font-bold py-4 rounded-2xl shadow-lg tracking-widest uppercase text-[10px] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-30"
                                 >
-                                  {loading ? <Loader2 className="animate-spin" /> : <><Check size={20} /> Add to Bill</>}
+                                  {loading ? <Loader2 className="animate-spin" /> : <><Check size={16} /> Add to Bill</>}
                                 </button>
                               )}
 
                               <button
                                 onClick={async () => {
+                                  if (paymentMethod === 'online' && (!accountType || !transactionId)) {
+                                    alert("Please enter Account Type and Transaction ID.");
+                                    return;
+                                  }
                                   if (confirm("Finalize transaction and clear table status?")) {
                                     try {
                                       await fetch('/api/orders', {
@@ -771,20 +817,29 @@ export default function WaiterPortal() {
                                         headers: { 'Content-Type': 'application/json' },
                                         body: JSON.stringify({
                                           id: existingOrderId,
-                                          updates: { status: 'Delivered' }
+                                          updates: {
+                                            status: 'Delivered',
+                                            paymentMethod: paymentMethod === 'online' ? `Online (${accountType})` : 'Cash',
+                                            transactionNumber: paymentMethod === 'online' ? transactionId : null
+                                          }
                                         })
                                       });
                                       alert("Bill Finalized!");
-                                      window.print();
-                                      setStep('tables');
-                                      setShowCart(false);
+                                      setTimeout(() => {
+                                        window.print();
+                                        setStep('tables');
+                                        setShowCart(false);
+                                        setPaymentMethod('cash');
+                                        setAccountType('');
+                                        setTransactionId('');
+                                      }, 500);
                                     } catch (err) {
                                       alert("Error finalizing bill");
                                     }
                                   }
                                 }}
                                 disabled={!existingOrderId || loading}
-                                className="bg-white text-slate-400 hover:bg-slate-900 hover:text-white font-bold py-4 rounded-2xl tracking-widest uppercase text-[10px] flex items-center justify-center gap-3 transition-all border border-slate-200"
+                                className="bg-white text-slate-400 hover:bg-slate-900 hover:text-white font-bold py-3.5 rounded-2xl tracking-widest uppercase text-[10px] flex items-center justify-center gap-3 transition-all border border-slate-200"
                               >
                                 <ShoppingBag size={16} /> Close & Finalize Bill
                               </button>
@@ -847,6 +902,20 @@ export default function WaiterPortal() {
           <div className="flex justify-between text-lg font-bold uppercase pt-2 border-t border-gray-200">
             <span>Total</span>
             <span>₹{existingOrderItems.reduce((s, it) => s + (it.price * it.quantity), 0) + cart.reduce((s, it) => s + (it.price * it.quantity), 0)}</span>
+          </div>
+
+          {/* Payment Info on Receipt */}
+          <div className="mt-4 pt-4 border-t border-dashed border-gray-400 space-y-1">
+            <div className="flex justify-between text-[10px] uppercase">
+              <span>Payment Mode</span>
+              <span className="font-bold">{paymentMethod === 'online' ? `Online (${accountType})` : 'Cash'}</span>
+            </div>
+            {paymentMethod === 'online' && (
+              <div className="flex justify-between text-[10px] uppercase">
+                <span>Transaction ID</span>
+                <span className="font-bold">{transactionId}</span>
+              </div>
+            )}
           </div>
         </div>
 

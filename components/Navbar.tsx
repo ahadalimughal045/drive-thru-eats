@@ -11,9 +11,22 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [dbCategories, setDbCategories] = useState<any[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isRestaurantClosed, setIsRestaurantClosed] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const checkStatus = () => {
+      fetch('/api/settings')
+        .then(res => res.json())
+        .then(data => {
+          if (!data || data.error) return;
+          setIsRestaurantClosed(data.isOpen === false);
+        });
+    };
+
+    checkStatus();
+    const statusInterval = setInterval(checkStatus, 30000);
+
     const handleScroll = () => setScrolled(window.scrollY > 20);
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -26,6 +39,7 @@ export default function Navbar() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('mousedown', handleClickOutside);
+      clearInterval(statusInterval);
     };
   }, []);
 
@@ -40,9 +54,12 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
-        scrolled ? 'py-2' : 'py-4'
-      }`}>
+      <nav 
+        style={{ top: isRestaurantClosed ? '46px' : '0' }}
+        className={`fixed left-0 right-0 z-[100] transition-all duration-300 ${
+          scrolled ? 'py-2' : 'py-4'
+        } ${isRestaurantClosed ? 'mt-[10px]' : ''}`}
+      >
         <div className="max-w-7xl mx-auto px-4">
           <div className={`glass rounded-2xl transition-all duration-300 border-white/40 shadow-premium ${
             scrolled ? 'bg-white/90 px-4' : 'bg-white/70 px-6'

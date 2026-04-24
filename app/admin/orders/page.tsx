@@ -239,20 +239,14 @@ export default function OrdersPage() {
                   <td className="p-6 align-top text-center">
                     <p className="text-xl font-bold text-brand-red">₹{order.total}</p>
                     <div className="mt-2 flex flex-col items-center gap-1">
-                      <select 
-                        value={order.status}
-                        onChange={(e) => updateStatus(order.orderId, e.target.value)}
-                        className={`text-[10px] font-bold uppercase px-2 py-1 rounded-full outline-none cursor-pointer border-none shadow-sm ${
-                          order.status === 'Pending' ? 'bg-red-50 text-red-600' :
-                          order.status === 'Preparing' ? 'bg-orange-50 text-orange-600' :
-                          order.status === 'Ready' ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'
-                        }`}
-                      >
-                        <option value="Pending">Pending</option>
-                        <option value="Preparing">Preparing</option>
-                        <option value="Ready">Ready</option>
-                        <option value="Delivered">Delivered</option>
-                      </select>
+                      <span className={`text-[10px] font-bold uppercase px-3 py-1 rounded-full shadow-sm ${
+                        order.status === 'Pending' ? 'bg-red-50 text-red-600 border border-red-100' :
+                        order.status === 'Preparing' ? 'bg-orange-50 text-orange-600 border border-orange-100' :
+                        order.status === 'Ready' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 
+                        'bg-green-50 text-green-600 border border-green-100'
+                      }`}>
+                        {order.status}
+                      </span>
                     </div>
                   </td>
                   <td className="p-6 align-top text-right">
@@ -353,10 +347,6 @@ export default function OrdersPage() {
                 <div>
                   <h3 className="text-sm font-bold text-gray-900 mb-3 border-b border-gray-100 pb-2">Staff Assigned</h3>
                    <div className="space-y-2">
-                     <p className="text-sm">
-                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest w-12 inline-block">Chef:</span> 
-                       <span className="font-bold text-gray-700">{selectedOrder.chef || 'Unassigned'}</span>
-                     </p>
                      <p className="text-sm">
                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest w-12 inline-block">Waiter:</span> 
                        <span className="font-bold text-gray-700">{selectedOrder.waiter || 'Unassigned'}</span>

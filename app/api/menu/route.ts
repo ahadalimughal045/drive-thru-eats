@@ -1,19 +1,15 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import fs from 'fs';
-import path from 'path';
-
-const LOG_FILE = path.join(process.cwd(), 'data', 'menu_error.log');
 
 export async function GET() {
   try {
     const categories = await prisma.menu_category.findMany({
       include: { items: true }
     });
-    fs.appendFileSync(LOG_FILE, `[${new Date().toISOString()}] GET SUCCESS: Found ${categories.length} categories\n`);
+    console.log(`GET SUCCESS: Found ${categories.length} categories`);
     return NextResponse.json(categories);
   } catch (error: any) {
-    fs.appendFileSync(LOG_FILE, `[${new Date().toISOString()}] GET ERROR: ${error.message}\n`);
+    console.error(`GET ERROR: ${error.message}`);
     return NextResponse.json({ error: 'Failed to fetch menu', detail: error.message }, { status: 500 });
   }
 }
@@ -24,8 +20,7 @@ export async function POST(req: Request) {
     const { type, payload } = data;
 
     const availableModels = Object.keys(prisma).filter(k => !k.startsWith('$'));
-    const version = (prisma as any)._customVersion || 'UNKNOWN-OLD';
-    fs.appendFileSync(LOG_FILE, `Version: ${version} | Models: ${availableModels.join(', ')}\n`);
+    console.log(`Models: ${availableModels.join(', ')}`);
 
     if (type === 'category') {
       const category = await prisma.menu_category.create({
@@ -58,9 +53,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
   } catch (error: any) {
-    const logMsg = `[${new Date().toISOString()}] POST ERROR: ${error.message}\n${error.stack}\n`;
-    if (!fs.existsSync(path.join(process.cwd(), 'data'))) fs.mkdirSync(path.join(process.cwd(), 'data'));
-    fs.appendFileSync(LOG_FILE, logMsg);
     console.error('Menu Operation failed:', error);
     return NextResponse.json({ error: 'Operation failed', detail: error.message }, { status: 500 });
   }

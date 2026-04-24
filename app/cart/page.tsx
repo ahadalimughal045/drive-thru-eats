@@ -92,7 +92,42 @@ export default function CartPage() {
   const currentDeliveryFee = orderType === 'delivery' ? (DELIVERY_ZONES.find(d => d.area === deliveryArea)?.fee || 0) : 0;
   const finalPrice = totalPrice - discountAmount + currentDeliveryFee;
 
+  const [isRestaurantClosed, setIsRestaurantClosed] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (!data || data.error) return;
+        if (!data.isOpen) {
+          setIsRestaurantClosed(true);
+          return;
+        }
+
+        const now = new Date();
+        const currentTime = now.getHours() * 60 + now.getMinutes();
+        const [openH, openM] = (data.openTime || '09:00').split(':').map(Number);
+        const [closeH, closeM] = (data.closeTime || '23:00').split(':').map(Number);
+        const openTotal = openH * 60 + openM;
+        const closeTotal = closeH * 60 + closeM;
+
+        if (openTotal < closeTotal) {
+          if (!(currentTime >= openTotal && currentTime < closeTotal)) {
+            setIsRestaurantClosed(true);
+          }
+        } else {
+          if (!(currentTime >= openTotal || currentTime < closeTotal)) {
+            setIsRestaurantClosed(true);
+          }
+        }
+      });
+  }, []);
+
   const placeOrder = () => {
+    if (isRestaurantClosed) {
+      alert("Sorry jani! Restaurant is currently CLOSED. We cannot accept orders right now.");
+      return;
+    }
     if (!name.trim() || !phone.trim()) return alert("Please enter Name and Phone!");
     if (orderType === 'dining' && !selectedTable) return alert("Please select a Table Number!");
 
@@ -360,7 +395,16 @@ export default function CartPage() {
 
               <div className="flex flex-col gap-4 mt-8">
                 <Link href="/" className="w-full bg-[#f06d2e] text-white py-4 rounded-xl font-bold uppercase tracking-tight text-center shadow-lg shadow-orange-500/10 hover:scale-[1.01] transition-all">Add More Item</Link>
-                <button onClick={placeOrder} className="w-full bg-[#f06d2e] text-white py-4 rounded-xl font-bold uppercase tracking-tight shadow-xl shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all">Place Order</button>
+                 <button 
+                  onClick={placeOrder} 
+                  className={`w-full py-4 rounded-xl font-bold uppercase tracking-tight shadow-xl transition-all ${
+                    isRestaurantClosed 
+                      ? 'bg-gray-400 text-white cursor-not-allowed opacity-70 shadow-none' 
+                      : 'bg-[#f06d2e] text-white shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98]'
+                  }`}
+                >
+                  {isRestaurantClosed ? 'Restaurant Closed' : 'Place Order'}
+                </button>
               </div>
             </div>
 

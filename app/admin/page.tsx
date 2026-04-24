@@ -1,168 +1,119 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { IndianRupee, ShoppingBag, Utensils, TrendingUp, Users } from 'lucide-react';
+import { ShoppingBag, Users, Utensils, IndianRupee, TrendingUp, Clock, CheckCircle2, ChevronRight, LayoutGrid, Power } from 'lucide-react';
+import Link from 'next/link';
 
-export default function AdminDashboard() {
-  const [orders, setOrders] = useState<any[]>([]);
-  const [userCount, setUserCount] = useState(0);
-  const [lastOrderId, setLastOrderId] = useState<string | null>(null);
+export default function DashboardPage() {
+  const [stats, setStats] = useState({
+    totalOrders: 0,
+    totalSales: 0,
+    pendingOrders: 0,
+    preparedOrders: 0
+  });
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
 
   useEffect(() => {
-    // Audio Notification Sound (Royalty Free Bell)
-    const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-
-    const fetchData = async () => {
-      try {
-        const res = await fetch('/api/orders');
-        const data = await res.json();
-        
-        if (Array.isArray(data) && data.length > 0) {
-          // Check if there's a new order
-          const latestId = data[0].id;
-          if (lastOrderId && latestId !== lastOrderId) {
-            notificationSound.play().catch(e => console.log('Audio play blocked:', e));
-          }
-          setLastOrderId(latestId);
-          setOrders(data);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchData();
-    const interval = setInterval(fetchData, 10000); // Polling every 10 seconds
-
-    fetch('/api/users')
+    fetch('/api/orders')
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data)) setUserCount(data.length);
+        if (Array.isArray(data)) {
+          const total = data.reduce((acc, curr) => acc + (parseFloat(curr.total) || 0), 0);
+          const pending = data.filter(o => o.status === 'Pending').length;
+          const prepared = data.filter(o => o.status === 'Delivered').length;
+          
+          setStats({
+            totalOrders: data.length,
+            totalSales: Math.round(total),
+            pendingOrders: pending,
+            preparedOrders: prepared
+          });
+          setRecentOrders(data.slice(0, 5));
+        }
       });
-
-    return () => clearInterval(interval);
-  }, [lastOrderId]);
-
-  const deliveredOrders = (Array.isArray(orders) ? orders : []).filter(o => o.status === 'Delivered');
-  const totalRevenue = deliveredOrders.reduce((sum, o) => sum + (o.total || 0), 0);
-  const totalOrders = (Array.isArray(orders) ? orders : []).length;
-  const pendingOrders = (Array.isArray(orders) ? orders : []).filter(o => o.status === 'Pending' || o.status === 'Preparing').length;
-  
-  const itemsSold = deliveredOrders.reduce((sum, o) => {
-    const items = Array.isArray(o.items) ? o.items : [];
-    return sum + items.reduce((itemSum: number, item: any) => itemSum + (item.quantity || 0), 0);
-  }, 0);
+  }, []);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold text-brand-text mb-2">Dashboard Overview</h1>
-      <p className="text-brand-muted font-medium mb-8">Welcome back to your restaurant control center.</p>
-
-      {/* Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white border border-[#dee2e6] rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <p className="text-[#6c757d] font-bold text-sm">Total Revenue</p>
-              <h3 className="text-3xl font-bold font-body text-[#212529] mt-1">₹{totalRevenue}</h3>
-            </div>
-            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600">
-              <IndianRupee size={24} />
-            </div>
-          </div>
-          <p className="text-xs text-[#6c757d] font-medium"><span className="text-green-600 font-bold">+12%</span> from last week</p>
+    <div className="max-w-7xl mx-auto space-y-8">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl lg:text-5xl font-bold text-brand-text tracking-tighter">
+            Dashboard <span className="text-brand-red">Overview.</span>
+          </h1>
+          <p className="text-brand-muted font-medium mt-1">Real-time performance and analytics.</p>
         </div>
-
-        <div className="bg-white border border-[#dee2e6] rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <p className="text-[#6c757d] font-bold text-sm">Total Orders</p>
-              <h3 className="text-3xl font-bold font-body text-[#212529] mt-1">{totalOrders}</h3>
-            </div>
-            <div className="w-12 h-12 bg-brand-red/10 rounded-xl flex items-center justify-center text-brand-red">
-              <ShoppingBag size={24} />
-            </div>
-          </div>
-          <p className="text-xs text-[#6c757d] font-medium">All time orders placed</p>
-        </div>
-
-        <div className="bg-white border border-[#dee2e6] rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <p className="text-[#6c757d] font-bold text-sm">Active Queue</p>
-              <h3 className="text-3xl font-bold font-body text-brand-orange mt-1">{pendingOrders}</h3>
-            </div>
-            <div className="w-12 h-12 bg-brand-orange/10 rounded-xl flex items-center justify-center text-brand-orange">
-              <Utensils size={24} />
-            </div>
-          </div>
-          <p className="text-xs text-[#6c757d] font-medium">Pending & preparing</p>
-        </div>
-
-        <div 
-          onClick={() => window.location.href = '/admin/users'}
-          className="bg-white border border-[#dee2e6] rounded-2xl p-6 shadow-sm flex flex-col justify-between cursor-pointer hover:border-brand-red/30 transition-all group"
-        >
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <p className="text-[#6c757d] font-bold text-sm uppercase tracking-widest text-[10px]">Total Customers</p>
-              <h3 className="text-3xl font-bold font-body text-[#212529] mt-1">{userCount}</h3>
-            </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 group-hover:bg-brand-red group-hover:text-white transition-all">
-              <Users size={24} />
-            </div>
-          </div>
-          <p className="text-xs text-[#6c757d] font-medium">New registrations stored</p>
+        <div className="flex items-center gap-3">
+          <Link href="/admin/orders" className="btn-primary py-3 px-6 text-sm flex items-center gap-2">
+            View All Orders <ChevronRight size={16} />
+          </Link>
         </div>
       </div>
 
-      {/* Recent Activity */}
-      <div className="bg-white border border-[#dee2e6] rounded-2xl shadow-sm mt-8 overflow-hidden">
-        <div className="p-6 border-b border-[#dee2e6]">
-          <h2 className="text-lg font-bold text-[#212529]">Recent Orders</h2>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 text-[#6c757d] text-sm tracking-wider">
-                <th className="p-4 font-semibold border-b border-[#dee2e6]">Order ID</th>
-                <th className="p-4 font-semibold border-b border-[#dee2e6]">Customer</th>
-                <th className="p-4 font-semibold border-b border-[#dee2e6]">Items</th>
-                <th className="p-4 font-semibold border-b border-[#dee2e6]">Total</th>
-                <th className="p-4 font-semibold border-b border-[#dee2e6]">Status</th>
-              </tr>
-            </thead>
-            <tbody className="text-sm font-medium text-[#212529]">
-              {(Array.isArray(orders) ? orders : []).slice(0, 5).map(order => (
-                <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="p-4 border-b border-[#dee2e6] font-bold">{order.orderId || order.id}</td>
-                  <td className="p-4 border-b border-[#dee2e6]">
-                    <div className="flex flex-col">
-                      <span>{order.customerName}</span>
-                      <span className="text-xs text-[#6c757d]">{order.type}</span>
-                    </div>
-                  </td>
-                  <td className="p-4 border-b border-[#dee2e6]">{(Array.isArray(order.items) ? order.items.length : 0)} items</td>
-                  <td className="p-4 border-b border-[#dee2e6] font-bold text-brand-orange">₹{order.total}</td>
-                  <td className="p-4 border-b border-[#dee2e6]">
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                      order.status === 'Delivered' ? 'bg-green-100 text-green-700' : 
-                      order.status === 'Ready' ? 'bg-blue-100 text-blue-700' :
-                      order.status === 'Preparing' ? 'bg-orange-100 text-orange-700' :
-                      'bg-red-100 text-red-700'
-                    }`}>
-                      {order.status}
-                    </span>
-                  </td>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { label: 'Total Orders', value: stats.totalOrders, icon: <ShoppingBag size={24} />, color: 'bg-blue-500' },
+          { label: 'Total Sales', value: `₹${stats.totalSales}`, icon: <IndianRupee size={24} />, color: 'bg-green-500' },
+          { label: 'Pending', value: stats.pendingOrders, icon: <Clock size={24} />, color: 'bg-orange-500' },
+          { label: 'Completed', value: stats.preparedOrders, icon: <CheckCircle2 size={24} />, color: 'bg-purple-500' },
+        ].map((stat, i) => (
+          <div key={i} className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-premium flex items-center gap-4 group hover:scale-[1.02] transition-all">
+            <div className={`w-14 h-14 rounded-2xl ${stat.color} text-white flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform`}>
+              {stat.icon}
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.label}</p>
+              <p className="text-2xl font-black text-brand-text tracking-tight">{stat.value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid lg:grid-cols-12 gap-8">
+        {/* Recent Orders Table */}
+        <div className="lg:col-span-12 bg-white rounded-[2.5rem] border border-gray-100 shadow-premium overflow-hidden">
+          <div className="p-8 border-b border-gray-50 flex items-center justify-between">
+            <h2 className="text-xl font-bold text-brand-text tracking-tight flex items-center gap-3">
+              <TrendingUp className="text-brand-red" size={20} /> Latest Orders
+            </h2>
+            <Link href="/admin/orders" className="text-xs font-bold text-brand-red hover:underline uppercase tracking-widest">
+              View All
+            </Link>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50">
+                  <th className="px-8 py-4">Order ID</th>
+                  <th className="px-8 py-4">Customer</th>
+                  <th className="px-8 py-4">Status</th>
+                  <th className="px-8 py-4">Total</th>
                 </tr>
-              ))}
-              {(!orders || orders.length === 0) && (
-                <tr>
-                  <td colSpan={5} className="p-8 text-center text-[#6c757d]">No orders received yet.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {recentOrders.map((order) => (
+                  <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
+                    <td className="px-8 py-4 text-sm font-bold text-brand-text">{order.orderId}</td>
+                    <td className="px-8 py-4">
+                      <p className="text-sm font-bold text-brand-text">{order.customerName}</p>
+                      <p className="text-[10px] text-brand-muted font-medium uppercase tracking-tighter">{order.type}</p>
+                    </td>
+                    <td className="px-8 py-4">
+                      <span className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase ${
+                        order.status === 'Pending' ? 'bg-orange-50 text-orange-600' :
+                        order.status === 'Preparing' ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'
+                      }`}>
+                        {order.status}
+                      </span>
+                    </td>
+                    <td className="px-8 py-4 font-black text-brand-text">₹{order.total}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
+
       </div>
     </div>
   );

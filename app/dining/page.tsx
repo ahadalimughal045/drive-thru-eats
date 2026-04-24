@@ -20,20 +20,21 @@ export default function DiningPage() {
   const [dbReservations, setDbReservations] = useState<any[]>([]);
 
   useEffect(() => {
-    // Fetch real occupancy from DB
-    fetch('/api/reservations')
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) setDbReservations(data);
-      });
+    const loadTablesAndRes = async () => {
+      const resRes = await fetch('/api/reservations');
+      const resData = await resRes.json();
+      if (Array.isArray(resData)) setDbReservations(resData);
 
-    const stored = localStorage.getItem('dte_tables');
-    if (stored) {
-      setTablesList(JSON.parse(stored));
-    } else {
-      setTablesList(tables);
-      localStorage.setItem('dte_tables', JSON.stringify(tables));
-    }
+      const tRes = await fetch('/api/tables');
+      const tData = await tRes.json();
+      if (Array.isArray(tData)) {
+        setTablesList(tData.sort((a: any, b: any) => a.number - b.number));
+      }
+    };
+
+    loadTablesAndRes();
+    const interval = setInterval(loadTablesAndRes, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const isTableBooked = (tableId: string) => {

@@ -1,4 +1,4 @@
-import { PrismaClient } from './generated/client_v2';
+import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
@@ -9,5 +9,3 @@ export const prisma =
   });
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
-
-(prisma as any)._customVersion = 'v2-menu-fix';

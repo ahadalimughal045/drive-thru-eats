@@ -7,6 +7,7 @@ export default function MenuManagement() {
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [modalType, setModalType] = useState<'category' | 'item'>('item');
+  const [editingId, setEditingId] = useState<string | null>(null);
   
   // Form State
   const [newItem, setNewItem] = useState({
@@ -50,9 +51,22 @@ export default function MenuManagement() {
 
     setUploading(true);
     const reader = new FileReader();
-    reader.onloadend = () => {
-      setNewItem({ ...newItem, image: reader.result as string });
-      setUploading(false);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 400;
+        canvas.height = 400;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          // Draw image to 400x400, strictly forcing the size
+          ctx.drawImage(img, 0, 0, 400, 400);
+          const resizedDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+          setNewItem({ ...newItem, image: resizedDataUrl });
+        }
+        setUploading(false);
+      };
+      img.src = event.target?.result as string;
     };
     reader.readAsDataURL(file);
   };
@@ -60,29 +74,79 @@ export default function MenuManagement() {
   const handleAddItem = async () => {
     if (!newItem.image) return alert('Please upload an image');
     try {
-      const res = await fetch('/api/menu', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'item', payload: newItem })
-      });
-      if (res.ok) {
-        fetchMenu();
-        setShowAddModal(false);
-        setNewItem({ 
-          name: '', 
-          price: '', 
-          description: '', 
-          discount: '0', 
-          tags: '', 
-          categoryId: '', 
-          categoryName: '', 
-          image: '', 
-          restaurant: 'Burger Arena' 
+      if (editingId) {
+        // UPDATE Existing
+        const res = await fetch('/api/menu', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            id: editingId, 
+            updates: {
+              name: newItem.name,
+              price: parseFloat(newItem.price),
+              description: newItem.description,
+              discount: parseFloat(newItem.discount),
+              tags: newItem.tags,
+              categoryId: newItem.categoryId,
+              categoryName: newItem.categoryName,
+              image: newItem.image,
+              restaurant: newItem.restaurant
+            }
+          })
         });
+        if (res.ok) {
+          fetchMenu();
+          setShowAddModal(false);
+          setEditingId(null);
+          resetForm();
+        }
+      } else {
+        // CREATE New
+        const res = await fetch('/api/menu', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'item', payload: newItem })
+        });
+        if (res.ok) {
+          fetchMenu();
+          setShowAddModal(false);
+          resetForm();
+        }
       }
     } catch (err) {
-      alert('Failed to add item');
+      alert(editingId ? 'Failed to update item' : 'Failed to add item');
     }
+  };
+
+  const resetForm = () => {
+    setNewItem({ 
+      name: '', 
+      price: '', 
+      description: '', 
+      discount: '0', 
+      tags: '', 
+      categoryId: '', 
+      categoryName: '', 
+      image: '', 
+      restaurant: 'Burger Arena' 
+    });
+  };
+
+  const editItem = (it: any) => {
+    setEditingId(it.id);
+    setNewItem({
+      name: it.name,
+      price: String(it.price),
+      description: it.description || '',
+      discount: String(it.discount || '0'),
+      tags: it.tags || '',
+      categoryId: it.categoryId,
+      categoryName: it.categoryName,
+      image: it.image,
+      restaurant: it.restaurant || 'Burger Arena'
+    });
+    setModalType('item');
+    setShowAddModal(true);
   };
 
   const handleAddCategory = async () => {
@@ -124,13 +188,13 @@ export default function MenuManagement() {
           </div>
           <div className="flex gap-4">
             <button 
-              onClick={() => { setModalType('category'); setShowAddModal(true); }}
+              onClick={() => { setEditingId(null); resetForm(); setModalType('category'); setShowAddModal(true); }}
               className="bg-white border border-gray-200 text-gray-900 font-bold px-6 py-4 rounded-2xl flex items-center gap-2 hover:bg-gray-50 transition-all text-sm"
             >
               <Plus size={18} /> NEW CATEGORY
             </button>
             <button 
-              onClick={() => { setModalType('item'); setShowAddModal(true); }}
+              onClick={() => { setEditingId(null); resetForm(); setModalType('item'); setShowAddModal(true); }}
               className="bg-brand-red text-white font-bold px-6 py-4 rounded-2xl flex items-center gap-2 hover:bg-red-700 transition-all text-sm shadow-premium"
             >
               <Plus size={18} /> ADD NEW DISH
@@ -177,12 +241,20 @@ export default function MenuManagement() {
                             </span>
                           ))}
                         </div>
-                        <button 
-                          onClick={() => deleteItem(item.id)}
-                          className="absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur rounded-xl flex items-center justify-center text-red-500 opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:bg-red-50"
-                        >
-                          <Trash2 size={18} />
-                        </button>
+                        <div className="absolute top-3 right-3 flex flex-col gap-2">
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); editItem(item); }}
+                            className="w-10 h-10 bg-white/90 backdrop-blur rounded-xl flex items-center justify-center text-blue-500 opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:bg-blue-50"
+                          >
+                            <Edit3 size={18} />
+                          </button>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); deleteItem(item.id); }}
+                            className="w-10 h-10 bg-white/90 backdrop-blur rounded-xl flex items-center justify-center text-red-500 opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:bg-red-50"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
                       </div>
                       <div className="space-y-1 px-1">
                         <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{item.restaurant}</p>
@@ -208,9 +280,11 @@ export default function MenuManagement() {
             <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden animate-slide-up">
               <div className="bg-brand-red p-8 flex justify-between items-center text-white">
                 <h3 className="text-2xl font-bold uppercase tracking-tight">
-                  {modalType === 'item' ? 'Add New Menu Item' : 'New Category Section'}
+                  {modalType === 'item' 
+                    ? (editingId ? 'Update Menu Item' : 'Add New Menu Item') 
+                    : 'New Category Section'}
                 </h3>
-                <button onClick={() => setShowAddModal(false)} className="bg-white/20 p-2 rounded-full hover:bg-white/40 transition-all">
+                <button onClick={() => { setShowAddModal(false); setEditingId(null); resetForm(); }} className="bg-white/20 p-2 rounded-full hover:bg-white/40 transition-all">
                   <X size={24} />
                 </button>
               </div>
@@ -336,7 +410,7 @@ export default function MenuManagement() {
                       onClick={handleAddItem}
                       className="w-full bg-brand-text text-white font-bold py-6 rounded-[2rem] shadow-premium hover:bg-black transition-all uppercase tracking-[0.2em] text-sm mt-4 active:scale-95"
                     >
-                      Sync to Kitchen
+                      {editingId ? 'Update Changes' : 'Add Item'}
                     </button>
                   </div>
                 ) : (
@@ -351,23 +425,11 @@ export default function MenuManagement() {
                         className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 font-bold text-sm outline-none transition-all"
                       />
                     </div>
-                    <div className="space-y-3 text-center">
-                      <label className="text-[11px] font-bold uppercase text-gray-400 tracking-widest">Icon (Emoji)</label>
-                      <div className="flex justify-center">
-                        <input 
-                          type="text" 
-                          value={newCat.icon}
-                          onChange={e => setNewCat({...newCat, icon: e.target.value})}
-                          placeholder="🥤" 
-                          className="w-32 h-32 bg-gray-50 border-none rounded-[2rem] font-bold text-5xl text-center outline-none focus:ring-4 focus:ring-brand-red/10 transition-all"
-                        />
-                      </div>
-                    </div>
                     <button 
                       onClick={handleAddCategory}
-                      className="w-full bg-brand-text text-white font-bold py-6 rounded-[2rem] shadow-premium hover:bg-black transition-all uppercase tracking-[0.2em] text-sm"
+                      className="w-full bg-brand-text text-white font-bold py-6 rounded-[2rem] shadow-premium hover:bg-black transition-all uppercase tracking-[0.2em] text-sm mt-4"
                     >
-                      Create Section
+                      Add Category
                     </button>
                   </div>
                 )}

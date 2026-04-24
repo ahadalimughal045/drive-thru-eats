@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, ChefHat, Users, ShoppingBag, LogOut, ArrowLeft, LayoutGrid, Utensils, Tag } from 'lucide-react';
+import { LayoutDashboard, ChefHat, Users, ShoppingBag, LogOut, ArrowLeft, LayoutGrid, Utensils, Tag, Settings2 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -14,6 +14,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Kitchen', href: '/admin/kitchen', icon: <ChefHat size={20} /> },
     { name: 'Menu', href: '/admin/menu', icon: <Utensils size={20} /> },
     { name: 'Coupons', href: '/admin/coupons', icon: <Tag size={20} /> },
+    { name: 'Control', href: '/admin/control', icon: <Settings2 size={20} /> },
     { name: 'Staff', href: '/admin/staff', icon: <Users size={20} /> },
   ];
 

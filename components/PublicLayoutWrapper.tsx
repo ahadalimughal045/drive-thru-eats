@@ -3,11 +3,12 @@
 import { usePathname } from 'next/navigation';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import StatusHeader from './StatusHeader';
 
 export default function PublicLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   
-  // If we are in the admin, waiter, or staff portals, DO NOT render the public Navbar/Footer.
+  // If we are in the admin, waiter, or staff portals, DO NOT render the public Navbar/Footer/StatusHeader.
   if (pathname.startsWith('/admin') || pathname.startsWith('/waiter') || pathname.startsWith('/staff')) {
     return <main className="flex-1 flex flex-col">{children}</main>;
   }
@@ -16,11 +17,9 @@ export default function PublicLayoutWrapper({ children }: { children: React.Reac
   return (
     <>
       <Navbar />
+      <StatusHeader />
       <main className="flex-1">{children}</main>
       <Footer />
-      <a href="https://wa.link/mnta3l" target="_blank" rel="noopener noreferrer">
-        <img src="https://drive-thrueats.online/walogo.png" alt="WhatsApp" className="fixed bottom-8 right-8 w-14 h-14 z-[999] hover:scale-110 transition-transform" />
-      </a>
     </>
   );
 }

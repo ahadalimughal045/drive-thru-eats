@@ -42,7 +42,10 @@ export default function TablesPage() {
     };
 
     loadAllData();
-    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+      loadAllData();
+    }, 30000);
     return () => clearInterval(timer);
   }, []);
 
@@ -255,7 +258,7 @@ export default function TablesPage() {
         {/* Key Indicators */}
         <div className="flex gap-6 mb-8 text-sm font-bold border-b border-[#dee2e6] pb-4">
           <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-green-500"></span> Available</div>
-          <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-brand-red"></span> Occupied (2h Time Limit)</div>
+          <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-brand-red"></span> Booked (2h Time Limit)</div>
         </div>
 
         {/* Tables Grid */}
@@ -282,7 +285,7 @@ export default function TablesPage() {
                     </div>
                   </div>
                   {isOccupied ? (
-                    <span className="px-3 py-1 bg-brand-red text-white text-xs font-bold rounded-full animate-pulse">Occupied</span>
+                    <span className="px-3 py-1 bg-brand-red text-white text-xs font-bold rounded-full animate-pulse">Booked</span>
                   ) : (
                     <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full flex items-center gap-1"><CheckCircle size={14}/>Free</span>
                   )}

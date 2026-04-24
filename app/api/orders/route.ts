@@ -44,6 +44,36 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const data = await req.json();
+
+    // SERVER-SIDE STATUS CHECK
+    const settings = await prisma.settings.findUnique({
+      where: { id: 'restaurant_config' }
+    });
+
+    if (settings && !settings.isOpen && settings.mode !== 'auto') {
+      return NextResponse.json({ error: 'Restaurant is currently CLOSED. Orders are disabled.' }, { status: 403 });
+    }
+
+    if (settings && settings.mode === 'auto') {
+      const now = new Date();
+      const currentTime = now.getHours() * 60 + now.getMinutes();
+      const [openH, openM] = (settings.openTime || '09:00').split(':').map(Number);
+      const [closeH, closeM] = (settings.closeTime || '02:00').split(':').map(Number);
+      const openTotal = openH * 60 + openM;
+      const closeTotal = closeH * 60 + closeM;
+
+      let isWithinTime = false;
+      if (openTotal < closeTotal) {
+        isWithinTime = currentTime >= openTotal && currentTime < closeTotal;
+      } else {
+        isWithinTime = currentTime >= openTotal || currentTime < closeTotal;
+      }
+
+      if (!isWithinTime) {
+        return NextResponse.json({ error: 'Restaurant is currently CLOSED. Orders are disabled.' }, { status: 403 });
+      }
+    }
+
     console.log(`[ORDER] Attempting: ${data.id || 'new'}`);
 
     const newOrder = await prisma.order.create({
