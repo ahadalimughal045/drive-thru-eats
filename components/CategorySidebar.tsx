@@ -18,13 +18,12 @@ export default function CategorySidebar({ activeCategory, onSelect }: CategorySi
             <button
               key={cat.id}
               onClick={() => onSelect(cat.id)}
-              className={`w-full text-left px-4 py-3 mb-1 rounded-xl flex items-center gap-3 text-sm font-bold transition-all ${
+              className={`w-full text-left px-4 py-3 mb-1 rounded-xl flex items-center text-sm font-bold transition-all ${
                 activeCategory === cat.id
                   ? 'bg-brand-red/10 text-brand-red'
                   : 'text-brand-muted hover:text-brand-text hover:bg-brand-bg'
               }`}
             >
-              <span className={`text-xl flex items-center justify-center w-8 h-8 rounded-lg ${activeCategory === cat.id ? 'bg-white shadow-sm' : 'bg-transparent'}`}>{cat.icon}</span>
               <span className="leading-tight">{cat.name}</span>
             </button>
           ))}

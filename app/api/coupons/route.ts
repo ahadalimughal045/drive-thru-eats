@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { ensureMenuAndCouponsSeeded } from '@/lib/bootstrap-data';
 
 export async function GET() {
   try {
+    await ensureMenuAndCouponsSeeded();
     const coupons = await prisma.coupon.findMany({
       orderBy: { createdAt: 'desc' }
     });
@@ -15,6 +17,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const data = await req.json();
+    const shouldActivate = data.isActive !== undefined ? Boolean(data.isActive) : true;
     
     // Check if code exists
     const existing = await prisma.coupon.findUnique({
@@ -25,12 +28,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Coupon code already exists' }, { status: 400 });
     }
 
-    const coupon = await prisma.coupon.create({
-      data: {
-        code: data.code.toUpperCase(),
-        discount: parseInt(data.discount),
-        isActive: data.isActive !== undefined ? data.isActive : true
+    const coupon = await prisma.$transaction(async (tx) => {
+      if (shouldActivate) {
+        await tx.coupon.updateMany({
+          where: { isActive: true },
+          data: { isActive: false }
+        });
       }
+
+      return tx.coupon.create({
+        data: {
+          code: data.code.toUpperCase(),
+          discount: parseInt(data.discount),
+          isActive: shouldActivate
+        }
+      });
     });
     return NextResponse.json({ success: true, coupon });
   } catch (error: any) {
@@ -41,11 +53,24 @@ export async function POST(req: Request) {
 export async function PATCH(req: Request) {
   try {
     const data = await req.json();
-    const coupon = await prisma.coupon.update({
-      where: { id: data.id },
-      data: {
-        isActive: data.isActive
+    const activate = Boolean(data.isActive);
+    const coupon = await prisma.$transaction(async (tx) => {
+      if (activate) {
+        await tx.coupon.updateMany({
+          where: {
+            isActive: true,
+            NOT: { id: data.id }
+          },
+          data: { isActive: false }
+        });
       }
+
+      return tx.coupon.update({
+        where: { id: data.id },
+        data: {
+          isActive: activate
+        }
+      });
     });
     return NextResponse.json({ success: true, coupon });
   } catch (error: any) {

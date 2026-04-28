@@ -122,7 +122,7 @@ export default function MenuSection() {
                         : 'bg-white border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-text'
                     }`}
                   >
-                    <span className="text-lg">{cat.icon}</span> {cat.name}
+                    {cat.name}
                   </button>
                 ))}
               </div>
@@ -157,7 +157,7 @@ export default function MenuSection() {
                         <span className="ml-3 text-sm font-bold text-brand-muted bg-brand-bg px-3 py-1 rounded-full border border-brand-border uppercase tracking-widest">{getFilteredItems().length} Items</span>
                       </h2>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 lg:gap-7">
                       {getFilteredItems().map(item => (
                         <MenuCard key={item.id} item={item} />
                       ))}
@@ -180,9 +180,7 @@ export default function MenuSection() {
                 >
                   <div className="flex items-center justify-between gap-6 mb-10 group">
                     <div className="flex items-center gap-5">
-                      <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center text-3xl shadow-soft border border-brand-border group-hover:border-brand-red group-hover:bg-brand-red/5 transition-all">
-                        {cat.icon}
-                      </div>
+                      <div className="w-1.5 h-14 rounded-full bg-brand-red/70" />
                       <div>
                         <h2 className="text-brand-text font-bold text-3xl lg:text-4xl tracking-tight">{cat.name}</h2>
                         <p className="text-brand-muted text-sm font-bold uppercase tracking-[0.2em]">{items.length} Options Available</p>
@@ -194,7 +192,7 @@ export default function MenuSection() {
                     </button>
                   </div>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 lg:gap-7">
                     {items.map(item => (
                       <MenuCard key={item.id} item={item} />
                     ))}

@@ -1,11 +1,47 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { LayoutDashboard, ChefHat, Users, ShoppingBag, LogOut, ArrowLeft, LayoutGrid, Utensils, Tag, Settings2 } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import {
+  LayoutDashboard,
+  ChefHat,
+  Users,
+  ShoppingBag,
+  LogOut,
+  ArrowLeft,
+  LayoutGrid,
+  Utensils,
+  Tag,
+  Settings2,
+} from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const verifySession = async () => {
+      try {
+        const res = await fetch('/api/auth/session', { cache: 'no-store' });
+        if (!res.ok) {
+          router.replace('/admin/login');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    verifySession();
+  }, [router]);
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } finally {
+      router.replace('/admin/login');
+    }
+  };
 
   const links = [
     { name: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={20} /> },
@@ -18,16 +54,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Staff', href: '/admin/staff', icon: <Users size={20} /> },
   ];
 
+  if (isLoading) {
+    return (
+      <div className="h-screen bg-brand-bg flex items-center justify-center">
+        <div className="animate-pulse text-brand-red font-bold text-xl tracking-widest uppercase">
+          Loading...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen bg-brand-bg flex overflow-hidden">
-      {/* Sidebar */}
       <aside className="w-64 bg-[#212529] text-white hidden md:flex flex-col h-screen sticky top-0">
         <div className="p-8 border-b border-gray-800 flex flex-col items-center">
-          <img 
-            src="https://drive-thrueats.online/logo.png" 
-            alt="Logo" 
-            className="w-24 h-auto invert brightness-0 invert-0"
-            style={{ filter: 'brightness(0) invert(1)' }} 
+          <img
+            src="https://drive-thrueats.online/logo.png"
+            alt="Logo"
+            className="w-24 h-auto"
+            style={{ filter: 'brightness(0) invert(1)' }}
           />
           <div className="mt-4 text-center">
             <h2 className="text-xl font-bold text-white tracking-widest uppercase">Admin</h2>
@@ -41,7 +86,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               key={link.name}
               href={link.href}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
-                pathname === link.href ? 'bg-brand-red text-white shadow-md' : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                pathname === link.href
+                  ? 'bg-brand-red text-white shadow-md'
+                  : 'text-gray-400 hover:text-white hover:bg-gray-800'
               }`}
             >
               {link.icon}
@@ -50,28 +97,39 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           ))}
         </nav>
 
-        <div className="p-4 border-t border-gray-700">
-          <Link href="/" className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-xl font-bold transition-all">
+        <div className="p-4 border-t border-gray-700 space-y-2">
+          <Link
+            href="/"
+            className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-xl font-bold transition-all"
+          >
             <ArrowLeft size={20} /> Back to Site
           </Link>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-white hover:bg-red-900/40 rounded-xl font-bold transition-all text-left"
+          >
+            <LogOut size={20} /> Logout
+          </button>
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
-        {/* Mobile Header */}
         <header className="md:hidden bg-[#212529] text-white p-4 flex items-center justify-between">
-          <img 
-            src="https://drive-thrueats.online/logo.png" 
-            alt="Logo" 
-            className="h-8 w-auto brightness-0 invert" 
+          <img
+            src="https://drive-thrueats.online/logo.png"
+            alt="Logo"
+            className="h-8 w-auto brightness-0 invert"
           />
-          <Link href="/">
-            <ArrowLeft className="text-gray-400" />
-          </Link>
+          <div className="flex items-center gap-3">
+            <button onClick={handleLogout} className="text-red-400">
+              <LogOut size={20} />
+            </button>
+            <Link href="/">
+              <ArrowLeft className="text-gray-400" />
+            </Link>
+          </div>
         </header>
 
-        {/* Mobile Nav Scroll */}
         <div className="md:hidden bg-[#1a1d20] overflow-x-auto scrollbar-hide border-b border-gray-800">
           <div className="flex px-4 py-3 gap-2 w-max">
             {links.map((link) => (
@@ -89,10 +147,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </div>
 
-        {/* Page Content */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8">
-          {children}
-        </div>
+        <div className="flex-1 overflow-y-auto p-4 md:p-8">{children}</div>
       </main>
     </div>
   );

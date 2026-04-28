@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Package, MapPin, ChevronRight, Play, Star, ShieldCheck, Zap, MousePointer2 } from 'lucide-react';
+import { Package, MapPin, ChevronRight, Play, Star, ShieldCheck, Zap } from 'lucide-react';
 
 export default function Hero() {
   const [orderType, setOrderType] = useState<'pickup' | 'delivery'>('pickup');
@@ -65,6 +65,21 @@ export default function Hero() {
               </p>
             </div>
 
+            <div className="flex flex-wrap items-center gap-6">
+              <a
+                href="https://drive-thrueats.online/dte-app.apk"
+                className="group flex items-center gap-3 text-brand-text hover:text-brand-red transition-all bg-white border border-brand-border px-4 py-2 rounded-2xl shadow-premium hover:shadow-xl hover:-translate-y-1"
+              >
+                <div className="w-12 h-12 rounded-xl bg-brand-bg border-2 border-brand-border flex items-center justify-center group-hover:border-brand-red group-hover:bg-brand-red group-hover:text-white group-hover:-rotate-6 transition-all shadow-soft">
+                  <Play size={16} className="fill-current ml-1" />
+                </div>
+                <div>
+                  <p className="text-[9px] font-bold text-brand-muted uppercase tracking-widest leading-tight">Get the App</p>
+                  <p className="text-xs font-bold uppercase tracking-tight">Android APK</p>
+                </div>
+              </a>
+            </div>
+
             <div className="glass p-2 md:p-2 rounded-[2rem] border-white shadow-premium max-w-2xl group flex flex-col md:flex-row items-stretch gap-2 transition-transform hover:scale-[1.01]">
               <div className="flex bg-brand-bg p-1 rounded-2xl gap-1 shrink-0">
                 <button
@@ -111,41 +126,6 @@ export default function Hero() {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-6 pt-2">
-              <a
-                href="https://drive-thrueats.online/dte-app.apk"
-                className="group flex items-center gap-3 text-brand-text hover:text-brand-red transition-all bg-white border border-brand-border px-4 py-2 rounded-2xl shadow-premium hover:shadow-xl hover:-translate-y-1"
-              >
-                <div className="w-12 h-12 rounded-xl bg-brand-bg border-2 border-brand-border flex items-center justify-center group-hover:border-brand-red group-hover:bg-brand-red group-hover:text-white group-hover:-rotate-6 transition-all shadow-soft">
-                  <Play size={16} className="fill-current ml-1" />
-                </div>
-                <div>
-                  <p className="text-[9px] font-bold text-brand-muted uppercase tracking-widest leading-tight">Get the App</p>
-                  <p className="text-xs font-bold uppercase tracking-tight">Android APK</p>
-                </div>
-              </a>
-
-              <div className="hidden sm:block h-8 w-px bg-brand-border" />
-
-              <div className="flex items-center gap-3">
-                <div className="flex -space-x-2">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="w-10 h-10 rounded-xl border-2 border-white bg-brand-bg overflow-hidden shadow-soft transition-transform hover:scale-110 hover:z-10">
-                      <img src={`https://i.pravatar.cc/100?img=${i + 14}`} alt="User" />
-                    </div>
-                  ))}
-                  <div className="w-10 h-10 rounded-xl border-2 border-white bg-brand-text text-white text-[9px] font-bold flex items-center justify-center shadow-soft">
-                    +5k
-                  </div>
-                </div>
-                <div>
-                  <div className="flex gap-0.5 text-brand-orange mb-0.5">
-                    {[1, 2, 3, 4, 5].map(i => <Star key={i} size={8} fill="currentColor" />)}
-                  </div>
-                  <p className="text-[9px] font-bold text-brand-muted uppercase tracking-widest">Happy Cravings</p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Right Content (Visuals) */}
@@ -203,13 +183,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Hero Footer / Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2 animate-bounce cursor-default">
-        <span className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.3em] ml-1">Explore Menu</span>
-        <div className="w-6 h-10 border-2 border-brand-border rounded-full flex justify-center p-1">
-          <div className="w-1 h-2 bg-brand-red rounded-full animate-scroll" />
-        </div>
-      </div>
     </section>
   );
 }

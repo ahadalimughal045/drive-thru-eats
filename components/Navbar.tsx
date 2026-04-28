@@ -100,9 +100,8 @@ export default function Navbar() {
                         key={cat.id} 
                         href={`/#${cat.id}`}
                         onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-3 p-3 rounded-2xl hover:bg-brand-bg hover:text-brand-red transition-all w-full text-brand-text group"
+                        className="flex items-center p-3 rounded-2xl hover:bg-brand-bg hover:text-brand-red transition-all w-full text-brand-text group"
                       >
-                        <span className="text-lg group-hover:scale-110 transition-transform">{cat.icon}</span>
                         <span className="font-bold text-sm tracking-tight">{cat.name}</span>
                       </Link>
                     ))}
@@ -195,9 +194,8 @@ export default function Navbar() {
                         key={cat.id}
                         href={`/#${cat.id}`}
                         onClick={() => setMobileOpen(false)}
-                        className="flex flex-col items-center gap-2 p-4 bg-brand-bg rounded-2xl hover:bg-white hover:shadow-soft transition-all"
+                        className="flex items-center justify-center p-4 bg-brand-bg rounded-2xl hover:bg-white hover:shadow-soft transition-all"
                       >
-                        <span className="text-2xl">{cat.icon}</span>
                         <span className="text-xs font-bold text-brand-text text-center">{cat.name}</span>
                       </a>
                     ))}

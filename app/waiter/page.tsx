@@ -502,9 +502,8 @@ export default function WaiterPortal() {
                               <span className="font-bold text-base text-emerald-600 uppercase tracking-tighter">{order.orderId}</span>
                               <Check size={16} className="text-emerald-500" />
                             </div>
-                            <p className="text-[10px] font-bold text-slate-500 uppercase mb-4">Transfer: Table {order.tableNumber}</p>
                             <div className="bg-emerald-50 py-3 rounded-2xl text-center border border-emerald-100">
-                              <p className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Handover Ready</p>
+                              <p className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Ready</p>
                             </div>
                           </div>
                         ))}

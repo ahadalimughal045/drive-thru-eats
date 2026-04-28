@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { ensureMenuAndCouponsSeeded } from '@/lib/bootstrap-data';
 
 export async function GET() {
   try {
+    await ensureMenuAndCouponsSeeded();
     const categories = await prisma.menu_category.findMany({
       include: { items: true }
     });
@@ -27,7 +29,7 @@ export async function POST(req: Request) {
         data: {
           id: payload.name.toLowerCase().trim().replace(/\s+/g, '-'),
           name: payload.name,
-          icon: payload.icon || '🍴'
+          icon: ''
         }
       });
       return NextResponse.json({ success: true, category });

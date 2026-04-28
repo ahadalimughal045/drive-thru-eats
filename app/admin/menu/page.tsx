@@ -25,8 +25,7 @@ export default function MenuManagement() {
   const [uploading, setUploading] = useState(false);
 
   const [newCat, setNewCat] = useState({
-    name: '',
-    icon: '🍴'
+    name: ''
   });
 
   useEffect(() => {
@@ -159,7 +158,7 @@ export default function MenuManagement() {
       if (res.ok) {
         fetchMenu();
         setShowAddModal(false);
-        setNewCat({ name: '', icon: '🍴' });
+        setNewCat({ name: '' });
       }
     } catch (err) {
       alert('Failed to add category');
@@ -209,9 +208,7 @@ export default function MenuManagement() {
             {categories.map(cat => (
               <div key={cat.id} className="space-y-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center text-2xl">
-                    {cat.icon}
-                  </div>
+                  <div className="w-1.5 h-10 rounded-full bg-brand-red/70" />
                   <h2 className="text-2xl font-bold text-gray-900 uppercase tracking-tight">{cat.name}</h2>
                   <div className="flex-1 h-px bg-gray-200" />
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{cat.items.length} Items</span>
