@@ -222,7 +222,6 @@ export default function WaiterPortal() {
       } else {
         const kitchenItems = cart.filter(it => !isBeverage(it));
         const orderData = {
-          id: 'DINE-' + Date.now(),
           customerName: `Table ${selectedTable.number} Guest`,
           phone: 'N/A',
           type: 'dining',

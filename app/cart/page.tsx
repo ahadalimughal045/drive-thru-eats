@@ -59,6 +59,21 @@ export default function CartPage() {
       .then(data => {
         if (Array.isArray(data)) setTablesList(data);
       });
+      
+    // Check for saved coupon from Hero section
+    const savedCoupon = localStorage.getItem('savedCoupon');
+    if (savedCoupon) {
+      setCoupon(savedCoupon);
+      fetch('/api/coupons')
+        .then(res => res.json())
+        .then(coupons => {
+          const validCoupon = coupons.find((c: any) => c.code === savedCoupon.toUpperCase() && c.isActive);
+          if (validCoupon) {
+            setDiscount(validCoupon.discount);
+          }
+        })
+        .catch(console.error);
+    }
   }, []);
 
   const copyToClipboard = (text: string) => {
@@ -132,7 +147,6 @@ export default function CartPage() {
     if (orderType === 'dining' && !selectedTable) return alert("Please select a Table Number!");
 
     const newOrder = {
-      id: 'ORD-' + Date.now().toString().slice(-6),
       customerName: name,
       email,
       phone,
@@ -158,6 +172,7 @@ export default function CartPage() {
       if (res.ok) {
         setOrderPlaced(true);
         clearCart();
+        localStorage.removeItem('savedCoupon');
       } else {
         alert('Order Failed: ' + (data.detail || data.error || 'Unknown Error'));
       }

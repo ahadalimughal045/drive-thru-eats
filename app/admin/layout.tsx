@@ -20,20 +20,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const verifySession = async () => {
+      setIsLoading(true);
       try {
         const res = await fetch('/api/auth/session', { cache: 'no-store' });
         if (!res.ok) {
-          router.replace('/admin/login');
+          setIsAuthenticated(false);
+          if (pathname !== '/admin/login') {
+            router.replace('/admin/login');
+          }
+        } else {
+          setIsAuthenticated(true);
         }
       } finally {
         setIsLoading(false);
       }
     };
     verifySession();
-  }, [router]);
+  }, [pathname, router]);
 
   const handleLogout = async () => {
     try {
@@ -54,6 +61,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Staff', href: '/admin/staff', icon: <Users size={20} /> },
   ];
 
+  const isLoginPage = pathname === '/admin/login';
+
+  // Show a full-screen loader while verifying
   if (isLoading) {
     return (
       <div className="h-screen bg-brand-bg flex items-center justify-center">
@@ -62,6 +72,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </div>
     );
+  }
+
+  // On the login page OR not yet authenticated → render children only (no sidebar)
+  if (isLoginPage || !isAuthenticated) {
+    return <>{children}</>;
   }
 
   return (
