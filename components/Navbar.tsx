@@ -186,6 +186,7 @@ export default function Navbar() {
                   </a>
                 </div>
 
+                {false && (
                 <div className="space-y-4 pt-4 border-t border-brand-border">
                   <p className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.2em] pl-2">Menu Categories</p>
                   <div className="grid grid-cols-2 gap-3">
@@ -201,6 +202,7 @@ export default function Navbar() {
                     ))}
                   </div>
                 </div>
+                )}
               </div>
             </div>
           </div>
