@@ -28,6 +28,7 @@ export default function WaiterPortal() {
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'online'>('cash');
   const [accountType, setAccountType] = useState('');
   const [transactionId, setTransactionId] = useState('');
+  const [kitchenTab, setKitchenTab] = useState<'Pending' | 'Preparing' | 'Ready'>('Pending');
 
   const fetchExistingOrder = async (tableNum: number) => {
     try {
@@ -88,7 +89,7 @@ export default function WaiterPortal() {
     }
 
     loadInitialData();
-    const interval = setInterval(loadInitialData, 30000); 
+    const interval = setInterval(loadInitialData, 3000); // 3 seconds for better real-time feel
     return () => clearInterval(interval);
   }, []);
 
@@ -327,27 +328,30 @@ export default function WaiterPortal() {
               {step !== 'tables' && (
                 <button
                   onClick={() => setShowCart(true)}
-                  className="relative group flex items-center gap-3 px-6 py-3 bg-brand-red text-white rounded-2xl shadow-lg shadow-brand-red/20 transition-all hover:scale-105 active:scale-95"
+                  className="relative group flex items-center gap-3 px-4 md:px-6 py-2.5 md:py-3 bg-brand-red text-white rounded-xl md:rounded-2xl shadow-lg shadow-brand-red/20 transition-all hover:scale-105 active:scale-95"
                 >
                   <ShoppingBag size={18} />
-                  <span className="font-bold text-xs uppercase tracking-widest text-white">View Order</span>
+                  <span className="hidden sm:inline font-bold text-[10px] md:text-xs uppercase tracking-widest text-white">View Order</span>
                   {(cart.length > 0 || existingOrderItems.length > 0) && (
-                    <span className="absolute -top-2 -right-2 bg-white text-brand-red text-[10px] font-bold rounded-full h-6 px-2 flex items-center justify-center border-2 border-brand-red shadow-soft">
+                    <span className="absolute -top-2 -right-2 bg-white text-brand-red text-[10px] font-bold rounded-full h-5 md:h-6 px-1.5 md:px-2 flex items-center justify-center border-2 border-brand-red shadow-soft">
                       {cart.length + existingOrderItems.length}
                     </span>
                   )}
                 </button>
               )}
 
-              <div className="hidden md:flex flex-col items-end mr-4">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">System Status</p>
-                <p className="text-[10px] font-bold text-green-500 uppercase flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Network Active</p>
+              <div className="hidden sm:flex flex-col items-end mr-2 md:mr-4">
+                <p className="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">System Status</p>
+                <p className="text-[8px] md:text-[10px] font-bold text-green-500 uppercase flex items-center gap-1 md:gap-1.5">
+                  <span className="w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-green-500 animate-pulse"></span> 
+                  Live Tracking
+                </p>
               </div>
               <button
                 onClick={() => { localStorage.removeItem('dte_waiter_session'); setIsLoggedIn(false); }}
-                className="p-3 bg-slate-100 hover:bg-red-50 text-slate-400 hover:text-brand-red rounded-xl transition-all border border-slate-200 group"
+                className="p-2.5 md:p-3 bg-slate-100 hover:bg-red-50 text-slate-400 hover:text-brand-red rounded-xl transition-all border border-slate-200 group"
               >
-                <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
+                <LogOut size={18} className="group-hover:-translate-x-1 transition-transform" />
               </button>
             </div>
           </header>
@@ -356,7 +360,7 @@ export default function WaiterPortal() {
           <main className="flex-1 overflow-y-auto p-8 flex flex-col scrollbar-custom">
             {waiter?.role === 'Kitchen Staff' ? (
               <div className="space-y-8 animate-fade-in flex-1 flex flex-col h-full">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                   <div>
                     <h1 className="text-4xl font-bold text-slate-800 tracking-tighter uppercase leading-none">Kitchen Operations</h1>
                     <div className="flex items-center gap-4 mt-3">
@@ -367,14 +371,169 @@ export default function WaiterPortal() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Kitchen Toggle Buttons - Visible only on mobile/tablet */}
+                  <div className="flex md:hidden bg-slate-100 p-1.5 rounded-[2rem] border border-slate-200 shadow-inner w-full md:w-auto">
+                    <button 
+                      onClick={() => setKitchenTab('Pending')}
+                      className={`flex-1 md:flex-none px-6 py-3 rounded-full font-bold text-[10px] uppercase tracking-widest transition-all ${kitchenTab === 'Pending' ? 'bg-white text-slate-800 shadow-md scale-105' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                      Incoming ({activeOrders.filter(o => o.status === 'Pending').length})
+                    </button>
+                    <button 
+                      onClick={() => setKitchenTab('Preparing')}
+                      className={`flex-1 md:flex-none px-6 py-3 rounded-full font-bold text-[10px] uppercase tracking-widest transition-all ${kitchenTab === 'Preparing' ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20 scale-105' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                      Preparing ({activeOrders.filter(o => o.status === 'Preparing').length})
+                    </button>
+                    <button 
+                      onClick={() => setKitchenTab('Ready')}
+                      className={`flex-1 md:flex-none px-6 py-3 rounded-full font-bold text-[10px] uppercase tracking-widest transition-all ${kitchenTab === 'Ready' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 scale-105' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                      Ready ({activeOrders.filter(o => o.status === 'Ready').length})
+                    </button>
+                  </div>
                 </div>
 
-                <div className="flex-1 overflow-x-auto pb-4 scrollbar-custom">
-                  <div className="flex gap-8 h-full min-w-[1100px]">
-                    {/* KDS Columns - Each with a unique glass aesthetic */}
-
+                <div className="flex-1 pb-4">
+                  {/* DESKTOP VIEW - 3 Columns Grid */}
+                  <div className="hidden md:grid grid-cols-3 gap-6 h-full min-w-full">
                     {/* 1. Pending Column */}
-                    <div className="w-[380px] flex flex-col gap-5 bg-slate-200/50 backdrop-blur-sm p-6 rounded-[3rem] border border-slate-200/60 shadow-inner">
+                    <div className="flex flex-col gap-5 bg-slate-200/50 backdrop-blur-sm p-6 rounded-[3rem] border border-slate-200/60 shadow-inner h-full">
+                      <div className="flex items-center justify-between px-4">
+                        <h2 className="font-bold text-slate-500 text-xs uppercase tracking-widest flex items-center gap-2">
+                          <LayoutGrid size={14} className="text-slate-400" /> Incoming orders
+                        </h2>
+                        <span className="bg-white text-slate-800 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-slate-200 shadow-sm">
+                          {activeOrders.filter(o => o.status === 'Pending').length}
+                        </span>
+                      </div>
+                      <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar">
+                        {activeOrders.filter(o => o.status === 'Pending').length === 0 && (
+                          <div className="h-40 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-3xl opacity-50">
+                            <span className="text-xs font-bold uppercase tracking-widest text-slate-400">No New Orders</span>
+                          </div>
+                        )}
+                        {activeOrders.filter(o => o.status === 'Pending').map(order => (
+                          <div key={order.id} className="bg-white p-7 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-xl hover:scale-[1.01] transition-all group animate-slide-up">
+                            <div className="flex justify-between items-start mb-6">
+                              <div>
+                                <span className="font-bold text-xl text-slate-800 tracking-tighter line-clamp-1">{order.orderId}</span>
+                                <p className="text-[10px] font-bold text-brand-red/50 uppercase tracking-widest mt-1">
+                                  {order.tableNumber ? `Dining • Table ${order.tableNumber}` : `${order.type} order`}
+                                </p>
+                              </div>
+                              <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 group-hover:bg-brand-red group-hover:text-white transition-colors">
+                                <Utensils size={18} />
+                              </div>
+                            </div>
+                            <ul className="space-y-2.5 mb-8">
+                              {(Array.isArray(order.items) ? order.items : []).filter((it: any) => {
+                                const catName = (it.categoryName || '').toLowerCase();
+                                return !catName.includes('beverage') && !catName.includes('drink');
+                              }).map((item: any, i: number) => (
+                                <li key={i} className="text-sm font-bold text-slate-700 flex justify-between items-center bg-slate-50/50 px-4 py-2.5 rounded-xl border border-dotted border-slate-200">
+                                  <span className="uppercase tracking-tight truncate">{item.name}</span>
+                                  <span className="text-brand-red font-bold text-xs brightness-90">x{item.quantity}</span>
+                                </li>
+                              ))}
+                            </ul>
+                            <button
+                              onClick={async () => {
+                                await fetch('/api/orders', {
+                                  method: 'PATCH',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ id: order.orderId, updates: { status: 'Preparing', chef: waiter?.name || 'Chef' } })
+                                });
+                                loadInitialData();
+                              }}
+                              className="w-full bg-slate-900 border-2 border-slate-900 text-white py-4 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-slate-200 hover:bg-brand-red hover:border-brand-red transition-all active:scale-[0.97]"
+                            >
+                              Make Order
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 2. Preparing Column */}
+                    <div className="flex flex-col gap-5 bg-orange-100/40 backdrop-blur-sm p-6 rounded-[3rem] border border-orange-200/30 h-full">
+                      <div className="flex items-center justify-between px-4">
+                        <h2 className="font-bold text-orange-600 text-xs uppercase tracking-widest flex items-center gap-2">
+                          In preparation
+                        </h2>
+                      </div>
+                      <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar">
+                        {activeOrders.filter(o => o.status === 'Preparing').length === 0 && (
+                          <div className="h-40 flex items-center justify-center border-2 border-dashed border-orange-200 rounded-3xl opacity-50">
+                            <span className="text-xs font-bold uppercase tracking-widest text-orange-400">No Orders Here</span>
+                          </div>
+                        )}
+                        {activeOrders.filter(o => o.status === 'Preparing').map(order => (
+                          <div key={order.id} className="bg-white p-7 rounded-[2.5rem] shadow-xl shadow-orange-500/5 border-l-8 border-orange-500 group animate-pulse-subtle">
+                            <div className="flex justify-between items-start mb-6">
+                              <div>
+                                <span className="font-bold text-xl text-slate-800 tracking-tighter line-clamp-1">{order.orderId}</span>
+                                <p className="text-[10px] font-bold text-orange-500 uppercase tracking-widest mt-1">Cooking • {order.chef || 'Chef'}</p>
+                              </div>
+                            </div>
+                            <ul className="space-y-2 mb-8">
+                              {(Array.isArray(order.items) ? order.items : []).filter((it: any) => {
+                                const catName = (it.categoryName || '').toLowerCase();
+                                return !catName.includes('beverage') && !catName.includes('drink');
+                              }).map((item: any, i: number) => (
+                                <li key={i} className="text-sm font-bold text-slate-700 bg-orange-50/50 px-4 py-2 rounded-xl">
+                                  <span className="text-orange-600 font-bold mr-2">x{item.quantity}</span> {item.name}
+                                </li>
+                              ))}
+                            </ul>
+                            <button
+                              onClick={async () => {
+                                await fetch('/api/orders', {
+                                  method: 'PATCH',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ id: order.orderId, updates: { status: 'Ready' } })
+                                });
+                                loadInitialData();
+                              }}
+                              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-orange-200 hover:scale-[1.02] transition-all"
+                            >
+                              Complete Task
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 3. Ready Column */}
+                    <div className="flex flex-col gap-5 bg-emerald-100/30 backdrop-blur-sm p-6 rounded-[3rem] border border-emerald-200/20 h-full">
+                      <h2 className="font-bold text-emerald-600 text-xs uppercase tracking-widest px-4">Out to guest</h2>
+                      <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar">
+                        {activeOrders.filter(o => o.status === 'Ready').length === 0 && (
+                          <div className="h-40 flex items-center justify-center border-2 border-dashed border-emerald-200 rounded-3xl opacity-50">
+                            <span className="text-xs font-bold uppercase tracking-widest text-emerald-500">Nothing to Serve</span>
+                          </div>
+                        )}
+                        {activeOrders.filter(o => o.status === 'Ready').map(order => (
+                          <div key={order.id} className="bg-white/80 p-7 rounded-[2.5rem] shadow-sm border border-emerald-100 scale-95 opacity-80 filter grayscale-[0.5]">
+                            <div className="flex justify-between items-center mb-4">
+                              <span className="font-bold text-base text-emerald-600 uppercase tracking-tighter">{order.orderId}</span>
+                              <Check size={16} className="text-emerald-500" />
+                            </div>
+                            <div className="bg-emerald-50 py-3 rounded-2xl text-center border border-emerald-100">
+                              <p className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Ready</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* MOBILE/TABLET VIEW - Toggled View */}
+                  <div className="h-full md:hidden">
+                    {/* 1. Pending Column */}
+                    {kitchenTab === 'Pending' && (
+                      <div className="flex flex-col gap-5 bg-slate-200/50 backdrop-blur-sm p-6 md:p-10 rounded-[3rem] border border-slate-200/60 shadow-inner h-full animate-fade-in">
                       <div className="flex items-center justify-between px-4">
                         <h2 className="font-bold text-slate-500 text-xs uppercase tracking-widest flex items-center gap-2">
                           <LayoutGrid size={14} className="text-slate-400" /> Incoming orders
@@ -432,10 +591,12 @@ export default function WaiterPortal() {
                           </div>
                         ))}
                       </div>
-                    </div>
+                      </div>
+                    )}
 
                     {/* 2. Preparing Column */}
-                    <div className="w-[380px] flex flex-col gap-5 bg-orange-100/40 backdrop-blur-sm p-6 rounded-[3rem] border border-orange-200/30">
+                    {kitchenTab === 'Preparing' && (
+                      <div className="flex flex-col gap-5 bg-orange-100/40 backdrop-blur-sm p-6 md:p-10 rounded-[3rem] border border-orange-200/30 h-full animate-fade-in">
                       <div className="flex items-center justify-between px-4">
                         <h2 className="font-bold text-orange-600 text-xs uppercase tracking-widest flex items-center gap-2">
                           In preparation
@@ -484,10 +645,12 @@ export default function WaiterPortal() {
                           </div>
                         ))}
                       </div>
-                    </div>
+                      </div>
+                    )}
 
                     {/* 3. Ready Column */}
-                    <div className="w-[380px] flex flex-col gap-5 bg-emerald-100/30 backdrop-blur-sm p-6 rounded-[3rem] border border-emerald-200/20">
+                    {kitchenTab === 'Ready' && (
+                      <div className="flex flex-col gap-5 bg-emerald-100/30 backdrop-blur-sm p-6 md:p-10 rounded-[3rem] border border-emerald-200/20 h-full animate-fade-in">
                       <h2 className="font-bold text-emerald-600 text-xs uppercase tracking-widest px-4">Out to guest</h2>
                       <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar">
                         {activeOrders.filter(o => o.status === 'Ready').length === 0 && (
@@ -508,6 +671,7 @@ export default function WaiterPortal() {
                         ))}
                       </div>
                     </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -534,7 +698,7 @@ export default function WaiterPortal() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-8">
                       {tables.map((t, idx) => {
                         const isOccupied = activeOrders.some((o: any) => o.tableNumber == t.number);
                         return (
@@ -542,23 +706,23 @@ export default function WaiterPortal() {
                             key={t.id}
                             onClick={() => handleTableSelect(t)}
                             style={{ animationDelay: `${idx * 50}ms` }}
-                            className={`relative bg-white aspect-square rounded-[3.5rem] border-2 transition-all p-10 flex flex-col items-center justify-center gap-5 shadow-sm group animate-slide-up ${isOccupied
-                              ? 'border-orange-500 ring-8 ring-orange-500/5 shadow-orange-500/10'
+                            className={`relative bg-white aspect-square rounded-[2rem] md:rounded-[3.5rem] border-2 transition-all p-4 md:p-10 flex flex-col items-center justify-center gap-3 md:gap-5 shadow-sm group animate-slide-up ${isOccupied
+                              ? 'border-orange-500 ring-4 md:ring-8 ring-orange-500/5 shadow-orange-500/10'
                               : 'border-transparent hover:border-brand-red hover:shadow-2xl hover:shadow-brand-red/10'
                               }`}
                           >
                             {isOccupied && (
-                              <div className="absolute top-8 right-8">
-                                <div className="bg-orange-500 text-white text-[8px] font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-orange-500/30">Busy</div>
+                              <div className="absolute top-4 right-4 md:top-8 md:right-8">
+                                <div className="bg-orange-500 text-white text-[7px] md:text-[8px] font-bold px-2 md:px-3 py-0.5 md:py-1 rounded-full uppercase tracking-widest shadow-lg shadow-orange-500/30">Busy</div>
                               </div>
                             )}
-                            <div className={`p-6 rounded-[2rem] transition-all transform group-hover:scale-110 group-hover:rotate-6 ${isOccupied ? 'bg-orange-50 text-orange-500' : 'bg-slate-50 text-slate-300 group-hover:bg-brand-red group-hover:text-white'
+                            <div className={`p-4 md:p-6 rounded-xl md:rounded-[2rem] transition-all transform group-hover:scale-110 group-hover:rotate-6 ${isOccupied ? 'bg-orange-50 text-orange-500' : 'bg-slate-50 text-slate-300 group-hover:bg-brand-red group-hover:text-white'
                               }`}>
-                              <Utensils size={32} />
+                              <Utensils size={24} className="md:w-[32px] md:h-[32px]" />
                             </div>
                             <div className="text-center">
-                              <p className={`font-bold text-3xl tracking-tighter ${isOccupied ? 'text-orange-600' : 'text-slate-800'}`}>T-{t.number}</p>
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{t.seats} SEATS</span>
+                              <p className={`font-bold text-xl md:text-3xl tracking-tighter ${isOccupied ? 'text-orange-600' : 'text-slate-800'}`}>T-{t.number}</p>
+                              <span className="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{t.seats} SEATS</span>
                             </div>
                           </button>
                         );
