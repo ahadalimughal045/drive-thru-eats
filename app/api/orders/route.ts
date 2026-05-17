@@ -74,12 +74,25 @@ export async function POST(req: Request) {
       }
     }
 
-    console.log(`[ORDER] Attempting: ${data.id || 'new'}`);
+    console.log(`[ORDER] Attempting new order...`);
+
+    // Generate sequential ID: DT-00001, DT-00002, ...
+    let nextOrderId: string;
+    const lastOrder = await prisma.order.findFirst({
+      where: { orderId: { startsWith: 'DT-' } },
+      orderBy: { timestamp: 'desc' },
+    });
+    if (lastOrder?.orderId) {
+      const lastNum = parseInt(lastOrder.orderId.replace('DT-', ''), 10);
+      nextOrderId = `DT-${String((isNaN(lastNum) ? 0 : lastNum) + 1).padStart(5, '0')}`;
+    } else {
+      nextOrderId = 'DT-00001';
+    }
 
     const newOrder = await prisma.order.create({
       data: {
-        id: data.id || `ORD-${Date.now()}`,
-        orderId: data.id || `ORD-${Date.now()}`,
+        id: nextOrderId,
+        orderId: nextOrderId,
         customerName: data.customerName,
         email: data.email || null,
         phone: data.phone,

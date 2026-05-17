@@ -55,14 +55,42 @@ export default function Hero() {
                 </h1>
               </div>
 
-              <p className="text-brand-muted text-sm md:text-base max-w-lg leading-relaxed font-medium">
-                Experience the pinnacle of drive-thru excellence.
+              <div className="flex flex-col gap-4 max-w-lg">
+                <p className="text-brand-muted text-sm md:text-base leading-relaxed font-medium">
+                  Experience the pinnacle of drive-thru excellence. Fast, fresh, and exceptionally delicious—crafted to satisfy your cravings instantly.
+                </p>
+                
                 {activePromo ? (
-                  <> Use code <span className="text-brand-text font-bold px-1.5 py-0.5 bg-brand-bg rounded-lg border border-brand-border mx-1">{activePromo.code}</span> for an instant {activePromo.discount}% off.</>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-gradient-to-r from-brand-orange/10 to-brand-red/5 border border-brand-orange/20 px-5 py-3 rounded-2xl shadow-soft hover:shadow-md transition-all">
+                    <div className="flex items-center gap-3 flex-1">
+                      <div className="w-10 h-10 rounded-full bg-brand-orange/20 flex items-center justify-center shrink-0">
+                        <span className="text-xl">🎉</span>
+                      </div>
+                      <p className="text-sm font-medium text-brand-text leading-snug">
+                        <span className="text-brand-orange font-bold">Great news!</span> Use code <span className="inline-block bg-white text-brand-red font-bold px-2.5 py-1 rounded-lg shadow-sm border border-brand-border mx-1">{activePromo.code}</span> for an instant <span className="font-bold text-brand-red">{activePromo.discount}% OFF</span>.
+                      </p>
+                    </div>
+                    <button 
+                      onClick={() => {
+                        localStorage.setItem('savedCoupon', activePromo.code);
+                        alert(`Coupon ${activePromo.code} applied! It will be automatically used at checkout.`);
+                      }}
+                      className="whitespace-nowrap bg-[#f06d2e] hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md hover:shadow-lg transition-all active:scale-95"
+                    >
+                      Apply Coupon
+                    </button>
+                  </div>
                 ) : (
-                  <> Grab our legendary specials today.</>
+                  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-brand-red/5 to-brand-orange/5 border border-brand-red/10 px-5 py-3 rounded-2xl shadow-soft hover:shadow-md transition-all">
+                    <div className="w-10 h-10 rounded-full bg-brand-red/10 flex items-center justify-center shrink-0">
+                      <span className="text-xl">🎁</span>
+                    </div>
+                    <p className="text-sm font-medium text-brand-text leading-snug">
+                      <span className="font-bold text-brand-red">Craving a deal?</span> Don't forget to check for <span className="font-bold underline decoration-brand-orange/50 underline-offset-4">exclusive coupons</span> to grab our legendary specials!
+                    </p>
+                  </div>
                 )}
-              </p>
+              </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-6">
