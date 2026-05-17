@@ -39,6 +39,7 @@ export default function OrdersPage() {
     fetchOrders();
     const interval = setInterval(fetchOrders, 10000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastOrderId]);
 
   const filteredOrders = (Array.isArray(orders) ? orders : []).filter(o => {
@@ -373,7 +374,7 @@ export default function OrdersPage() {
                   {selectedOrder.instructions && (
                     <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-lg">
                       <p className="text-[10px] font-bold text-brand-red uppercase tracking-widest mb-1">Cooking Instructions</p>
-                      <p className="text-sm text-red-900 italic">"{selectedOrder.instructions}"</p>
+                      <p className="text-sm text-red-900 italic">&quot;{selectedOrder.instructions}&quot;</p>
                     </div>
                   )}
                 </div>

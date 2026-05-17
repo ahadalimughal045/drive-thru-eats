@@ -35,7 +35,7 @@ export default function WaiterPortal() {
       const oRes = await fetch('/api/orders');
       const oData = await oRes.json();
       const active = oData.find((o: any) => o.tableNumber == tableNum && o.status !== 'Delivered' && o.status !== 'Cancelled');
-      
+
       if (active) {
         const items = Array.isArray(active.items) ? active.items : JSON.parse(active.items || '[]');
         setExistingOrderItems(items);
@@ -142,8 +142,8 @@ export default function WaiterPortal() {
   const isBeverage = (item: any) => {
     const cat = (item.categoryName || item.category || '').toLowerCase();
     return cat.includes('beverage') || cat.includes('drink') || cat.includes('juice') ||
-           cat.includes('shake') || cat.includes('water') || cat.includes('shakes') ||
-           cat.includes('juices') || cat.includes('ice cream');
+      cat.includes('shake') || cat.includes('water') || cat.includes('shakes') ||
+      cat.includes('juices') || cat.includes('ice cream');
   };
 
   const updateQty = (id: string, delta: number) => {
@@ -158,15 +158,15 @@ export default function WaiterPortal() {
 
   const updateExistingQty = async (itemId: string, delta: number) => {
     if (!existingOrderId) return;
-    
+
     const newItems = existingOrderItems.map((c: any) => {
       if (c.id === itemId) return { ...c, quantity: Math.max(0, c.quantity + delta) };
       return c;
     }).filter((c: any) => c.quantity > 0);
-    
+
     setExistingOrderItems(newItems);
     const newTotal = newItems.reduce((sum: number, it: any) => sum + (it.price * it.quantity), 0);
-    
+
     try {
       await fetch('/api/orders', {
         method: 'PATCH',
@@ -180,7 +180,7 @@ export default function WaiterPortal() {
         })
       });
       loadInitialData();
-    } catch(e) {
+    } catch (e) {
       console.error('Failed to update DB quantity', e);
     }
   };
@@ -343,7 +343,7 @@ export default function WaiterPortal() {
               <div className="hidden sm:flex flex-col items-end mr-2 md:mr-4">
                 <p className="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">System Status</p>
                 <p className="text-[8px] md:text-[10px] font-bold text-green-500 uppercase flex items-center gap-1 md:gap-1.5">
-                  <span className="w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-green-500 animate-pulse"></span> 
+                  <span className="w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-green-500 animate-pulse"></span>
                   Live Tracking
                 </p>
               </div>
@@ -374,19 +374,19 @@ export default function WaiterPortal() {
 
                   {/* Kitchen Toggle Buttons - Visible only on mobile/tablet */}
                   <div className="flex md:hidden bg-slate-100 p-1.5 rounded-[2rem] border border-slate-200 shadow-inner w-full md:w-auto">
-                    <button 
+                    <button
                       onClick={() => setKitchenTab('Pending')}
                       className={`flex-1 md:flex-none px-6 py-3 rounded-full font-bold text-[10px] uppercase tracking-widest transition-all ${kitchenTab === 'Pending' ? 'bg-white text-slate-800 shadow-md scale-105' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                       Incoming ({activeOrders.filter(o => o.status === 'Pending').length})
                     </button>
-                    <button 
+                    <button
                       onClick={() => setKitchenTab('Preparing')}
                       className={`flex-1 md:flex-none px-6 py-3 rounded-full font-bold text-[10px] uppercase tracking-widest transition-all ${kitchenTab === 'Preparing' ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20 scale-105' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                       Preparing ({activeOrders.filter(o => o.status === 'Preparing').length})
                     </button>
-                    <button 
+                    <button
                       onClick={() => setKitchenTab('Ready')}
                       className={`flex-1 md:flex-none px-6 py-3 rounded-full font-bold text-[10px] uppercase tracking-widest transition-all ${kitchenTab === 'Ready' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 scale-105' : 'text-slate-400 hover:text-slate-600'}`}
                     >
@@ -534,143 +534,143 @@ export default function WaiterPortal() {
                     {/* 1. Pending Column */}
                     {kitchenTab === 'Pending' && (
                       <div className="flex flex-col gap-5 bg-slate-200/50 backdrop-blur-sm p-6 md:p-10 rounded-[3rem] border border-slate-200/60 shadow-inner h-full animate-fade-in">
-                      <div className="flex items-center justify-between px-4">
-                        <h2 className="font-bold text-slate-500 text-xs uppercase tracking-widest flex items-center gap-2">
-                          <LayoutGrid size={14} className="text-slate-400" /> Incoming orders
-                        </h2>
-                        <span className="bg-white text-slate-800 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-slate-200 shadow-sm">
-                          {activeOrders.filter(o => o.status === 'Pending').length}
-                        </span>
-                      </div>
+                        <div className="flex items-center justify-between px-4">
+                          <h2 className="font-bold text-slate-500 text-xs uppercase tracking-widest flex items-center gap-2">
+                            <LayoutGrid size={14} className="text-slate-400" /> Incoming orders
+                          </h2>
+                          <span className="bg-white text-slate-800 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-slate-200 shadow-sm">
+                            {activeOrders.filter(o => o.status === 'Pending').length}
+                          </span>
+                        </div>
 
-                      <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar">
-                        {activeOrders.filter(o => o.status === 'Pending').length === 0 && (
-                          <div className="h-40 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-3xl opacity-50">
-                            <span className="text-xs font-bold uppercase tracking-widest text-slate-400">No New Orders</span>
-                          </div>
-                        )}
-                        {activeOrders.filter(o => o.status === 'Pending').map(order => (
-                          <div key={order.id} className="bg-white p-7 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-xl hover:scale-[1.01] transition-all group animate-slide-up">
-                            <div className="flex justify-between items-start mb-6">
-                              <div>
-                                <span className="font-bold text-xl text-slate-800 tracking-tighter line-clamp-1">{order.orderId}</span>
-                                <p className="text-[10px] font-bold text-brand-red/50 uppercase tracking-widest mt-1">
-                                  {order.tableNumber ? `Dining • Table ${order.tableNumber}` : `${order.type} order`}
-                                </p>
-                              </div>
-                              <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 group-hover:bg-brand-red group-hover:text-white transition-colors">
-                                <Utensils size={18} />
-                              </div>
+                        <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar">
+                          {activeOrders.filter(o => o.status === 'Pending').length === 0 && (
+                            <div className="h-40 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-3xl opacity-50">
+                              <span className="text-xs font-bold uppercase tracking-widest text-slate-400">No New Orders</span>
                             </div>
+                          )}
+                          {activeOrders.filter(o => o.status === 'Pending').map(order => (
+                            <div key={order.id} className="bg-white p-7 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-xl hover:scale-[1.01] transition-all group animate-slide-up">
+                              <div className="flex justify-between items-start mb-6">
+                                <div>
+                                  <span className="font-bold text-xl text-slate-800 tracking-tighter line-clamp-1">{order.orderId}</span>
+                                  <p className="text-[10px] font-bold text-brand-red/50 uppercase tracking-widest mt-1">
+                                    {order.tableNumber ? `Dining • Table ${order.tableNumber}` : `${order.type} order`}
+                                  </p>
+                                </div>
+                                <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 group-hover:bg-brand-red group-hover:text-white transition-colors">
+                                  <Utensils size={18} />
+                                </div>
+                              </div>
 
-                            <ul className="space-y-2.5 mb-8">
-                              {(Array.isArray(order.items) ? order.items : []).filter((it: any) => {
-                                const catName = (it.categoryName || '').toLowerCase();
-                                return !catName.includes('beverage') && !catName.includes('drink');
-                              }).map((item: any, i: number) => (
-                                <li key={i} className="text-sm font-bold text-slate-700 flex justify-between items-center bg-slate-50/50 px-4 py-2.5 rounded-xl border border-dotted border-slate-200">
-                                  <span className="uppercase tracking-tight truncate">{item.name}</span>
-                                  <span className="text-brand-red font-bold text-xs brightness-90">x{item.quantity}</span>
-                                </li>
-                              ))}
-                            </ul>
+                              <ul className="space-y-2.5 mb-8">
+                                {(Array.isArray(order.items) ? order.items : []).filter((it: any) => {
+                                  const catName = (it.categoryName || '').toLowerCase();
+                                  return !catName.includes('beverage') && !catName.includes('drink');
+                                }).map((item: any, i: number) => (
+                                  <li key={i} className="text-sm font-bold text-slate-700 flex justify-between items-center bg-slate-50/50 px-4 py-2.5 rounded-xl border border-dotted border-slate-200">
+                                    <span className="uppercase tracking-tight truncate">{item.name}</span>
+                                    <span className="text-brand-red font-bold text-xs brightness-90">x{item.quantity}</span>
+                                  </li>
+                                ))}
+                              </ul>
 
-                            <button
-                              onClick={async () => {
-                                await fetch('/api/orders', {
-                                  method: 'PATCH',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ id: order.orderId, updates: { status: 'Preparing', chef: waiter?.name || 'Chef' } })
-                                });
-                                loadInitialData();
-                              }}
-                              className="w-full bg-slate-900 border-2 border-slate-900 text-white py-4 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-slate-200 hover:bg-brand-red hover:border-brand-red transition-all active:scale-[0.97]"
-                            >
-                              Make Order
-                            </button>
-                          </div>
-                        ))}
-                      </div>
+                              <button
+                                onClick={async () => {
+                                  await fetch('/api/orders', {
+                                    method: 'PATCH',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ id: order.orderId, updates: { status: 'Preparing', chef: waiter?.name || 'Chef' } })
+                                  });
+                                  loadInitialData();
+                                }}
+                                className="w-full bg-slate-900 border-2 border-slate-900 text-white py-4 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-slate-200 hover:bg-brand-red hover:border-brand-red transition-all active:scale-[0.97]"
+                              >
+                                Make Order
+                              </button>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
 
                     {/* 2. Preparing Column */}
                     {kitchenTab === 'Preparing' && (
                       <div className="flex flex-col gap-5 bg-orange-100/40 backdrop-blur-sm p-6 md:p-10 rounded-[3rem] border border-orange-200/30 h-full animate-fade-in">
-                      <div className="flex items-center justify-between px-4">
-                        <h2 className="font-bold text-orange-600 text-xs uppercase tracking-widest flex items-center gap-2">
-                          In preparation
-                        </h2>
-                      </div>
+                        <div className="flex items-center justify-between px-4">
+                          <h2 className="font-bold text-orange-600 text-xs uppercase tracking-widest flex items-center gap-2">
+                            In preparation
+                          </h2>
+                        </div>
 
-                      <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar">
-                        {activeOrders.filter(o => o.status === 'Preparing').length === 0 && (
-                          <div className="h-40 flex items-center justify-center border-2 border-dashed border-orange-200 rounded-3xl opacity-50">
-                            <span className="text-xs font-bold uppercase tracking-widest text-orange-400">No Orders Here</span>
-                          </div>
-                        )}
-                        {activeOrders.filter(o => o.status === 'Preparing').map(order => (
-                          <div key={order.id} className="bg-white p-7 rounded-[2.5rem] shadow-xl shadow-orange-500/5 border-l-8 border-orange-500 group animate-pulse-subtle">
-                            <div className="flex justify-between items-start mb-6">
-                              <div>
-                                <span className="font-bold text-xl text-slate-800 tracking-tighter line-clamp-1">{order.orderId}</span>
-                                <p className="text-[10px] font-bold text-orange-500 uppercase tracking-widest mt-1">Cooking • {order.chef || 'Chef'}</p>
-                              </div>
+                        <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar">
+                          {activeOrders.filter(o => o.status === 'Preparing').length === 0 && (
+                            <div className="h-40 flex items-center justify-center border-2 border-dashed border-orange-200 rounded-3xl opacity-50">
+                              <span className="text-xs font-bold uppercase tracking-widest text-orange-400">No Orders Here</span>
                             </div>
+                          )}
+                          {activeOrders.filter(o => o.status === 'Preparing').map(order => (
+                            <div key={order.id} className="bg-white p-7 rounded-[2.5rem] shadow-xl shadow-orange-500/5 border-l-8 border-orange-500 group animate-pulse-subtle">
+                              <div className="flex justify-between items-start mb-6">
+                                <div>
+                                  <span className="font-bold text-xl text-slate-800 tracking-tighter line-clamp-1">{order.orderId}</span>
+                                  <p className="text-[10px] font-bold text-orange-500 uppercase tracking-widest mt-1">Cooking • {order.chef || 'Chef'}</p>
+                                </div>
+                              </div>
 
-                            <ul className="space-y-2 mb-8">
-                              {(Array.isArray(order.items) ? order.items : []).filter((it: any) => {
-                                const catName = (it.categoryName || '').toLowerCase();
-                                return !catName.includes('beverage') && !catName.includes('drink');
-                              }).map((item: any, i: number) => (
-                                <li key={i} className="text-sm font-bold text-slate-700 bg-orange-50/50 px-4 py-2 rounded-xl">
-                                  <span className="text-orange-600 font-bold mr-2">x{item.quantity}</span> {item.name}
-                                </li>
-                              ))}
-                            </ul>
+                              <ul className="space-y-2 mb-8">
+                                {(Array.isArray(order.items) ? order.items : []).filter((it: any) => {
+                                  const catName = (it.categoryName || '').toLowerCase();
+                                  return !catName.includes('beverage') && !catName.includes('drink');
+                                }).map((item: any, i: number) => (
+                                  <li key={i} className="text-sm font-bold text-slate-700 bg-orange-50/50 px-4 py-2 rounded-xl">
+                                    <span className="text-orange-600 font-bold mr-2">x{item.quantity}</span> {item.name}
+                                  </li>
+                                ))}
+                              </ul>
 
-                            <button
-                              onClick={async () => {
-                                await fetch('/api/orders', {
-                                  method: 'PATCH',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ id: order.orderId, updates: { status: 'Ready' } })
-                                });
-                                loadInitialData();
-                              }}
-                              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-orange-200 hover:scale-[1.02] transition-all"
-                            >
-                              Complete Task
-                            </button>
-                          </div>
-                        ))}
-                      </div>
+                              <button
+                                onClick={async () => {
+                                  await fetch('/api/orders', {
+                                    method: 'PATCH',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ id: order.orderId, updates: { status: 'Ready' } })
+                                  });
+                                  loadInitialData();
+                                }}
+                                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-orange-200 hover:scale-[1.02] transition-all"
+                              >
+                                Complete Task
+                              </button>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
 
                     {/* 3. Ready Column */}
                     {kitchenTab === 'Ready' && (
                       <div className="flex flex-col gap-5 bg-emerald-100/30 backdrop-blur-sm p-6 md:p-10 rounded-[3rem] border border-emerald-200/20 h-full animate-fade-in">
-                      <h2 className="font-bold text-emerald-600 text-xs uppercase tracking-widest px-4">Out to guest</h2>
-                      <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar">
-                        {activeOrders.filter(o => o.status === 'Ready').length === 0 && (
-                          <div className="h-40 flex items-center justify-center border-2 border-dashed border-emerald-200 rounded-3xl opacity-50">
-                            <span className="text-xs font-bold uppercase tracking-widest text-emerald-500">Nothing to Serve</span>
-                          </div>
-                        )}
-                        {activeOrders.filter(o => o.status === 'Ready').map(order => (
-                          <div key={order.id} className="bg-white/80 p-7 rounded-[2.5rem] shadow-sm border border-emerald-100 scale-95 opacity-80 filter grayscale-[0.5]">
-                            <div className="flex justify-between items-center mb-4">
-                              <span className="font-bold text-base text-emerald-600 uppercase tracking-tighter">{order.orderId}</span>
-                              <Check size={16} className="text-emerald-500" />
+                        <h2 className="font-bold text-emerald-600 text-xs uppercase tracking-widest px-4">Out to guest</h2>
+                        <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar">
+                          {activeOrders.filter(o => o.status === 'Ready').length === 0 && (
+                            <div className="h-40 flex items-center justify-center border-2 border-dashed border-emerald-200 rounded-3xl opacity-50">
+                              <span className="text-xs font-bold uppercase tracking-widest text-emerald-500">Nothing to Serve</span>
                             </div>
-                            <div className="bg-emerald-50 py-3 rounded-2xl text-center border border-emerald-100">
-                              <p className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Ready</p>
+                          )}
+                          {activeOrders.filter(o => o.status === 'Ready').map(order => (
+                            <div key={order.id} className="bg-white/80 p-7 rounded-[2.5rem] shadow-sm border border-emerald-100 scale-95 opacity-80 filter grayscale-[0.5]">
+                              <div className="flex justify-between items-center mb-4">
+                                <span className="font-bold text-base text-emerald-600 uppercase tracking-tighter">{order.orderId}</span>
+                                <Check size={16} className="text-emerald-500" />
+                              </div>
+                              <div className="bg-emerald-50 py-3 rounded-2xl text-center border border-emerald-100">
+                                <p className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Ready</p>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
                     )}
                   </div>
                 </div>
@@ -775,7 +775,7 @@ export default function WaiterPortal() {
                                   <div key={it.id} className="bg-white p-4 rounded-3xl shadow-sm border border-transparent flex justify-between items-center group hover:border-brand-red/20 hover:shadow-xl hover:shadow-brand-red/5 hover:-translate-y-1 transition-all duration-300">
                                     <div className="flex items-center gap-4">
                                       <div className="w-16 h-16 rounded-[1.5rem] bg-slate-100 overflow-hidden flex-shrink-0 relative group-hover:scale-105 transition-transform duration-500 shadow-inner">
-                                        <img src={it.image} className="w-full h-full object-cover" />
+                                        <img src={it.image} alt={it.name || "Menu item"} className="w-full h-full object-cover" />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                                       </div>
                                       <div>
@@ -824,29 +824,29 @@ export default function WaiterPortal() {
                                 <div className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-3 ml-1 flex items-center gap-2">
                                   Already Ordered <div className="h-[1px] flex-1 bg-slate-100"></div>
                                 </div>
-                                  <div className="space-y-3 mt-4">
-                                    {existingOrderItems.map((item, i) => (
-                                      <div key={i} className="group/item flex justify-between items-center gap-5 bg-slate-50 p-3 px-4 rounded-[1.5rem] border border-slate-100/60 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all">
-                                        <div className="flex-1 min-w-0 flex items-center gap-3">
-                                          <div className="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
-                                          <h4 className="font-bold text-[10px] text-slate-500 uppercase truncate">{item.name}</h4>
-                                        </div>
-                                        
-                                        <div className="flex items-center gap-4">
-                                          <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-100 shadow-sm">
-                                            <button disabled className="w-6 h-6 rounded-lg bg-slate-50 text-slate-300 flex items-center justify-center cursor-not-allowed">
-                                              <Minus size={12} />
-                                            </button>
-                                            <span className="font-bold text-xs w-5 text-center text-slate-800">{item.quantity}</span>
-                                            <button onClick={() => updateExistingQty(item.id, 1)} className="w-6 h-6 rounded-lg bg-slate-50/50 text-slate-400 hover:text-brand-red hover:bg-brand-red/10 flex items-center justify-center transition-all">
-                                              <Plus size={12} />
-                                            </button>
-                                          </div>
-                                          <p className="font-mono text-xs font-bold text-slate-500 tracking-wider w-12 text-right">₹{item.price * item.quantity}</p>
-                                        </div>
+                                <div className="space-y-3 mt-4">
+                                  {existingOrderItems.map((item, i) => (
+                                    <div key={i} className="group/item flex justify-between items-center gap-5 bg-slate-50 p-3 px-4 rounded-[1.5rem] border border-slate-100/60 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition-all">
+                                      <div className="flex-1 min-w-0 flex items-center gap-3">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
+                                        <h4 className="font-bold text-[10px] text-slate-500 uppercase truncate">{item.name}</h4>
                                       </div>
-                                    ))}
-                                  </div>
+
+                                      <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-100 shadow-sm">
+                                          <button disabled className="w-6 h-6 rounded-lg bg-slate-50 text-slate-300 flex items-center justify-center cursor-not-allowed">
+                                            <Minus size={12} />
+                                          </button>
+                                          <span className="font-bold text-xs w-5 text-center text-slate-800">{item.quantity}</span>
+                                          <button onClick={() => updateExistingQty(item.id, 1)} className="w-6 h-6 rounded-lg bg-slate-50/50 text-slate-400 hover:text-brand-red hover:bg-brand-red/10 flex items-center justify-center transition-all">
+                                            <Plus size={12} />
+                                          </button>
+                                        </div>
+                                        <p className="font-mono text-xs font-bold text-slate-500 tracking-wider w-12 text-right">₹{item.price * item.quantity}</p>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
                             )}
 

@@ -36,6 +36,7 @@ export default function KitchenPage() {
     loadData();
     const interval = setInterval(loadData, 10000); 
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastOrderId]);
 
   const activeOrders = (Array.isArray(orders) ? orders : []).filter(o => o.status === 'Pending' || o.status === 'Preparing' || o.status === 'Ready');

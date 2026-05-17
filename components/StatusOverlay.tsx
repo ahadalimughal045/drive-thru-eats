@@ -71,12 +71,12 @@ export default function StatusOverlay() {
           </div>
           
           <h2 className="text-3xl md:text-4xl font-bold text-brand-text tracking-tight uppercase">
-            We're Currently <br />
+            We&apos;re Currently <br />
             <span className="text-brand-red underline decoration-brand-red/20 underline-offset-8">Closed</span>
           </h2>
           
           <p className="text-brand-muted font-medium leading-relaxed text-sm md:text-base">
-            Sorry jani! Our kitchen is closed right now. We'll be back online to take your orders soon.
+            Sorry jani! Our kitchen is closed right now. We&apos;ll be back online to take your orders soon.
           </p>
 
           <div className="pt-8 border-t border-gray-100 grid grid-cols-2 gap-4">
