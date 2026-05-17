@@ -29,7 +29,7 @@ export default function StatusHeader() {
       <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping shrink-0" />
       <Clock size={14} className="shrink-0" />
       <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-center">
-        Restaurant is closed right now. We'll reopen at <span className="bg-white/20 px-2 py-0.5 rounded ml-1">{settings?.openTime || '09:00'}</span>
+        Restaurant is closed right now. We&apos;ll reopen at <span className="bg-white/20 px-2 py-0.5 rounded ml-1">{settings?.openTime || '09:00'}</span>
       </p>
     </div>
   );

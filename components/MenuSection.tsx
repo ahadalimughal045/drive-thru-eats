@@ -88,7 +88,7 @@ export default function MenuSection() {
                 <span className="text-brand-red">Legendary Menu</span>
               </h2>
               <p className="text-brand-muted font-medium max-w-md">
-                From morning breakfast to late night snacks, we've got your cravings covered.
+                From morning breakfast to late night snacks, we&apos;ve got your cravings covered.
               </p>
             </div>
 
@@ -138,7 +138,7 @@ export default function MenuSection() {
                   <div className="text-center py-24 bg-white rounded-4xl border-2 border-dashed border-brand-border">
                     <div className="text-8xl mb-6">🤌</div>
                     <h3 className="text-2xl font-bold text-brand-text mb-2">Non found, Chef!</h3>
-                    <p className="text-brand-muted mb-8">Maybe try searching for 'Burger' or 'Pizza'?</p>
+                    <p className="text-brand-muted mb-8">Maybe try searching for &apos;Burger&apos; or &apos;Pizza&apos;?</p>
                     <button 
                       onClick={() => setSearchQuery('')}
                       className="btn-secondary"
@@ -153,7 +153,7 @@ export default function MenuSection() {
                         <Search size={24} />
                       </div>
                       <h2 className="text-brand-text font-bold text-3xl tracking-tight">
-                        Results for "{searchQuery}"
+                        Results for &quot;{searchQuery}&quot;
                         <span className="ml-3 text-sm font-bold text-brand-muted bg-brand-bg px-3 py-1 rounded-full border border-brand-border uppercase tracking-widest">{getFilteredItems().length} Items</span>
                       </h2>
                     </div>

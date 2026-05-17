@@ -59,7 +59,7 @@ export default function Hero() {
                 <p className="text-brand-muted text-sm md:text-base leading-relaxed font-medium">
                   Experience the pinnacle of drive-thru excellence. Fast, fresh, and exceptionally delicious—crafted to satisfy your cravings instantly.
                 </p>
-                
+
                 {activePromo ? (
                   <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-gradient-to-r from-brand-orange/10 to-brand-red/5 border border-brand-orange/20 px-5 py-3 rounded-2xl shadow-soft hover:shadow-md transition-all">
                     <div className="flex items-center gap-3 flex-1">
@@ -70,7 +70,7 @@ export default function Hero() {
                         <span className="text-brand-orange font-bold">Great news!</span> Use code <span className="inline-block bg-white text-brand-red font-bold px-2.5 py-1 rounded-lg shadow-sm border border-brand-border mx-1">{activePromo.code}</span> for an instant <span className="font-bold text-brand-red">{activePromo.discount}% OFF</span>.
                       </p>
                     </div>
-                    <button 
+                    <button
                       onClick={() => {
                         localStorage.setItem('savedCoupon', activePromo.code);
                         alert(`Coupon ${activePromo.code} applied! It will be automatically used at checkout.`);
@@ -86,7 +86,7 @@ export default function Hero() {
                       <span className="text-xl">🎁</span>
                     </div>
                     <p className="text-sm font-medium text-brand-text leading-snug">
-                      <span className="font-bold text-brand-red">Craving a deal?</span> Don't forget to check for <span className="font-bold underline decoration-brand-orange/50 underline-offset-4">exclusive coupons</span> to grab our legendary specials!
+                      <span className="font-bold text-brand-red">Craving a deal?</span> Don&apos;t forget to check for <span className="font-bold underline decoration-brand-orange/50 underline-offset-4">exclusive coupons</span> to grab our legendary specials!
                     </p>
                   </div>
                 )}
