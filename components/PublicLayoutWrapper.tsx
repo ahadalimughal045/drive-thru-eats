@@ -9,7 +9,7 @@ export default function PublicLayoutWrapper({ children }: { children: React.Reac
   const pathname = usePathname();
   
   // If we are in the admin, waiter, or staff portals, DO NOT render the public Navbar/Footer/StatusHeader.
-  if (pathname.startsWith('/admin') || pathname.startsWith('/waiter') || pathname.startsWith('/staff')) {
+  if (pathname.startsWith('/admin') || pathname.startsWith('/waiter') || pathname.startsWith('/staff') || pathname.startsWith('/chef')) {
     return <main className="flex-1 flex flex-col">{children}</main>;
   }
 
