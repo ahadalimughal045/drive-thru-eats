@@ -107,10 +107,8 @@ export default function WaiterPortal() {
       if (data.success) {
         const staff = data.staff;
         const isAuthorized = staff.role === 'Waiter' ||
-          staff.role === 'Kitchen Staff' ||
           staff.role === 'Manager' ||
-          staff.role.toLowerCase().includes('waiter') ||
-          staff.role.toLowerCase().includes('staff');
+          staff.role.toLowerCase().includes('waiter');
 
         if (isAuthorized) {
           setWaiter(staff);
@@ -269,7 +267,7 @@ export default function WaiterPortal() {
               <div className="w-20 h-20 bg-gradient-to-br from-brand-red to-orange-500 rounded-3xl mx-auto flex items-center justify-center mb-8 shadow-lg shadow-brand-red/20 rotate-3">
                 <Utensils className="text-white" size={40} />
               </div>
-              <h1 className="text-3xl font-bold text-white tracking-tighter uppercase mb-2">Staff Portal</h1>
+              <h1 className="text-3xl font-bold text-white tracking-tighter uppercase mb-2">Waiter Portal</h1>
               <p className="text-slate-400 font-medium text-xs uppercase tracking-[0.2em]">Secure Hardware Access</p>
             </div>
 

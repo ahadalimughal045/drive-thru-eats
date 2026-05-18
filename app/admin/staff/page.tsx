@@ -90,8 +90,11 @@ export default function StaffPage() {
           <p className="text-[#6c757d] font-medium mt-1">Manage kitchen staff, delivery drivers, and managers.</p>
         </div>
         <div className="flex gap-3">
-          <a href="/staff" className="bg-gray-800 hover:bg-black text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all shadow-md">
-            Staff Portal
+          <a href="/chef" className="bg-orange-600 hover:bg-orange-700 text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all shadow-md">
+            <ChefHat size={18} /> Chef Portal
+          </a>
+          <a href="/waiter" className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all shadow-md">
+            <UserCircle size={18} /> Waiter Portal
           </a>
           <button
             onClick={() => setShowAddForm(!showAddForm)}
