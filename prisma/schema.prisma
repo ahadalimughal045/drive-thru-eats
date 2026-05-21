@@ -26,7 +26,16 @@ model order {
   waiter            String?
   timestamp         DateTime @default(now())
   items             String
+  
+  // Credit Order & Reports Integration
+  payment_type         String?  // "cash" | "upi" | "credit"
+  credit_customer_name String?
+  credit_company_name  String?
+  credit_phone         String?
+  credit_status        String?  // "pending" | "cleared"
+  is_deleted_credit    Boolean  @default(false)
 }
+
 
 model reservation {
   id      String @id

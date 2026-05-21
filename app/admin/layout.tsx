@@ -14,6 +14,8 @@ import {
   Utensils,
   Tag,
   Settings2,
+  FileSpreadsheet,
+  BarChart3,
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -59,6 +61,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Coupons', href: '/admin/coupons', icon: <Tag size={20} /> },
     { name: 'Control', href: '/admin/control', icon: <Settings2 size={20} /> },
     { name: 'Staff', href: '/admin/staff', icon: <Users size={20} /> },
+    { name: 'Credit Reports', href: '/admin/credit-reports', icon: <FileSpreadsheet size={20} /> },
+    { name: 'Main Report', href: '/admin/main-report', icon: <BarChart3 size={20} /> },
   ];
 
   const isLoginPage = pathname === '/admin/login';
