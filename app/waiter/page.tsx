@@ -205,32 +205,37 @@ export default function WaiterPortal() {
         const kitchenItems = cart.filter(it => !isBeverage(it));
         const kitchenStatus = kitchenItems.length > 0 ? 'Pending' : activeOrder.status;
 
+        const updates: any = {
+          items: JSON.stringify(mergedItems),
+          total: newTotal,
+          status: kitchenStatus
+        };
+
+
         await fetch('/api/orders', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             id: activeOrder.orderId,
-            updates: {
-              items: JSON.stringify(mergedItems),
-              total: newTotal,
-              status: kitchenStatus
-            }
+            updates
           })
         });
         alert(kitchenItems.length > 0 ? 'Items added to existing Table Order!' : 'Beverages added to bill!');
       } else {
         const kitchenItems = cart.filter(it => !isBeverage(it));
-        const orderData = {
+        const orderData: any = {
           customerName: `Table ${selectedTable.number} Guest`,
           phone: 'N/A',
           type: 'dining',
           tableNumber: String(selectedTable.number),
           items: cart,
           total: cart.reduce((sum, it) => sum + (it.price * it.quantity), 0),
-          paymentMethod: 'cash',
+          paymentMethod: paymentMethod,
           status: kitchenItems.length > 0 ? 'Pending' : 'Delivered',
           waiter: waiter.name
         };
+
+        orderData.payment_type = paymentMethod === 'cash' ? 'cash' : 'upi';
 
         await fetch('/api/orders', {
           method: 'POST',
@@ -942,6 +947,7 @@ export default function WaiterPortal() {
                                   </div>
                                 </div>
                               )}
+
                             </div>
 
                             <div className="flex flex-col gap-2">
@@ -972,16 +978,19 @@ export default function WaiterPortal() {
                                   }
                                   if (confirm("Finalize transaction and clear table status?")) {
                                     try {
+                                      const updates: any = {
+                                        status: 'Delivered',
+                                        paymentMethod: paymentMethod === 'online' ? `Online (${accountType})` : 'Cash',
+                                        transactionNumber: paymentMethod === 'online' ? transactionId : null,
+                                        payment_type: paymentMethod === 'cash' ? 'cash' : 'upi'
+                                      };
+
                                       await fetch('/api/orders', {
                                         method: 'PATCH',
                                         headers: { 'Content-Type': 'application/json' },
                                         body: JSON.stringify({
                                           id: existingOrderId,
-                                          updates: {
-                                            status: 'Delivered',
-                                            paymentMethod: paymentMethod === 'online' ? `Online (${accountType})` : 'Cash',
-                                            transactionNumber: paymentMethod === 'online' ? transactionId : null
-                                          }
+                                          updates
                                         })
                                       });
                                       alert("Bill Finalized!");
@@ -1068,13 +1077,29 @@ export default function WaiterPortal() {
           <div className="mt-4 pt-4 border-t border-dashed border-gray-400 space-y-1">
             <div className="flex justify-between text-[10px] uppercase">
               <span>Payment Mode</span>
-              <span className="font-bold">{paymentMethod === 'online' ? `Online (${accountType})` : 'Cash'}</span>
+              <span className="font-bold">{paymentMethod === 'online' ? `Online (${accountType})` : (paymentMethod === 'credit' ? 'Credit' : 'Cash')}</span>
             </div>
             {paymentMethod === 'online' && (
               <div className="flex justify-between text-[10px] uppercase">
                 <span>Transaction ID</span>
                 <span className="font-bold">{transactionId}</span>
               </div>
+            )}
+            {paymentMethod === 'credit' && (
+              <>
+                <div className="flex justify-between text-[10px] uppercase">
+                  <span>Customer Name</span>
+                  <span className="font-bold">{creditName}</span>
+                </div>
+                <div className="flex justify-between text-[10px] uppercase">
+                  <span>Company Name</span>
+                  <span className="font-bold">{creditCompany}</span>
+                </div>
+                <div className="flex justify-between text-[10px] uppercase">
+                  <span>Phone Number</span>
+                  <span className="font-bold">{creditPhone}</span>
+                </div>
+              </>
             )}
           </div>
         </div>

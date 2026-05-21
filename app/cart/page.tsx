@@ -53,6 +53,18 @@ export default function CartPage() {
   const [paymentMethod, setPaymentMethod] = useState('');
   const [transactionNumber, setTransactionNumber] = useState('');
 
+  // Credit Form States
+  const [creditName, setCreditName] = useState('');
+  const [creditCompany, setCreditCompany] = useState('');
+  const [creditPhone, setCreditPhone] = useState('');
+
+  useEffect(() => {
+    if (paymentMethod === 'Credit') {
+      if (!creditName) setCreditName(name);
+      if (!creditPhone) setCreditPhone(phone);
+    }
+  }, [paymentMethod, name, phone]);
+
   useEffect(() => {
     fetch('/api/tables')
       .then(res => res.json())
@@ -146,6 +158,12 @@ export default function CartPage() {
     if (!name.trim() || !phone.trim()) return alert("Please enter Name and Phone!");
     if (orderType === 'dining' && !selectedTable) return alert("Please select a Table Number!");
 
+    if (paymentMethod === 'Credit') {
+      if (!creditName.trim() || !creditCompany.trim() || !creditPhone.trim()) {
+        return alert("Please fill in all Credit form fields (Full Name, Company Name, and Phone Number)!");
+      }
+    }
+
     const newOrder = {
       customerName: name,
       email,
@@ -156,10 +174,16 @@ export default function CartPage() {
       address: orderType === 'delivery' ? address : '',
       instructions,
       paymentMethod,
-      transactionNumber,
+      transactionNumber: paymentMethod === 'Credit' ? '' : transactionNumber,
       items: items,
       total: finalPrice,
-      status: 'Pending'
+      status: 'Pending',
+      // Credit payment details
+      payment_type: paymentMethod === 'Credit' ? 'credit' : undefined,
+      credit_customer_name: paymentMethod === 'Credit' ? creditName : undefined,
+      credit_company_name: paymentMethod === 'Credit' ? creditCompany : undefined,
+      credit_phone: paymentMethod === 'Credit' ? creditPhone : undefined,
+      credit_status: paymentMethod === 'Credit' ? 'pending' : undefined,
     };
 
     fetch('/api/orders', {
@@ -354,6 +378,7 @@ export default function CartPage() {
                       <option value="G-PAY- [AN# +919682329952]">G-PAY- [AN# +919682329952]</option>
                       <option value="UPI - [AN# 9682329952@okbizaxis]">UPI - [AN# 9682329952@okbizaxis]</option>
                       <option value="Cash On Delivery">Cash On Delivery</option>
+                      <option value="Credit">Credit</option>
                     </select>
                     <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none">
                       <ChevronRight size={20} className="rotate-90 text-slate-400" />
@@ -361,10 +386,56 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <label className="text-xs font-bold text-slate-500 block">Transaction Number <span className="text-slate-800">(After Order place you also upload a transaction screenshot)</span></label>
-                  <input type="text" value={transactionNumber} onChange={e => setTransactionNumber(e.target.value)} placeholder="Transaction Number" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all shadow-sm" />
-                </div>
+                {paymentMethod === 'Credit' && (
+                  <div className="p-8 bg-orange-50/10 rounded-[2rem] border border-orange-200/20 space-y-6 animate-fade-in">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse"></div>
+                      <h4 className="text-xs font-bold text-slate-800 uppercase tracking-widest">Credit Information</h4>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-500 block">Full Name *</label>
+                        <input
+                          type="text"
+                          required
+                          value={creditName}
+                          onChange={e => setCreditName(e.target.value)}
+                          placeholder="e.g. Ishfaq Nazir"
+                          className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3.5 text-slate-800 font-medium placeholder:text-slate-300 focus:outline-none focus:border-brand-red transition-all shadow-sm"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-500 block">Company Name *</label>
+                        <input
+                          type="text"
+                          required
+                          value={creditCompany}
+                          onChange={e => setCreditCompany(e.target.value)}
+                          placeholder="e.g. Acme Corp"
+                          className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3.5 text-slate-800 font-medium placeholder:text-slate-300 focus:outline-none focus:border-brand-red transition-all shadow-sm"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-500 block">Phone Number *</label>
+                        <input
+                          type="number"
+                          required
+                          value={creditPhone}
+                          onChange={e => setCreditPhone(e.target.value)}
+                          placeholder="Numeric Phone"
+                          className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3.5 text-slate-800 font-medium placeholder:text-slate-300 focus:outline-none focus:border-brand-red transition-all shadow-sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {paymentMethod !== 'Credit' && paymentMethod !== 'Cash On Delivery' && paymentMethod !== '' && (
+                  <div className="space-y-4">
+                    <label className="text-xs font-bold text-slate-500 block">Transaction Number <span className="text-slate-800">(After Order place you also upload a transaction screenshot)</span></label>
+                    <input type="text" value={transactionNumber} onChange={e => setTransactionNumber(e.target.value)} placeholder="Transaction Number" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all shadow-sm" />
+                  </div>
+                )}
               </div>
             </div>
           </div>

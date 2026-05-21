@@ -89,6 +89,19 @@ export async function POST(req: Request) {
       nextOrderId = 'DT-00001';
     }
 
+    // Helper to derive payment_type if not explicitly sent
+    let derivedPaymentType = data.payment_type;
+    if (!derivedPaymentType && data.paymentMethod) {
+      const pm = String(data.paymentMethod).toLowerCase();
+      if (pm.includes('credit')) {
+        derivedPaymentType = 'credit';
+      } else if (pm.includes('cash')) {
+        derivedPaymentType = 'cash';
+      } else if (pm.includes('upi') || pm.includes('g-pay') || pm.includes('m-pay') || pm.includes('online')) {
+        derivedPaymentType = 'upi';
+      }
+    }
+
     const newOrder = await prisma.order.create({
       data: {
         id: nextOrderId,
@@ -108,6 +121,13 @@ export async function POST(req: Request) {
         chef: data.chef || null,
         waiter: data.waiter || null,
         items: typeof data.items === 'string' ? data.items : JSON.stringify(data.items),
+        // Credit payment fields
+        payment_type: derivedPaymentType || null,
+        credit_customer_name: data.credit_customer_name || null,
+        credit_company_name: data.credit_company_name || null,
+        credit_phone: data.credit_phone || null,
+        credit_status: data.credit_status || null,
+        is_deleted_credit: data.is_deleted_credit !== undefined ? Boolean(data.is_deleted_credit) : false,
       }
     });
     
