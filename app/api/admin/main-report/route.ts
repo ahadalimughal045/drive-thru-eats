@@ -201,9 +201,11 @@ export async function GET(req: Request) {
 
       // Standardize payment type display
       let normalizedPayment = 'Cash';
-      if (order.payment_type === 'credit' || order.paymentMethod?.toLowerCase().includes('credit')) {
+      const pmStr = order.paymentMethod?.toLowerCase() || '';
+      
+      if (order.payment_type === 'credit' || pmStr.includes('credit')) {
         normalizedPayment = 'Credit';
-      } else if (order.payment_type === 'upi' || order.paymentMethod?.toLowerCase().includes('upi') || order.paymentMethod?.toLowerCase().includes('online') || order.paymentMethod?.toLowerCase().includes('g-pay') || order.paymentMethod?.toLowerCase().includes('m-pay')) {
+      } else if (order.payment_type === 'upi' || pmStr.includes('upi') || pmStr.includes('online') || pmStr.includes('g-pay') || pmStr.includes('m-pay')) {
         normalizedPayment = 'UPI';
       }
 
