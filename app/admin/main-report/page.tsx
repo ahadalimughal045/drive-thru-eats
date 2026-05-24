@@ -17,7 +17,8 @@ import {
   UtensilsCrossed,
   Filter,
   X,
-  AlertCircle
+  AlertCircle,
+  MessageCircle,
 } from 'lucide-react';
 
 export default function MainReportPage() {
@@ -104,6 +105,44 @@ export default function MainReportPage() {
     window.open(`/api/admin/export/main-report?${queryParams.toString()}`, '_blank');
   };
 
+  const handleShareViaWhatsApp = () => {
+    const phoneInput = prompt('Enter WhatsApp Number to share the report summary (with Country Code, e.g. 923001234567):');
+    if (phoneInput === null) return;
+    const cleanPhone = phoneInput.replace(/\D/g, '');
+    if (!cleanPhone) { alert('Invalid phone number.'); return; }
+
+    const dateRangeStr = startDate && endDate
+      ? `${startDate} to ${endDate}`
+      : startDate
+      ? `From ${startDate}`
+      : endDate
+      ? `Up to ${endDate}`
+      : 'All Time';
+
+    const reportUrl = `${window.location.origin}/api/admin/export/main-report${startDate || endDate ? `?startDate=${startDate}&endDate=${endDate}` : ''}`;
+    const dateStr = new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+
+    const message =
+      `*DRIVE THRU EATS* \u{1F354}\u{1F525}\n*Master Sales Report*\n---------------------------------------\n` +
+      `*Report Period:* ${dateRangeStr}\n` +
+      `---------------------------------------\n` +
+      `*Total Sales:* \u{20B9}${Math.round(summary.totalSales)}\n` +
+      `*Total Orders:* ${summary.totalOrders}\n` +
+      `*Cash Received:* \u{20B9}${Math.round(summary.totalCash)}\n` +
+      `*UPI Received:* \u{20B9}${Math.round(summary.totalUPI)}\n` +
+      `*Credit Given:* \u{20B9}${Math.round(summary.totalCredit)}\n` +
+      `*Cleared Credit:* \u{20B9}${Math.round(summary.clearedCredit)}\n` +
+      `*Pending Credit:* \u{20B9}${Math.round(summary.pendingCredit)}\n` +
+      `*Today\u2019s Sales:* \u{20B9}${Math.round(summary.todaySales)}\n` +
+      `*Month\u2019s Sales:* \u{20B9}${Math.round(summary.monthSales)}\n` +
+      `---------------------------------------\n` +
+      `\u{1F4C4} Full Report: ${reportUrl}\n` +
+      `*Generated:* ${dateStr}\n` +
+      `Drive-Thru Eats — Restaurant Management System`;
+
+    window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Page Header */}
@@ -112,12 +151,20 @@ export default function MainReportPage() {
           <h1 className="text-3xl font-bold text-[#212529]">Master Reports</h1>
           <p className="text-[#6c757d] font-medium mt-1">Comprehensive restaurant financial analytics, sales records, and payment distributions.</p>
         </div>
-        <button
-          onClick={handleExportReport}
-          className="flex items-center gap-2 bg-[#f06d2e] hover:bg-[#d85c20] text-white font-bold py-3 px-6 rounded-2xl transition-all shadow-lg shadow-orange-500/20 text-sm whitespace-nowrap"
-        >
-          <FileSpreadsheet size={18} /> Export Master Report
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleShareViaWhatsApp}
+            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-5 rounded-2xl transition-all shadow-lg shadow-emerald-500/20 text-sm whitespace-nowrap"
+          >
+            <MessageCircle size={17} /> Share via WhatsApp
+          </button>
+          <button
+            onClick={handleExportReport}
+            className="flex items-center gap-2 bg-[#f06d2e] hover:bg-[#d85c20] text-white font-bold py-3 px-6 rounded-2xl transition-all shadow-lg shadow-orange-500/20 text-sm whitespace-nowrap"
+          >
+            <FileSpreadsheet size={18} /> Export Master Report
+          </button>
+        </div>
       </div>
 
       {/* KPI Cards Grid */}

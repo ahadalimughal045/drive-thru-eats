@@ -29,6 +29,7 @@ import {
   ChefHat,
   Utensils,
   MapPin,
+  MessageCircle,
 } from 'lucide-react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -72,6 +73,36 @@ function SettleModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [copySuccess, setCopySuccess] = useState(false);
+
+  const shareSettlementViaWhatsApp = () => {
+    const defaultPhone = employee.credit_phone || '';
+    const phoneInput = prompt('Enter WhatsApp Number to send settlement confirmation (with Country Code, e.g. 923001234567):', defaultPhone);
+    if (phoneInput === null) return;
+    const cleanPhone = phoneInput.replace(/\D/g, '');
+    if (!cleanPhone) { alert('Invalid phone number.'); return; }
+
+    const amt = parseFloat(amountPaid) || 0;
+    const remaining = Math.max(0, employee.pending_balance - amt);
+    const isFullPayment = amt >= employee.pending_balance;
+    const dateStr = new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+
+    const message =
+      `*DRIVE THRU EATS* 🍔🔥\n*Credit Account Settlement*\n---------------------------------------\n` +
+      `*Customer:* ${employee.credit_customer_name || 'N/A'}\n` +
+      `*Company:* ${employee.credit_company_name || 'Individual'}\n` +
+      `*Phone:* ${employee.credit_phone}\n` +
+      `---------------------------------------\n` +
+      `*Total Pending:* ₹${employee.pending_balance.toFixed(2)}\n` +
+      `*Amount Paid:* ₹${amt.toFixed(2)} via ${paymentMethod}\n` +
+      `${transactionNumber ? `*Transaction #:* ${transactionNumber}\n` : ''}` +
+      `*Remaining Balance:* ₹${remaining.toFixed(2)}\n` +
+      `*Status:* ${isFullPayment ? '✅ Account CLEARED' : '⚠️ Partially Settled'}\n` +
+      `---------------------------------------\n` +
+      `*Date:* ${dateStr}\n` +
+      `Thank you for your payment! ❤️`;
+
+    window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
+  };
 
   const copyAccountNumber = () => {
     const accountNumbers: Record<string, string> = {
@@ -222,9 +253,8 @@ function SettleModal({
               {paymentMethod !== 'Cash' && (
                 <button
                   onClick={copyAccountNumber}
-                  className={`text-[10px] font-bold underline transition-colors ${
-                    copySuccess ? 'text-green-600' : 'text-brand-red hover:text-rose-700'
-                  }`}
+                  className={`text-[10px] font-bold underline transition-colors ${copySuccess ? 'text-green-600' : 'text-brand-red hover:text-rose-700'
+                    }`}
                 >
                   {copySuccess ? '✓ Copied!' : 'Copy Account Number'}
                 </button>
@@ -309,6 +339,16 @@ function SettleModal({
           >
             {isSubmitting ? 'Recording Payment...' : `Record ₹${parseFloat(amountPaid || '0').toFixed(2)} Payment`}
           </button>
+          {parseFloat(amountPaid) > 0 && (
+            <button
+              type="button"
+              onClick={shareSettlementViaWhatsApp}
+              className="w-full mt-2 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all flex items-center justify-center gap-2 text-sm"
+            >
+              <MessageCircle size={15} />
+              Share Settlement via WhatsApp
+            </button>
+          )}
           <button onClick={onClose} className="w-full py-3 text-gray-500 font-bold text-sm mt-2 hover:text-gray-700 transition-colors">
             Cancel
           </button>
@@ -464,9 +504,8 @@ function LogDetailsModal({
           <div className="space-y-3">
             <div className="flex justify-between items-center py-2 border-b border-gray-100">
               <span className="text-xs font-bold text-gray-400 uppercase">Status</span>
-              <span className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full border ${
-                order.credit_status === 'cleared' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-600 border-red-100'
-              }`}>
+              <span className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full border ${order.credit_status === 'cleared' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-600 border-red-100'
+                }`}>
                 {order.credit_status || 'pending'}
               </span>
             </div>
@@ -562,8 +601,8 @@ function CustomerStatementModal({
 
   // Summary stats
   const totalOrdered = records.filter(r => r.total > 0).reduce((s, r) => s + r.total, 0);
-  const totalPaid    = records.filter(r => r.total < 0).reduce((s, r) => s + Math.abs(r.total), 0);
-  const balanceDue   = employee.pending_balance;
+  const totalPaid = records.filter(r => r.total < 0).reduce((s, r) => s + Math.abs(r.total), 0);
+  const balanceDue = employee.pending_balance;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
@@ -660,11 +699,10 @@ function CustomerStatementModal({
                         <span className="font-mono text-[11px] text-gray-500">{r.orderId}</span>
                       </td>
                       <td className="p-4 align-middle whitespace-nowrap">
-                        <span className={`inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${
-                          isPayment
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
-                            : 'bg-orange-50 text-orange-700 border border-orange-100'
-                        }`}>
+                        <span className={`inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${isPayment
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                          : 'bg-orange-50 text-orange-700 border border-orange-100'
+                          }`}>
                           {isPayment ? <TrendingUp size={9} /> : <Receipt size={9} />}
                           {isPayment ? 'Payment' : (r.type || 'Order')}
                         </span>
@@ -694,7 +732,7 @@ function CustomerStatementModal({
                         )}
                       </td>
                       <td className="p-4 align-middle text-right whitespace-nowrap">
-                        <span className={`text-sm font-black ${ isPayment ? 'text-emerald-600' : 'text-red-600' }`}>
+                        <span className={`text-sm font-black ${isPayment ? 'text-emerald-600' : 'text-red-600'}`}>
                           {isPayment ? `− ₹${Math.abs(r.total).toFixed(2)}` : `₹${r.total.toFixed(2)}`}
                         </span>
                       </td>
@@ -704,11 +742,10 @@ function CustomerStatementModal({
                         </span>
                       </td>
                       <td className="p-4 align-middle text-center whitespace-nowrap">
-                        <span className={`text-[9px] font-bold uppercase px-2.5 py-1 rounded-full border ${
-                          r.credit_status === 'cleared'
-                            ? 'bg-green-50 text-green-600 border-green-200'
-                            : 'bg-red-50 text-red-600 border-red-100'
-                        }`}>
+                        <span className={`text-[9px] font-bold uppercase px-2.5 py-1 rounded-full border ${r.credit_status === 'cleared'
+                          ? 'bg-green-50 text-green-600 border-green-200'
+                          : 'bg-red-50 text-red-600 border-red-100'
+                          }`}>
                           {r.credit_status || 'pending'}
                         </span>
                       </td>
@@ -744,6 +781,34 @@ function CompanyCard({
 }) {
   const [isOpen, setIsOpen] = useState(true);
   const [activeDropdownPhone, setActiveDropdownPhone] = useState<string | null>(null);
+
+  const shareStatementViaWhatsApp = (emp: Employee) => {
+    const defaultPhone = emp.credit_phone || '';
+    const phoneInput = prompt('Enter WhatsApp Number to share credit statement (with Country Code, e.g. 923001234567):', defaultPhone);
+    if (phoneInput === null) return;
+    const cleanPhone = phoneInput.replace(/\D/g, '');
+    if (!cleanPhone) { alert('Invalid phone number.'); return; }
+
+    const statementUrl = `${window.location.origin}/api/admin/export/credit-statement/pdf?phone=${encodeURIComponent(emp.credit_phone)}`;
+    const dateStr = new Date().toLocaleDateString('en-IN', { dateStyle: 'long' });
+
+    const message =
+      `*DRIVE THRU EATS* 🍔🔥\n*Credit Account Statement*\n---------------------------------------\n` +
+      `*Customer:* ${emp.credit_customer_name || 'N/A'}\n` +
+      `*Company:* ${emp.credit_company_name || 'Individual'}\n` +
+      `*Phone:* ${emp.credit_phone}\n` +
+      `---------------------------------------\n` +
+      `*Total Credit Used:* ₹${emp.total_ordered.toFixed(2)}\n` +
+      `*Total Paid:* ₹${emp.total_paid.toFixed(2)}\n` +
+      `*Outstanding Balance:* ₹${emp.pending_balance.toFixed(2)}\n` +
+      `*Pending Orders:* ${emp.pending_orders_count}\n` +
+      `---------------------------------------\n` +
+      `📄 Download Full Statement: ${statementUrl}\n` +
+      `*Date:* ${dateStr}\n` +
+      `Please clear your dues at the earliest. Thank you! ❤️`;
+
+    window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
+  };
 
   return (
     <div className="bg-white border border-gray-100 rounded-3xl shadow-sm overflow-hidden">
@@ -826,7 +891,7 @@ function CompanyCard({
                       <Wallet size={13} /> Settle
                     </button>
                   )}
-                  
+
                   {/* Dropdown for Statement Export */}
                   <div className="relative">
                     <button
@@ -838,7 +903,7 @@ function CompanyCard({
                     {activeDropdownPhone === emp.credit_phone && (
                       <>
                         <div className="fixed inset-0 z-40" onClick={() => setActiveDropdownPhone(null)} />
-                        <div className="absolute right-0 top-full mt-1.5 w-44 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-50 animate-fade-in text-left">
+                        <div className="absolute right-0 top-full mt-1.5 w-52 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-50 animate-fade-in text-left">
                           <button
                             onClick={() => {
                               onExport(emp.credit_phone, 'xlsx');
@@ -868,6 +933,17 @@ function CompanyCard({
                           >
                             <Printer size={13} className="text-red-500" />
                             <span>PDF Statement</span>
+                          </button>
+                          <div className="border-t border-gray-100 my-1" />
+                          <button
+                            onClick={() => {
+                              shareStatementViaWhatsApp(emp);
+                              setActiveDropdownPhone(null);
+                            }}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-emerald-700 hover:bg-emerald-50 transition-colors"
+                          >
+                            <MessageCircle size={13} className="text-emerald-600" />
+                            <span>Share via WhatsApp</span>
                           </button>
                         </div>
                       </>
@@ -1028,17 +1104,15 @@ export default function CreditReportsPage() {
         <div className="flex items-center bg-gray-100 rounded-2xl p-1 gap-1">
           <button
             onClick={() => setActiveTab('logs')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${
-              activeTab === 'logs' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'
-            }`}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'logs' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'
+              }`}
           >
             <LayoutList size={15} /> Detailed Logs
           </button>
           <button
             onClick={() => setActiveTab('balances')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${
-              activeTab === 'balances' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'
-            }`}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'balances' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'
+              }`}
           >
             <Users size={15} /> Customer Balances
           </button>
@@ -1173,34 +1247,39 @@ export default function CreditReportsPage() {
                           </div>
                           <p className="text-lg font-black text-brand-red">₹{order.total}</p>
                         </td>
-                        <td className="p-6 align-top text-center">
-                          <span className={`text-[10px] font-bold uppercase px-3 py-1 rounded-full shadow-sm border ${
-                            order.credit_status === 'cleared' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-600 border-red-100 animate-pulse'
-                          }`}>
+                        <td className="p-6 align-middle text-center">
+                          <span className={`text-[10px] font-bold uppercase px-3 py-1 rounded-full shadow-sm border ${order.credit_status === 'cleared' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-600 border-red-100'
+                            }`}>
                             {order.credit_status || 'pending'}
                           </span>
                         </td>
-                        <td className="p-6 align-middle w-[280px] min-w-[280px]">
-                          <div className="flex items-center justify-end gap-2">
-                            <button type="button" onClick={(e) => { e.stopPropagation(); setViewModal({ order }); }} className="flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-600 p-2.5 rounded-xl transition-all flex-shrink-0" title="View Details">
-                              <Eye size={14} />
-                            </button>
-                            <button onClick={() => handleDeleteCredit(order.orderId)} className="flex items-center justify-center bg-gray-100 hover:bg-red-50 hover:text-red-600 text-gray-500 p-2.5 rounded-xl transition-all flex-shrink-0">
-                              <Trash2 size={14} />
-                            </button>
-                            {order.total < 0 ? (
-                              <span className="flex items-center gap-1 bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold text-xs px-3 py-2 rounded-xl flex-shrink-0 whitespace-nowrap">
-                                <Wallet size={14} /> Received
-                              </span>
-                            ) : order.credit_status === 'cleared' ? (
-                              <span className="flex items-center gap-1 bg-green-50 border border-green-200 text-green-700 font-bold text-xs px-3 py-2 rounded-xl flex-shrink-0 whitespace-nowrap">
-                                <CheckCircle size={14} /> Cleared
-                              </span>
-                            ) : (
-                              <button onClick={() => handleClearCredit(order.orderId)} className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white font-bold text-xs px-3 py-2 rounded-xl transition-all shadow-sm flex-shrink-0">
-                                <CheckCircle size={14} /> Clear
+                        <td className="p-6 align-middle w-[260px] min-w-[260px]">
+                          <div className="flex items-center justify-between">
+                            {/* Fixed icon group — always on the left */}
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <button type="button" onClick={(e) => { e.stopPropagation(); setViewModal({ order }); }} className="flex items-center justify-center w-9 h-9 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl transition-all" title="View Details">
+                                <Eye size={14} />
                               </button>
-                            )}
+                              <button onClick={() => handleDeleteCredit(order.orderId)} className="flex items-center justify-center w-9 h-9 bg-gray-100 hover:bg-red-50 hover:text-red-600 text-gray-500 rounded-xl transition-all" title="Delete">
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                            {/* Variable action button — always on the right */}
+                            <div className="flex-shrink-0">
+                              {order.total < 0 ? (
+                                <span className="flex items-center gap-1 bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold text-xs px-3 py-2 rounded-xl whitespace-nowrap">
+                                  <Wallet size={13} /> Received
+                                </span>
+                              ) : order.credit_status === 'cleared' ? (
+                                <span className="flex items-center gap-1 bg-green-50 border border-green-200 text-green-700 font-bold text-xs px-3 py-2 rounded-xl whitespace-nowrap">
+                                  <CheckCircle size={13} /> Cleared
+                                </span>
+                              ) : (
+                                <button onClick={() => handleClearCredit(order.orderId)} className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white font-bold text-xs px-3 py-2 rounded-xl transition-all shadow-sm whitespace-nowrap">
+                                  <CheckCircle size={13} /> Clear
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </td>
                       </tr>
