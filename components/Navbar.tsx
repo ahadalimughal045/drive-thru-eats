@@ -21,7 +21,8 @@ export default function Navbar() {
         .then(data => {
           if (!data || data.error) return;
           setIsRestaurantClosed(data.isOpen === false);
-        });
+        })
+        .catch(error => console.error('Failed to fetch settings:', error));
     };
 
     checkStatus();
