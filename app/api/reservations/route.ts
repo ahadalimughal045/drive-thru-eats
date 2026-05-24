@@ -13,6 +13,23 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const data = await req.json();
+
+    // Check if table is already booked for this date and time
+    const existing = await prisma.reservation.findFirst({
+      where: {
+        tableId: data.tableId,
+        date: data.date,
+        time: data.time
+      }
+    });
+
+    if (existing) {
+      return NextResponse.json(
+        { error: 'This table is already booked for the selected date and time.' },
+        { status: 409 }
+      );
+    }
+
     const res = await prisma.reservation.create({
       data: {
         id: data.id || Math.random().toString(36).substr(2, 9),
@@ -26,6 +43,6 @@ export async function POST(req: Request) {
     });
     return NextResponse.json(res);
   } catch (err) {
-    return NextResponse.json({ error: 'Failed' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create reservation' }, { status: 500 });
   }
 }

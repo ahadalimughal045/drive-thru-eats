@@ -104,11 +104,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Link
               key={link.name}
               href={link.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
-                pathname === link.href
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${pathname === link.href
                   ? 'bg-brand-red text-white shadow-md'
                   : 'text-gray-400 hover:text-white hover:bg-gray-800'
-              }`}
+                }`}
             >
               {link.icon}
               {link.name}
@@ -155,9 +154,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={link.name}
                 href={link.href}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all ${
-                  pathname === link.href ? 'bg-brand-red text-white' : 'bg-gray-800 text-gray-400'
-                }`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all ${pathname === link.href ? 'bg-brand-red text-white' : 'bg-gray-800 text-gray-400'
+                  }`}
               >
                 {link.icon}
                 {link.name}

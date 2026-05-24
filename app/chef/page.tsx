@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   ChefHat, Utensils, LayoutGrid, Check, LogOut, Loader2, ArrowLeft
 } from 'lucide-react';
@@ -14,12 +14,30 @@ export default function ChefPortal() {
   const [loading, setLoading] = useState(false);
   const [kitchenTab, setKitchenTab] = useState<'Pending' | 'Preparing' | 'Ready'>('Pending');
 
+  const lastOrderIdRef = useRef<string | null>(null);
+
   const loadInitialData = async () => {
+    const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+
     try {
       const oRes = await fetch('/api/orders');
       const oData = await oRes.json();
       if (Array.isArray(oData)) {
-        setActiveOrders(oData.filter((o: any) => o.status !== 'Delivered' && o.status !== 'Cancelled'));
+        const active = oData.filter((o: any) => o.status !== 'Delivered' && o.status !== 'Cancelled');
+        setActiveOrders(active);
+
+        if (oData.length > 0) {
+          const latestId = oData[0].id;
+          const prevLatestId = lastOrderIdRef.current;
+
+          if (prevLatestId && latestId !== prevLatestId) {
+            const isNewActive = active.some((o: any) => o.id === latestId && o.status === 'Pending');
+            if (isNewActive) {
+              notificationSound.play().catch(e => console.log('Audio play blocked:', e));
+            }
+          }
+          lastOrderIdRef.current = latestId;
+        }
       } else {
         setActiveOrders([]);
       }

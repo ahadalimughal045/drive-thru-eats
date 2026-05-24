@@ -38,12 +38,42 @@ export default function DiningPage() {
   }, []);
 
   const isTableBooked = (tableId: string) => {
-    return dbReservations.some(r => r.tableId === tableId);
+    if (!date) return false;
+    return dbReservations.some(r => r.tableId === tableId && r.date === date && r.time === time);
+  };
+
+  const handleDateChange = (newDate: string) => {
+    setDate(newDate);
+    if (selectedTable && dbReservations.some(r => r.tableId === selectedTable.id && r.date === newDate && r.time === time)) {
+      setToast(`Table ${selectedTable.number} is already booked for this date and time.`);
+      setSelectedTable(null);
+      setTimeout(() => setToast(''), 3000);
+    }
+  };
+
+  const handleTimeChange = (newTime: string) => {
+    setTime(newTime);
+    if (selectedTable && dbReservations.some(r => r.tableId === selectedTable.id && r.date === date && r.time === newTime)) {
+      setToast(`Table ${selectedTable.number} is already booked for this date and time.`);
+      setSelectedTable(null);
+      setTimeout(() => setToast(''), 3000);
+    }
   };
 
   const handleBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedTable) return;
+
+    // Double check on frontend
+    const alreadyBooked = dbReservations.some(
+      r => r.tableId === selectedTable.id && r.date === date && r.time === time
+    );
+    if (alreadyBooked) {
+      setToast(`Table ${selectedTable.number} is already booked for this date and time. Please choose another spot.`);
+      setSelectedTable(null);
+      setTimeout(() => setToast(''), 4000);
+      return;
+    }
 
     const newRes: Reservation = {
       id: Math.random().toString(36).substr(2, 9),
@@ -62,7 +92,17 @@ export default function DiningPage() {
         body: JSON.stringify(newRes)
       });
 
-      if (!response.ok) throw new Error('Failed to save reservation');
+      if (!response.ok) {
+        if (response.status === 409) {
+          const errData = await response.json();
+          throw new Error(errData.error || 'This slot is already taken');
+        }
+        throw new Error('Failed to save reservation');
+      }
+
+      const freshResRes = await fetch('/api/reservations');
+      const freshResData = await freshResRes.json();
+      if (Array.isArray(freshResData)) setDbReservations(freshResData);
 
       addReservation(newRes);
       setToast('Table booked successfully!');
@@ -70,9 +110,9 @@ export default function DiningPage() {
       setName('');
       setPhone('');
       setDate('');
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      setToast('Failed to book table. Please try again.');
+      setToast(error.message || 'Failed to book table. Please try again.');
     }
     
     setTimeout(() => setToast(''), 3000);
@@ -224,7 +264,7 @@ export default function DiningPage() {
                   <label className="text-[10px] font-bold text-brand-muted uppercase tracking-widest ml-2">Reservation Date</label>
                   <div className="relative">
                     <Calendar size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-red" />
-                    <input type="date" required min={today} value={date} onChange={e=>setDate(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-12 pr-6 py-4 text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-medium" />
+                    <input type="date" required min={today} value={date} onChange={e=>handleDateChange(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-12 pr-6 py-4 text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-medium" />
                   </div>
                 </div>
 
@@ -233,7 +273,7 @@ export default function DiningPage() {
                     <label className="text-[10px] font-bold text-brand-muted uppercase tracking-widest ml-2">Time</label>
                     <div className="relative">
                       <Clock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-red" />
-                      <select value={time} onChange={e=>setTime(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-10 pr-4 py-4 text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-bold text-xs appearance-none">
+                      <select value={time} onChange={e=>handleTimeChange(e.target.value)} className="w-full bg-brand-bg border border-brand-border rounded-2xl pl-10 pr-4 py-4 text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red transition-all font-bold text-xs appearance-none">
                         {['12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM'].map(t => (
                           <option key={t} value={t}>{t}</option>
                         ))}

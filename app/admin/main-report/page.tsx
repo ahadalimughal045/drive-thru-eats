@@ -88,6 +88,8 @@ export default function MainReportPage() {
 
   useEffect(() => {
     fetchMainReport();
+    const interval = setInterval(fetchMainReport, 10000);
+    return () => clearInterval(interval);
   }, [fetchMainReport]);
 
   const handleClearFilters = () => {

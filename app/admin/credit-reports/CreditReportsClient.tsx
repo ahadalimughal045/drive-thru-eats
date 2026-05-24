@@ -961,6 +961,10 @@ function CompanyCard({
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function CreditReportsPage() {
+  useEffect(() => {
+    document.title = 'Credit Reports | Drive Thru Eats';
+  }, []);
+
   // Tabs
   const [activeTab, setActiveTab] = useState<'logs' | 'balances'>('logs');
 
@@ -1038,21 +1042,8 @@ export default function CreditReportsPage() {
     }
   }, [balancesSearch]);
 
-  useEffect(() => {
-    if (activeTab === 'logs') {
-      fetchReports();
-      const interval = setInterval(fetchReports, 10000);
-      return () => clearInterval(interval);
-    }
-  }, [fetchReports, activeTab]);
-
-  useEffect(() => {
-    if (activeTab === 'balances') {
-      fetchBalances();
-      const interval = setInterval(fetchBalances, 10000);
-      return () => clearInterval(interval);
-    }
-  }, [fetchBalances, activeTab]);
+  useEffect(() => { if (activeTab === 'logs') fetchReports(); }, [fetchReports, activeTab]);
+  useEffect(() => { if (activeTab === 'balances') fetchBalances(); }, [fetchBalances, activeTab]);
 
   const handleClearCredit = async (orderId: string) => {
     if (!confirm('Mark this credit order as cleared?')) return;
