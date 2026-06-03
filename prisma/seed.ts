@@ -14,7 +14,7 @@ async function main() {
     create: {
       name: 'Admin User',
       email: 'admin@drivethru.com',
-      password: 'admin123', // In a real app, hash this!
+      password: 'admin123',
       role: 'admin',
     },
   });

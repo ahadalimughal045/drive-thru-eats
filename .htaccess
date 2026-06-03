@@ -1,0 +1,5 @@
+# DO NOT REMOVE OR MODIFY.
+PassengerAppRoot "/home/inm647428/drive-admin"
+PassengerBaseURI "/"
+PassengerAppType node
+PassengerStartupFile server.js
