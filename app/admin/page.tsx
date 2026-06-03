@@ -12,7 +12,7 @@ export default function DashboardPage() {
   });
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
 
-  useEffect(() => {
+  const loadDashboard = () => {
     fetch('/api/orders')
       .then(res => res.json())
       .then(data => {
@@ -30,6 +30,13 @@ export default function DashboardPage() {
           setRecentOrders(data.slice(0, 5));
         }
       });
+  };
+
+  useEffect(() => {
+    loadDashboard();
+    const interval = setInterval(loadDashboard, 10000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
