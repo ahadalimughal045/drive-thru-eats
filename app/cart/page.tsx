@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Minus, Plus, ShoppingBag, ArrowLeft, Info, HelpCircle, CheckCircle2, ChevronRight, MapPin, Phone, User, Mail, CreditCard, Tag, Truck, ShoppingBasket, Utensils } from 'lucide-react';
+import { Minus, Plus, ShoppingBag, ArrowLeft, Info, HelpCircle, CheckCircle2, ChevronRight, MapPin, Phone, User, Mail, CreditCard, Tag, Truck, ShoppingBasket, Utensils, Upload, X } from 'lucide-react';
 import { useCart } from '@/components/CartContext';
 import { useRouter } from 'next/navigation';
 
@@ -52,6 +52,22 @@ export default function CartPage() {
   const [instructions, setInstructions] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
   const [transactionNumber, setTransactionNumber] = useState('');
+  const [screenshot, setScreenshot] = useState<string>('');
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size should not exceed 5MB!");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setScreenshot(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Credit Form States
   const [creditName, setCreditName] = useState('');
@@ -156,11 +172,25 @@ export default function CartPage() {
       return;
     }
     if (!name.trim() || !phone.trim()) return alert("Please enter Name and Phone!");
+    if (phone.length !== 11) return alert("Mobile Number must be exactly 11 digits!");
     if (orderType === 'dining' && !selectedTable) return alert("Please select a Table Number!");
+
+    const isOnlinePayment = paymentMethod !== 'Credit' && paymentMethod !== 'Cash On Delivery' && paymentMethod !== '';
+    if (isOnlinePayment) {
+      if (!transactionNumber.trim()) {
+        return alert("Please enter the Transaction Number/ID!");
+      }
+      if (!screenshot) {
+        return alert("Please upload a screenshot of your transaction!");
+      }
+    }
 
     if (paymentMethod === 'Credit') {
       if (!creditName.trim() || !creditCompany.trim() || !creditPhone.trim()) {
         return alert("Please fill in all Credit form fields (Full Name, Company Name, and Phone Number)!");
+      }
+      if (creditPhone.length !== 11) {
+        return alert("Credit Phone Number must be exactly 11 digits!");
       }
     }
 
@@ -175,6 +205,7 @@ export default function CartPage() {
       instructions,
       paymentMethod,
       transactionNumber: paymentMethod === 'Credit' ? '' : transactionNumber,
+      screenshot: isOnlinePayment ? screenshot : '',
       items: items,
       total: finalPrice,
       status: 'Pending',
@@ -348,7 +379,7 @@ export default function CartPage() {
 
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-slate-500 mb-1 block">Any Instructions</label>
-                  <input type="text" value={instructions} onChange={e => setInstructions(e.target.value)} placeholder="Any Instructions" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all font-medium shadow-sm" />
+                  <input type="text" value={instructions} onChange={e => setInstructions(e.target.value)} placeholder="e.g. Deliver near main gate / Make it extra spicy" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all font-medium shadow-sm" />
                 </div>
 
                 <div className="pt-6">
@@ -418,11 +449,12 @@ export default function CartPage() {
                       <div className="space-y-2">
                         <label className="text-xs font-bold text-slate-500 block">Phone Number *</label>
                         <input
-                          type="number"
+                          type="tel"
                           required
                           value={creditPhone}
-                          onChange={e => setCreditPhone(e.target.value)}
-                          placeholder="Numeric Phone"
+                          onChange={e => setCreditPhone(e.target.value.replace(/\D/g, '').slice(0, 11))}
+                          maxLength={11}
+                          placeholder="e.g. 9876543210"
                           className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3.5 text-slate-800 font-medium placeholder:text-slate-300 focus:outline-none focus:border-brand-red transition-all shadow-sm"
                         />
                       </div>
@@ -431,9 +463,53 @@ export default function CartPage() {
                 )}
 
                 {paymentMethod !== 'Credit' && paymentMethod !== 'Cash On Delivery' && paymentMethod !== '' && (
-                  <div className="space-y-4">
-                    <label className="text-xs font-bold text-slate-500 block">Transaction Number <span className="text-slate-800">(After Order place you also upload a transaction screenshot)</span></label>
-                    <input type="text" value={transactionNumber} onChange={e => setTransactionNumber(e.target.value)} placeholder="Transaction Number" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all shadow-sm" />
+                  <div className="space-y-6 p-6 bg-slate-50 rounded-3xl border border-slate-100 animate-fade-in">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-slate-500 block">Transaction Number *</label>
+                      <input 
+                        type="text" 
+                        value={transactionNumber} 
+                        onChange={e => setTransactionNumber(e.target.value)} 
+                        placeholder="Enter Transaction Number/ID" 
+                        className="w-full bg-white border border-slate-200 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all shadow-sm font-medium" 
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-slate-500 block">Upload Transaction Screenshot *</label>
+                      
+                      {!screenshot ? (
+                        <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-slate-300 rounded-3xl cursor-pointer hover:bg-white hover:border-brand-red/40 transition-all group bg-white/50">
+                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                            <div className="w-12 h-12 rounded-2xl bg-brand-red/10 text-brand-red flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                              <Upload size={20} />
+                            </div>
+                            <p className="text-xs font-bold text-slate-600 mb-1">Click to upload screenshot</p>
+                            <p className="text-[10px] text-slate-400 font-medium">PNG, JPG or JPEG (Max 5MB)</p>
+                          </div>
+                          <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                        </label>
+                      ) : (
+                        <div className="relative rounded-3xl overflow-hidden border border-slate-200 bg-white p-2 flex items-center gap-4 animate-fade-in">
+                          <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200">
+                            <img src={screenshot} alt="Screenshot Preview" className="w-full h-full object-cover" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-xs font-bold text-slate-700">Screenshot uploaded</p>
+                            <p className="text-[10px] text-green-500 font-semibold flex items-center gap-1 mt-0.5">
+                              <CheckCircle2 size={12} /> Ready to submit
+                            </p>
+                          </div>
+                          <button 
+                            type="button" 
+                            onClick={() => setScreenshot('')} 
+                            className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition-colors mr-2"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
