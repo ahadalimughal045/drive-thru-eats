@@ -20,6 +20,7 @@ model order {
   instructions      String?
   paymentMethod     String?
   transactionNumber String?
+  screenshot        String?
   total             Float
   status            String   @default("Pending")
   chef              String?

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 export async function GET(req: Request) {
   try {
@@ -101,6 +103,32 @@ export async function POST(req: Request) {
         derivedPaymentType = 'upi';
       }
     }
+    // Save screenshot if present as base64
+    let screenshotUrl = null;
+    if (data.screenshot && data.screenshot.startsWith('data:image')) {
+      try {
+        const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+        try {
+          await fs.access(uploadDir);
+        } catch {
+          await fs.mkdir(uploadDir, { recursive: true });
+        }
+
+        const mimeType = data.screenshot.split(';')[0].split(':')[1];
+        const ext = mimeType.split('/')[1] || 'png';
+        const base64Data = data.screenshot.replace(/^data:image\/\w+;base64,/, "");
+        const buffer = Buffer.from(base64Data, 'base64');
+        
+        const filename = `order_${nextOrderId}_screenshot.${ext}`;
+        const filePath = path.join(uploadDir, filename);
+        
+        await fs.writeFile(filePath, buffer);
+        screenshotUrl = `/uploads/${filename}`;
+        console.log(`[ORDER] Screenshot saved to ${filePath}`);
+      } catch (err) {
+        console.error("Failed to save screenshot:", err);
+      }
+    }
 
     const newOrder = await prisma.order.create({
       data: {
@@ -116,6 +144,7 @@ export async function POST(req: Request) {
         instructions: data.instructions || null,
         paymentMethod: data.paymentMethod,
         transactionNumber: data.transactionNumber || null,
+        screenshot: screenshotUrl || null,
         total: parseFloat(data.total),
         status: data.status || 'Pending',
         chef: data.chef || null,

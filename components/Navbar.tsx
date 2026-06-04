@@ -131,12 +131,10 @@ export default function Navbar() {
 
                 <Link href="/cart" className="relative group flex items-center gap-3">
                   <span className="text-sm font-bold text-brand-text group-hover:text-brand-red transition-colors">Cart</span>
-                  <div className="relative">
-                    <div className="w-12 h-12 rounded-2xl bg-brand-red text-white flex items-center justify-center group-hover:bg-brand-text transition-all shadow-premium group-hover:scale-110">
-                      <ShoppingCart size={22} />
-                    </div>
+                  <div className={`h-12 rounded-2xl bg-brand-red text-white flex items-center justify-center group-hover:bg-brand-text shadow-premium group-hover:scale-110 transition-all duration-300 ${totalItems > 0 ? 'px-4 gap-2' : 'w-12'}`}>
+                    <ShoppingCart size={22} />
                     {totalItems > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-brand-accent text-brand-text text-[10px] font-bold rounded-full h-6 px-2 flex items-center justify-center border-2 border-white shadow-soft animate-bounce-soft">
+                      <span className="text-sm font-bold text-white animate-bounce-soft">
                         {totalItems}
                       </span>
                     )}
@@ -147,10 +145,10 @@ export default function Navbar() {
 
             {/* Mobile Actions */}
             <div className="flex lg:hidden items-center gap-4">
-              <Link href="/cart" className="relative w-10 h-10 rounded-xl bg-brand-red flex items-center justify-center text-white shadow-soft hover:bg-brand-text transition-colors">
+              <Link href="/cart" className={`h-10 rounded-xl bg-brand-red flex items-center justify-center text-white shadow-soft hover:bg-brand-text transition-all duration-300 ${totalItems > 0 ? 'px-3 gap-1.5' : 'w-10'}`}>
                 <ShoppingCart size={20} />
                 {totalItems > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-brand-red text-white text-[8px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">
+                  <span className="text-xs font-bold text-white animate-bounce-soft">
                     {totalItems}
                   </span>
                 )}
