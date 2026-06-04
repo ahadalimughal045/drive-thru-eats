@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -16,8 +16,8 @@ model order {
   type              String
   tableNumber       String?
   deliveryArea      String?
-  address           String?
-  instructions      String?
+  address           String?  @db.Text
+  instructions      String?  @db.Text
   paymentMethod     String?
   transactionNumber String?
   screenshot        String?
@@ -26,7 +26,7 @@ model order {
   chef              String?
   waiter            String?
   timestamp         DateTime @default(now())
-  items             String
+  items             String   @db.Text
   
   // Credit Order & Reports Integration
   payment_type         String?  // "cash" | "upi" | "credit"
@@ -86,7 +86,7 @@ model menu_item {
   id           String        @id
   name         String
   price        Float
-  description  String?
+  description  String?       @db.Text
   discount     Float?        @default(0)
   image        String
   restaurant   String        @default("Burger Arena")

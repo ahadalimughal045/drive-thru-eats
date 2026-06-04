@@ -6,6 +6,7 @@ import { cookies } from 'next/headers';
 export const dynamic = 'force-dynamic';
 import * as XLSX from 'xlsx';
 
+
 export async function GET(req: Request) {
   try {
     const cookieStore = cookies();
@@ -36,15 +37,15 @@ export async function GET(req: Request) {
     });
 
     // Categorize orders
-    const cashOrders = allOrders.filter(o => {
+    const cashOrders = allOrders.filter((o: any) => {
       const pmStr = o.paymentMethod?.toLowerCase() || '';
       return o.payment_type === 'cash' || pmStr.includes('cash');
     });
-    const upiOrders = allOrders.filter(o => {
+    const upiOrders = allOrders.filter((o: any) => {
       const pmStr = o.paymentMethod?.toLowerCase() || '';
       return o.payment_type === 'upi' || pmStr.includes('upi') || pmStr.includes('online') || pmStr.includes('g-pay') || pmStr.includes('m-pay');
     });
-    const creditOrders = allOrders.filter(o => {
+    const creditOrders = allOrders.filter((o: any) => {
       const pmStr = o.paymentMethod?.toLowerCase() || '';
       return o.payment_type === 'credit' || pmStr.includes('credit');
     });
@@ -54,18 +55,18 @@ export async function GET(req: Request) {
       { Metric: 'Report Date Range:', Value: (startDate || endDate) ? `${startDate || 'Start'} to ${endDate || 'End'}` : 'All Time' },
       { Metric: 'Generated At:', Value: new Date().toLocaleString() },
       { Metric: '', Value: '' }, // Blank spacing row
-      { Metric: 'Total Sales (INR):', Value: allOrders.reduce((sum, o) => sum + o.total, 0) },
+      { Metric: 'Total Sales (INR):', Value: allOrders.reduce((sum: any, o: any) => sum + o.total, 0) },
       { Metric: 'Total Orders Count:', Value: allOrders.length },
-      { Metric: 'Total Cash Received (INR):', Value: cashOrders.reduce((sum, o) => sum + o.total, 0) },
-      { Metric: 'Total UPI Received (INR):', Value: upiOrders.reduce((sum, o) => sum + o.total, 0) },
-      { Metric: 'Total Credit Given (INR):', Value: creditOrders.reduce((sum, o) => sum + o.total, 0) },
-      { Metric: 'Pending Credit (INR):', Value: creditOrders.filter(o => o.credit_status !== 'cleared').reduce((sum, o) => sum + o.total, 0) },
-      { Metric: 'Cleared Credit (INR):', Value: creditOrders.filter(o => o.credit_status === 'cleared').reduce((sum, o) => sum + o.total, 0) }
+      { Metric: 'Total Cash Received (INR):', Value: cashOrders.reduce((sum: any, o: any) => sum + o.total, 0) },
+      { Metric: 'Total UPI Received (INR):', Value: upiOrders.reduce((sum: any, o: any) => sum + o.total, 0) },
+      { Metric: 'Total Credit Given (INR):', Value: creditOrders.reduce((sum: any, o: any) => sum + o.total, 0) },
+      { Metric: 'Pending Credit (INR):', Value: creditOrders.filter((o: any) => o.credit_status !== 'cleared').reduce((sum: any, o: any) => sum + o.total, 0) },
+      { Metric: 'Cleared Credit (INR):', Value: creditOrders.filter((o: any) => o.credit_status === 'cleared').reduce((sum: any, o: any) => sum + o.total, 0) }
     ];
 
     // Formatter for detail sheets
-    const formatOrdersForSheet = (ordersList: typeof allOrders) => {
-      return ordersList.map((o, idx) => {
+    const formatOrdersForSheet = (ordersList: any) => {
+      return ordersList.map((o: any, idx: any) => {
         let itemsStr = '';
         try {
           const items = typeof o.items === 'string' ? JSON.parse(o.items) : o.items;

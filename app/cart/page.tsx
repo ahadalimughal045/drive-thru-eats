@@ -335,11 +335,11 @@ export default function CartPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-500 mb-1 block">Full Name</label>
-                    <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Rahul Sharma" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all font-medium shadow-sm" />
+                    <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Enter Full Name" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all font-medium shadow-sm" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-500 mb-1 block">Email Address</label>
-                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="e.g. rahul.sharma@gmail.com" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all font-medium shadow-sm" />
+                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter Email Address" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all font-medium shadow-sm" />
                   </div>
                 </div>
 
@@ -362,32 +362,18 @@ export default function CartPage() {
                       </div>
                       <div className="space-y-2">
                         <label className="text-xs font-bold text-slate-500 mb-1 block">Mobile Number</label>
-                        <input 
-                          type="tel" 
-                          value={phone} 
-                          onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 11))} 
-                          maxLength={11} 
-                          placeholder="e.g. 9876543210" 
-                          className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all font-medium shadow-sm" 
-                        />
+                        <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="9876543210" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all font-medium shadow-sm" />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-slate-500 mb-1 block">Delivery Address</label>
-                      <input type="text" value={address} onChange={e => setAddress(e.target.value)} placeholder="e.g. House No. 12, Main Bazar, Handwara" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all font-medium shadow-sm" />
+                      <input type="text" value={address} onChange={e => setAddress(e.target.value)} placeholder="Enter Delivery Address" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all font-medium shadow-sm" />
                     </div>
                   </>
                 ) : (
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-500 mb-1 block">Mobile Number</label>
-                    <input 
-                      type="tel" 
-                      value={phone} 
-                      onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 11))} 
-                      maxLength={11} 
-                      placeholder="e.g. 9876543210" 
-                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all font-medium shadow-sm" 
-                    />
+                    <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="9876543210" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/20 transition-all font-medium shadow-sm" />
                   </div>
                 )}
 
@@ -536,7 +522,7 @@ export default function CartPage() {
               <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                 {items.map(item => (
                   <div key={item.id} className="flex gap-4 items-center bg-white p-3 rounded-2xl shadow-sm border border-slate-100">
-                    <img src={item.image} alt={item.name} className="w-14 h-14 rounded-xl object-cover" />
+                    <img src={item.image && (item.image.startsWith('http') || item.image.startsWith('data:')) ? item.image : `/admin/oimg/${item.image}`} alt={item.name} className="w-14 h-14 rounded-xl object-cover" />
                     <div className="flex-1">
                       <h4 className="font-bold text-[10px] text-slate-800 uppercase tracking-tight mb-1">{item.quantity} X {item.name}</h4>
                       <p className="font-bold text-xs text-slate-400 font-mono tracking-tighter">₹{item.price}</p>

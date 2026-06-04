@@ -20,7 +20,7 @@ export default function MenuCard({ item }: { item: MenuItem }) {
       {/* Image Container */}
       <div className="relative overflow-hidden aspect-square bg-brand-bg">
         <img
-          src={item.image}
+          src={item.image && (item.image.startsWith('http') || item.image.startsWith('data:')) ? item.image : `/admin/oimg/${item.image}`}
           alt={item.name}
           width={400}
           height={400}
